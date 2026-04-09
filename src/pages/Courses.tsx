@@ -133,7 +133,7 @@ export default function Courses() {
           <div className="flex items-center gap-2">
             {user ? (
               <Button variant="ghost" size="sm" asChild>
-                <Link to={profile?.role === 'instructor' || profile?.role === 'admin' ? '/instructor' : '/dashboard'}>
+                <Link to={['instructor', 'admin', 'nato_owner'].includes(profile?.role ?? '') ? '/instructor' : '/dashboard'}>
                   Mi panel
                 </Link>
               </Button>

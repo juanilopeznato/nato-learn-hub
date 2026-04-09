@@ -55,7 +55,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <Button variant="hero" size="sm" asChild>
-              <Link to={profile?.role === 'instructor' || profile?.role === 'admin' ? '/instructor' : '/dashboard'}>
+              <Link to={['instructor', 'admin', 'nato_owner'].includes(profile?.role ?? '') ? '/instructor' : '/dashboard'}>
                 Mi panel
               </Link>
             </Button>
@@ -100,7 +100,7 @@ export default function Navbar() {
           <div className="flex gap-2 pt-2">
             {user ? (
               <Button variant="hero" size="sm" className="flex-1" asChild>
-                <Link to={profile?.role === 'instructor' || profile?.role === 'admin' ? '/instructor' : '/dashboard'}>Mi panel</Link>
+                <Link to={['instructor', 'admin', 'nato_owner'].includes(profile?.role ?? '') ? '/instructor' : '/dashboard'}>Mi panel</Link>
               </Button>
             ) : (
               <>
