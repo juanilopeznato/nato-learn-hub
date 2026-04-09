@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Eye, LogOut, BookOpen, TrendingUp, Users, Settings, Mail, CreditCard, Gift } from 'lucide-react'
+import { Plus, Eye, LogOut, BookOpen, TrendingUp, Users, Settings, Mail, CreditCard, Gift, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -18,6 +18,7 @@ export default function InstructorDashboard() {
   const queryClient = useQueryClient()
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null)
+  const [deletingCourse, setDeletingCourse] = useState<{ id: string; title: string } | null>(null)
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['instructor-courses', profile?.id],
@@ -107,6 +108,8 @@ export default function InstructorDashboard() {
         instructor_avatar_url: (data as any).instructor_avatar_url ?? null,
         faq: (data as any).faq?.filter((f: any) => f.q) ?? [],
         meta_pixel_id: (data as any).meta_pixel_id ?? null,
+        nato_produced: (data as any).nato_produced ?? false,
+        production_recovery_sales: (data as any).production_recovery_sales ?? 10,
       })
       if (error) throw error
     },
@@ -153,6 +156,19 @@ export default function InstructorDashboard() {
       if (error) throw error
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['instructor-courses'] }),
+  })
+
+  const deleteCourse = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('courses').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      setDeletingCourse(null)
+      queryClient.invalidateQueries({ queryKey: ['instructor-courses'] })
+      toast.success('Curso eliminado')
+    },
+    onError: (e: Error) => toast.error(e.message),
   })
 
   const editingCourse = courses?.find(c => c.id === editingCourseId)
@@ -260,6 +276,14 @@ export default function InstructorDashboard() {
                         <Link to={`/courses/${course.slug}`} target="_blank">
                           <Eye className="w-4 h-4" />
                         </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-gray-400 hover:text-red-500"
+                        onClick={() => setDeletingCourse({ id: course.id, title: course.title })}
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
@@ -391,6 +415,28 @@ export default function InstructorDashboard() {
               </TabsContent>
             </Tabs>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirmation */}
+      <Dialog open={!!deletingCourse} onOpenChange={open => !open && setDeletingCourse(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>¿Eliminar curso?</DialogTitle>
+            <DialogDescription>
+              Vas a eliminar <strong>"{deletingCourse?.title}"</strong>. Esta acción no se puede deshacer y borrará todos los módulos y lecciones del curso.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="ghost" onClick={() => setDeletingCourse(null)}>Cancelar</Button>
+            <Button
+              variant="destructive"
+              disabled={deleteCourse.isPending}
+              onClick={() => deletingCourse && deleteCourse.mutate(deletingCourse.id)}
+            >
+              {deleteCourse.isPending ? 'Eliminando...' : 'Sí, eliminar'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

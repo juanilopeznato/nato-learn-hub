@@ -79,6 +79,8 @@ export default function InstructorCoursePage() {
         instructor_avatar_url: (data as any).instructor_avatar_url ?? null,
         faq: (data as any).faq?.filter((f: any) => f.q) ?? [],
         meta_pixel_id: (data as any).meta_pixel_id ?? null,
+        nato_produced: (data as any).nato_produced ?? false,
+        production_recovery_sales: (data as any).production_recovery_sales ?? 10,
       } as any).eq('id', courseId!)
       if (error) throw error
     },
@@ -199,6 +201,8 @@ export default function InstructorCoursePage() {
                     instructor_avatar_url: (course as any).instructor_avatar_url ?? '',
                     faq: (course as any).faq?.length ? (course as any).faq : [{ q: '', a: '' }],
                     meta_pixel_id: (course as any).meta_pixel_id ?? '',
+                    nato_produced: (course as any).nato_produced ?? false,
+                    production_recovery_sales: (course as any).production_recovery_sales ?? 10,
                   }}
                   onSubmit={updateCourse.mutateAsync}
                   onCancel={() => navigate('/instructor')}
