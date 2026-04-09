@@ -1,23 +1,17 @@
-import Navbar from "@/components/landing/Navbar";
-import HeroSection from "@/components/landing/HeroSection";
-import FeaturesSection from "@/components/landing/FeaturesSection";
-import PathsSection from "@/components/landing/PathsSection";
-import PricingSection from "@/components/landing/PricingSection";
-import CTASection from "@/components/landing/CTASection";
-import Footer from "@/components/landing/Footer";
+import Navbar from '@/components/landing/Navbar'
+import HeroSection from '@/components/landing/HeroSection'
+import CoursesSection from '@/components/landing/CoursesSection'
+import CTASection from '@/components/landing/CTASection'
+import Footer from '@/components/landing/Footer'
 
-const Index = () => {
+export default function Index() {
   return (
     <div className="min-h-screen">
       <Navbar />
       <HeroSection />
-      <PathsSection />
-      <FeaturesSection />
-      <PricingSection />
+      <CoursesSection />
       <CTASection />
       <Footer />
     </div>
-  );
-};
-
-export default Index;
+  )
+}

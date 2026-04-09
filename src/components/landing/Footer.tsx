@@ -7,9 +7,7 @@ const Footer = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img src="/nato-logo.png" alt="NATO" className="h-8 w-auto object-contain" />
               <span className="font-heading text-lg font-bold text-card-foreground">
                 NATO <span className="text-primary">University</span>
               </span>

@@ -30,18 +30,15 @@ const paths = [
 
 const PathsSection = () => {
   return (
-    <section id="paths" className="py-24 bg-gradient-dark relative overflow-hidden">
-      {/* Glow effects */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px]" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-[100px]" />
+    <section id="paths" className="py-24 bg-gray-50 relative overflow-hidden">
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-primary-foreground mb-4">
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             Learning Paths{" "}
             <span className="text-gradient-hero">diseñados para ti</span>
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-gray-500 text-lg">
             Recorridos estructurados que te llevan de 0 a experto, con quizzes 
             y certificación al completar.
           </p>
@@ -51,7 +48,7 @@ const PathsSection = () => {
           {paths.map((path) => (
             <div
               key={path.title}
-              className="group relative rounded-xl overflow-hidden glass-dark hover:border-primary/30 transition-all duration-300"
+              className="group relative rounded-xl overflow-hidden bg-white border border-gray-200 hover:border-primary/40 hover:shadow-lg transition-all duration-300"
             >
               {/* Top gradient bar */}
               <div className={`h-1.5 bg-gradient-to-r ${path.color}`} />
@@ -60,14 +57,14 @@ const PathsSection = () => {
                 <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
                   {path.level}
                 </span>
-                <h3 className="font-heading text-xl font-semibold text-primary-foreground">
+                <h3 className="font-heading text-xl font-semibold text-gray-900">
                   {path.title}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-gray-500 text-sm leading-relaxed">
                   {path.description}
                 </p>
                 
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-4 text-sm text-gray-400">
                   <span className="flex items-center gap-1">
                     <BookOpen className="w-4 h-4" />
                     {path.lessons} lecciones
