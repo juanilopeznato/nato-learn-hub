@@ -10,7 +10,7 @@ import {
 } from 'recharts'
 import {
   Building2, Users, BookOpen, TrendingUp, DollarSign,
-  ShieldCheck, Star, Activity
+  ShieldCheck, Star, Activity, Clapperboard, CheckCircle2, Clock
 } from 'lucide-react'
 
 function MetricCard({
@@ -82,6 +82,25 @@ export default function NatoOwnerPanel() {
         total_revenue_ars: number
         nato_revenue_ars: number
         last_activity: string | null
+      }[]
+    },
+    enabled: profile?.role === 'nato_owner',
+  })
+
+  const { data: productionCourses = [], isLoading: loadingProduction } = useQuery({
+    queryKey: ['nato-production-courses'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_production_courses')
+      if (error) throw error
+      return data as {
+        course_id: string
+        course_title: string
+        tenant_name: string
+        recovery_target: number
+        paid_sales: number
+        nato_sales: number
+        nato_revenue_ars: number
+        is_recovered: boolean
       }[]
     },
     enabled: profile?.role === 'nato_owner',
@@ -193,6 +212,9 @@ export default function NatoOwnerPanel() {
             <TabsTrigger value="escuelas" className="data-[state=active]:bg-gray-700 text-gray-300 data-[state=active]:text-white">
               Escuelas
             </TabsTrigger>
+            <TabsTrigger value="produccion" className="data-[state=active]:bg-gray-700 text-gray-300 data-[state=active]:text-white">
+              Producción NATO
+            </TabsTrigger>
           </TabsList>
 
           {/* Revenue trend */}
@@ -284,6 +306,103 @@ export default function NatoOwnerPanel() {
                 </div>
               )}
             </div>
+          </TabsContent>
+          {/* Producción NATO */}
+          <TabsContent value="produccion" className="mt-6 space-y-4">
+            {loadingProduction ? (
+              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-8 text-center text-gray-600 text-sm">Cargando...</div>
+            ) : productionCourses.length === 0 ? (
+              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center space-y-3">
+                <Clapperboard className="w-10 h-10 text-gray-700 mx-auto" />
+                <p className="text-gray-500 text-sm">No hay cursos marcados como producidos por NATO todavía.</p>
+                <p className="text-gray-600 text-xs">Activá el toggle "Producido por NATO Creative" al crear o editar un curso.</p>
+              </div>
+            ) : (
+              <>
+                {/* Summary strip */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                    <p className="text-xs text-gray-500 mb-1">Cursos producidos</p>
+                    <p className="text-2xl font-bold text-white">{productionCourses.length}</p>
+                  </div>
+                  <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                    <p className="text-xs text-gray-500 mb-1">En recupero</p>
+                    <p className="text-2xl font-bold text-yellow-400">
+                      {productionCourses.filter(c => !c.is_recovered).length}
+                    </p>
+                  </div>
+                  <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                    <p className="text-xs text-gray-500 mb-1">Total cobrado por NATO</p>
+                    <p className="text-2xl font-bold text-purple-400">
+                      ARS {productionCourses.reduce((s, c) => s + Number(c.nato_revenue_ars), 0).toLocaleString('es-AR')}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Course cards */}
+                <div className="space-y-3">
+                  {productionCourses.map(c => {
+                    const pct = Math.min(100, Math.round((c.nato_sales / c.recovery_target) * 100))
+                    return (
+                      <div key={c.course_id} className="bg-gray-900 rounded-2xl border border-gray-800 p-5">
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          <div>
+                            <p className="font-semibold text-white">{c.course_title}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{c.tenant_name}</p>
+                          </div>
+                          {c.is_recovered ? (
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full shrink-0">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Recuperado
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-yellow-400 bg-yellow-400/10 px-2.5 py-1 rounded-full shrink-0">
+                              <Clock className="w-3.5 h-3.5" /> En recupero
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Progress bar */}
+                        <div className="space-y-1.5 mb-4">
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>{c.nato_sales} ventas cobradas por NATO</span>
+                            <span>Meta: {c.recovery_target}</span>
+                          </div>
+                          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${c.is_recovered ? 'bg-green-500' : 'bg-yellow-400'}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <p className="text-xs text-gray-600">
+                            {c.is_recovered
+                              ? `${c.paid_sales - c.recovery_target} ventas ya van al creador`
+                              : `Faltan ${c.recovery_target - c.nato_sales} ventas para completar el recupero`}
+                          </p>
+                        </div>
+
+                        {/* Stats row */}
+                        <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-800">
+                          <div>
+                            <p className="text-xs text-gray-500">Ventas totales</p>
+                            <p className="text-sm font-semibold text-white mt-0.5">{c.paid_sales}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">Revenue NATO</p>
+                            <p className="text-sm font-semibold text-purple-400 mt-0.5">
+                              ARS {Number(c.nato_revenue_ars).toLocaleString('es-AR')}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">Estado</p>
+                            <p className="text-sm font-semibold mt-0.5 text-gray-300">{pct}% recuperado</p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
           </TabsContent>
         </Tabs>
       </div>
