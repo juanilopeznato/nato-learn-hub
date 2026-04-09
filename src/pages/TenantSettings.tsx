@@ -317,7 +317,7 @@ export default function TenantSettings() {
           <TabsContent value="payments" className="mt-6 space-y-4">
             <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-700">
               <p className="font-medium mb-1">¿Cómo funciona?</p>
-              <p>Cada estudiante que compra un curso de tu escuela paga directamente a tu cuenta de Mercado Pago. NATO University no cobra comisión por pagos — solo la comisión estándar de MP.</p>
+              <p>Cada estudiante que compra un curso de tu escuela paga directamente a tu cuenta de Mercado Pago. NATO University cobra una comisión del 5% sobre cada venta, que se descuenta automáticamente al momento del pago.</p>
             </div>
 
             <form onSubmit={mpForm.handleSubmit(d => saveMp.mutate(d))} className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
