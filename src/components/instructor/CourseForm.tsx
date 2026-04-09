@@ -43,6 +43,8 @@ const schema = z.object({
   faq: z.array(faqItemSchema).optional(),
   meta_pixel_id: z.string().optional(),
   category: z.string().optional(),
+  nato_produced: z.boolean().optional(),
+  production_recovery_sales: z.coerce.number().min(1).optional(),
 })
 
 export type CourseFormData = z.infer<typeof schema>
@@ -279,6 +281,35 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
               {...register('meta_pixel_id')}
             />
             <p className="text-xs text-gray-500">Opcional. Sobreescribe el pixel de la escuela.</p>
+          </div>
+
+          <div className="space-y-3 pt-2 border-t border-border/20">
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={watch('nato_produced') ?? false}
+                onCheckedChange={v => setValue('nato_produced', v)}
+                id="nato_produced"
+              />
+              <div>
+                <Label htmlFor="nato_produced" className="text-foreground cursor-pointer">
+                  Producido por NATO Creative
+                </Label>
+                <p className="text-xs text-gray-500">Los primeros N cobros recuperan el costo de producción</p>
+              </div>
+            </div>
+            {watch('nato_produced') && (
+              <div className="space-y-1.5 ml-1">
+                <Label className="text-foreground text-sm">Ventas de recupero</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  placeholder="10"
+                  className="bg-gray-100 border-border/50 text-foreground w-32"
+                  {...register('production_recovery_sales')}
+                />
+                <p className="text-xs text-gray-500">Primeras N ventas van 100% a NATO. A partir de ahí cobra el creador.</p>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

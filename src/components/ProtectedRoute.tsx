@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext'
 
 interface Props {
   children: React.ReactNode
-  requiredRole?: 'instructor' | 'admin' | 'super_admin'
+  requiredRole?: 'instructor' | 'admin' | 'nato_owner'
 }
 
 export function ProtectedRoute({ children, requiredRole }: Props) {
@@ -23,11 +23,14 @@ export function ProtectedRoute({ children, requiredRole }: Props) {
   }
 
   if (requiredRole && profile) {
-    const roleHierarchy = ['student', 'instructor', 'admin', 'super_admin']
-    const userLevel = roleHierarchy.indexOf(profile.role)
-    const requiredLevel = roleHierarchy.indexOf(requiredRole)
-    if (userLevel < requiredLevel) {
-      return <Navigate to="/dashboard" replace />
+    // nato_owner is a separate top-level role, not part of the instructor hierarchy
+    if (requiredRole === 'nato_owner') {
+      if (profile.role !== 'nato_owner') return <Navigate to="/dashboard" replace />
+    } else {
+      const roleHierarchy = ['student', 'instructor', 'admin', 'nato_owner']
+      const userLevel = roleHierarchy.indexOf(profile.role)
+      const requiredLevel = roleHierarchy.indexOf(requiredRole)
+      if (userLevel < requiredLevel) return <Navigate to="/dashboard" replace />
     }
   }
 

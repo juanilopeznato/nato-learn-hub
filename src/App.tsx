@@ -27,6 +27,7 @@ const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const CertificateVerify = React.lazy(() => import("./pages/CertificateVerify"));
 const ProfileSettings = React.lazy(() => import("./pages/ProfileSettings"));
 const EmailMarketing = React.lazy(() => import("./pages/EmailMarketing"));
+const NatoOwnerPanel = React.lazy(() => import("./pages/NatoOwnerPanel"));
 
 const queryClient = new QueryClient();
 
@@ -138,6 +139,15 @@ const App = () => (
               <ProtectedRoute requiredRole="admin">
                 <React.Suspense fallback={null}>
                   <AdminPanel />
+                </React.Suspense>
+              </ProtectedRoute>
+            } />
+
+            {/* Protegidas: NATO owner */}
+            <Route path="/nato" element={
+              <ProtectedRoute requiredRole="nato_owner">
+                <React.Suspense fallback={null}>
+                  <NatoOwnerPanel />
                 </React.Suspense>
               </ProtectedRoute>
             } />
