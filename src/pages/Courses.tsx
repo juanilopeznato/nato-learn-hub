@@ -110,6 +110,30 @@ export default function Courses() {
 
   const lessonCountMap = Object.fromEntries(lessonCounts.map(lc => [lc.course_id, lc.count]))
 
+  const { data: reviewStats = [] } = useQuery({
+    queryKey: ['courses-review-stats'],
+    enabled: courses.length > 0,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('course_reviews')
+        .select('course_id, rating')
+        .in('course_id', courses.map(c => c.id))
+      const map: Record<string, { sum: number; count: number }> = {}
+      data?.forEach(r => {
+        if (!map[r.course_id]) map[r.course_id] = { sum: 0, count: 0 }
+        map[r.course_id].sum += r.rating
+        map[r.course_id].count += 1
+      })
+      return Object.entries(map).map(([course_id, s]) => ({
+        course_id,
+        avg: s.sum / s.count,
+        count: s.count,
+      }))
+    },
+  })
+
+  const reviewMap = Object.fromEntries(reviewStats.map(r => [r.course_id, r]))
+
   const filtered = courses.filter(c => {
     const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
       (c.description ?? '').toLowerCase().includes(search.toLowerCase())
@@ -239,6 +263,7 @@ export default function Courses() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map(course => {
               const totalLessons = lessonCountMap[course.id] ?? 0
+              const review = reviewMap[course.id]
               return (
                 <Link
                   key={course.id}
@@ -270,6 +295,13 @@ export default function Courses() {
                     <h2 className="font-heading text-base font-semibold text-gray-900 leading-snug group-hover:text-primary transition-colors">
                       {course.title}
                     </h2>
+                    {review && (
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                        <span className="font-semibold text-gray-700">{review.avg.toFixed(1)}</span>
+                        <span>({review.count} {review.count === 1 ? 'opinión' : 'opiniones'})</span>
+                      </div>
+                    )}
                     {course.description && (
                       <p className="text-sm text-gray-500 line-clamp-2 flex-1">{course.description}</p>
                     )}

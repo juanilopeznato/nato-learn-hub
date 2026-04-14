@@ -2,10 +2,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useCourseTracking } from '@/hooks/useCourseTracking'
 import {
   BookOpen, Clock, ArrowRight, Lock, ChevronDown, CheckCircle,
-  Play, Users, Star, Shield, Award, ChevronUp, ExternalLink
+  Play, Users, Star, Shield, Award, ChevronUp, ExternalLink, Tag, X
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
@@ -22,6 +23,14 @@ export default function CourseDetail() {
   const [expandedFaq, setExpandedFaq] = useState<Set<number>>(new Set())
   const [stickyVisible, setStickyVisible] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
+  const [couponInput, setCouponInput] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState<{ id: string; code: string; discount_type: string; discount_value: number } | null>(null)
+  const [couponLoading, setCouponLoading] = useState(false)
+  const [couponError, setCouponError] = useState('')
+  const [reviewRating, setReviewRating] = useState(0)
+  const [reviewHover, setReviewHover] = useState(0)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
 
   // Show sticky CTA after hero scrolls out
   useEffect(() => {
@@ -79,6 +88,57 @@ export default function CourseDetail() {
     },
   })
 
+  const { data: reviews, refetch: refetchReviews } = useQuery({
+    queryKey: ['course-reviews', course?.id],
+    enabled: !!course?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('course_reviews')
+        .select('*, reviewer:profiles(full_name, avatar_url)')
+        .eq('course_id', course!.id)
+        .order('created_at', { ascending: false })
+      return data ?? []
+    },
+  })
+
+  const { data: myEnrollmentId } = useQuery({
+    queryKey: ['my-enrollment-id', course?.id, profile?.id],
+    enabled: !!course?.id && !!profile?.id && !!enrollment,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('enrollments')
+        .select('id')
+        .eq('course_id', course!.id)
+        .eq('student_id', profile!.id)
+        .in('mp_status', ['free', 'approved'])
+        .maybeSingle()
+      return data?.id ?? null
+    },
+  })
+
+  const myReview = reviews?.find((r: any) => r.user_id === profile?.id)
+  const avgRating = reviews && reviews.length > 0
+    ? reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length
+    : null
+
+  async function submitReview() {
+    if (!reviewRating || !myEnrollmentId || !profile || !course) return
+    setReviewSubmitting(true)
+    const { error } = await supabase.from('course_reviews').upsert({
+      course_id: course.id,
+      user_id: profile.id,
+      enrollment_id: myEnrollmentId,
+      rating: reviewRating,
+      comment: reviewComment.trim() || null,
+    }, { onConflict: 'enrollment_id' })
+    setReviewSubmitting(false)
+    if (error) { toast.error(error.message); return }
+    toast.success('¡Gracias por tu opinión!')
+    refetchReviews()
+    setReviewRating(0)
+    setReviewComment('')
+  }
+
   const enrollMutation = useMutation({
     mutationFn: async () => {
       if (!profile || !course) throw new Error('No hay sesión')
@@ -114,16 +174,44 @@ export default function CourseDetail() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session?.access_token}`,
           },
-          body: JSON.stringify({ course_id: course.id }),
+          body: JSON.stringify({ course_id: course.id, coupon_code: appliedCoupon?.code ?? undefined }),
         }
       )
       const data = await res.json()
       if (!res.ok || data.error) throw new Error(data.error ?? 'Error al procesar el pago')
       return data.init_point as string
     },
-    onSuccess: (initPoint) => { trackCheckoutStart(); fbTrack('InitiateCheckout', { content_name: course?.title, value: Number(course?.price ?? 0), currency: 'ARS' }); window.location.href = initPoint },
+    onSuccess: (initPoint) => { trackCheckoutStart(); fbTrack('InitiateCheckout', { content_name: course?.title, value: discountedPrice, currency: 'ARS' }); window.location.href = initPoint },
     onError: (e: Error) => toast.error(e.message),
   })
+
+  async function handleApplyCoupon() {
+    if (!couponInput.trim() || !course) return
+    setCouponLoading(true)
+    setCouponError('')
+    const code = couponInput.trim().toUpperCase()
+    const { data } = await supabase
+      .from('coupons')
+      .select('id, code, discount_type, discount_value, max_uses, uses_count, expires_at, course_id, is_active')
+      .eq('tenant_id', (course as any).tenant_id)
+      .eq('code', code)
+      .eq('is_active', true)
+      .maybeSingle()
+    setCouponLoading(false)
+
+    if (!data) { setCouponError('Cupón inválido o no disponible'); return }
+    if (data.expires_at && new Date(data.expires_at) < new Date()) { setCouponError('Este cupón ya venció'); return }
+    if (data.max_uses !== null && data.uses_count >= data.max_uses) { setCouponError('Este cupón ya alcanzó su límite de usos'); return }
+    if (data.course_id !== null && data.course_id !== course.id) { setCouponError('Este cupón no aplica a este curso'); return }
+
+    setAppliedCoupon({ id: data.id, code: data.code, discount_type: data.discount_type, discount_value: Number(data.discount_value) })
+    setCouponInput('')
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon(null)
+    setCouponError('')
+  }
 
   function toggleModule(id: string) {
     setExpandedModules(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
@@ -143,6 +231,11 @@ export default function CourseDetail() {
   const introVideo: string = (course as any)?.intro_video_url ?? ''
   const originalPrice: number = Number((course as any)?.original_price ?? 0)
   const pixelId: string = (course as any)?.meta_pixel_id || (tenant as any)?.meta_pixel_id || ''
+  const discountedPrice = appliedCoupon && course && !course.is_free
+    ? appliedCoupon.discount_type === 'percent'
+      ? Math.max(0, Number(course.price) * (1 - appliedCoupon.discount_value / 100))
+      : Math.max(0, Number(course.price) - appliedCoupon.discount_value)
+    : Number(course?.price ?? 0)
 
   function handleCTA() {
     if (!user) { navigate('/login'); return }
@@ -161,7 +254,7 @@ export default function CourseDetail() {
     ? 'Ir al curso'
     : course?.is_free
     ? (enrollMutation.isPending ? 'Inscribiendo...' : 'Inscribirse gratis')
-    : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${Number(course?.price ?? 0).toLocaleString('es-AR')}`)
+    : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${discountedPrice.toLocaleString('es-AR')}`)
 
   // SEO meta tags
   useEffect(() => {
@@ -341,6 +434,48 @@ export default function CourseDetail() {
                     <ArrowRight className="w-5 h-5" />
                   </Button>
 
+                  {/* Cupón de descuento (solo cursos pagos no inscriptos) */}
+                  {!enrollment && !course.is_free && (
+                    <div className="space-y-2">
+                      {appliedCoupon ? (
+                        <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                          <div className="flex items-center gap-2 text-green-700 text-sm">
+                            <Tag className="w-4 h-4" />
+                            <span className="font-medium">{appliedCoupon.code}</span>
+                            <span className="text-green-600">
+                              {appliedCoupon.discount_type === 'percent'
+                                ? `−${appliedCoupon.discount_value}%`
+                                : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
+                            </span>
+                          </div>
+                          <button onClick={removeCoupon} className="text-green-500 hover:text-green-700">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="¿Tenés un cupón?"
+                            value={couponInput}
+                            onChange={e => { setCouponInput(e.target.value); setCouponError('') }}
+                            onKeyDown={e => e.key === 'Enter' && handleApplyCoupon()}
+                            className="text-sm h-9"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleApplyCoupon}
+                            disabled={couponLoading || !couponInput.trim()}
+                            className="shrink-0 h-9"
+                          >
+                            {couponLoading ? '...' : 'Aplicar'}
+                          </Button>
+                        </div>
+                      )}
+                      {couponError && <p className="text-xs text-red-500">{couponError}</p>}
+                    </div>
+                  )}
+
                   {!user && (
                     <p className="text-xs text-center text-gray-500">
                       <Link to="/login" className="text-primary hover:underline">Iniciá sesión</Link> para inscribirte
@@ -494,6 +629,85 @@ export default function CourseDetail() {
                 </div>
               </section>
             )}
+
+            {/* Reviews */}
+            {((reviews && reviews.length > 0) || (enrollment && myEnrollmentId && !myReview)) && (
+              <section>
+                <div className="flex items-baseline gap-3 mb-6">
+                  <h2 className="font-heading text-2xl font-bold text-gray-900">Opiniones</h2>
+                  {avgRating !== null && (
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex">
+                        {[1,2,3,4,5].map(s => (
+                          <Star key={s} className={`w-4 h-4 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                        ))}
+                      </div>
+                      <span className="text-sm font-semibold text-gray-700">{avgRating.toFixed(1)}</span>
+                      <span className="text-sm text-gray-400">({reviews?.length ?? 0} {(reviews?.length ?? 0) === 1 ? 'opinión' : 'opiniones'})</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Form: dejar review */}
+                {enrollment && myEnrollmentId && !myReview && (
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6 space-y-3">
+                    <p className="text-sm font-semibold text-gray-700">¿Qué te pareció el curso?</p>
+                    <div className="flex gap-1">
+                      {[1,2,3,4,5].map(s => (
+                        <button
+                          key={s}
+                          onMouseEnter={() => setReviewHover(s)}
+                          onMouseLeave={() => setReviewHover(0)}
+                          onClick={() => setReviewRating(s)}
+                        >
+                          <Star className={`w-7 h-7 transition-colors ${s <= (reviewHover || reviewRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                        </button>
+                      ))}
+                    </div>
+                    {reviewRating > 0 && (
+                      <>
+                        <textarea
+                          placeholder="Contanos tu experiencia (opcional)"
+                          value={reviewComment}
+                          onChange={e => setReviewComment(e.target.value)}
+                          rows={3}
+                          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        />
+                        <Button size="sm" onClick={submitReview} disabled={reviewSubmitting}>
+                          {reviewSubmitting ? 'Enviando...' : 'Enviar opinión'}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Lista de reviews */}
+                <div className="space-y-4">
+                  {(reviews ?? []).map((r: any) => (
+                    <div key={r.id} className="flex gap-4">
+                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
+                        {r.reviewer?.avatar_url
+                          ? <img src={r.reviewer.avatar_url} alt={r.reviewer.full_name} className="w-full h-full object-cover" />
+                          : <span className="text-xs font-bold text-primary">{(r.reviewer?.full_name ?? '?')[0].toUpperCase()}</span>
+                        }
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-gray-900">{r.reviewer?.full_name ?? 'Estudiante'}</span>
+                          <div className="flex">
+                            {[1,2,3,4,5].map(s => (
+                              <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                            ))}
+                          </div>
+                          <span className="text-xs text-gray-400">{new Date(r.created_at).toLocaleDateString('es-AR')}</span>
+                        </div>
+                        {r.comment && <p className="text-sm text-gray-600 leading-relaxed">{r.comment}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Right sidebar (desktop) — sticky CTA */}
@@ -505,12 +719,22 @@ export default function CourseDetail() {
                     <span className="font-heading text-3xl font-bold text-gray-900">Gratis</span>
                   ) : (
                     <div className="space-y-1">
-                      <div className="flex items-baseline gap-2">
+                      <div className="flex items-baseline gap-2 flex-wrap">
                         <span className="font-heading text-3xl font-bold text-gray-900">
-                          ARS {Number(course.price).toLocaleString('es-AR')}
+                          ARS {discountedPrice.toLocaleString('es-AR')}
                         </span>
+                        {(appliedCoupon || originalPrice > 0) && (
+                          <span className="text-gray-400 text-lg line-through">
+                            ARS {Number(course.price).toLocaleString('es-AR')}
+                          </span>
+                        )}
+                        {appliedCoupon && (
+                          <Badge className="bg-green-50 text-green-700 border-green-100 text-xs">
+                            {appliedCoupon.discount_type === 'percent' ? `${appliedCoupon.discount_value}% OFF` : 'DESCUENTO'}
+                          </Badge>
+                        )}
                       </div>
-                      {originalPrice > 0 && (
+                      {originalPrice > 0 && !appliedCoupon && (
                         <p className="text-sm text-gray-400 line-through">
                           Antes ARS {originalPrice.toLocaleString('es-AR')}
                         </p>
@@ -529,6 +753,48 @@ export default function CourseDetail() {
                   {ctaLabel}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
+
+                {/* Cupón de descuento sidebar */}
+                {!enrollment && !course.is_free && (
+                  <div className="space-y-2">
+                    {appliedCoupon ? (
+                      <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                        <div className="flex items-center gap-2 text-green-700 text-sm">
+                          <Tag className="w-4 h-4" />
+                          <span className="font-medium">{appliedCoupon.code}</span>
+                          <span className="text-green-600">
+                            {appliedCoupon.discount_type === 'percent'
+                              ? `−${appliedCoupon.discount_value}%`
+                              : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
+                          </span>
+                        </div>
+                        <button onClick={removeCoupon} className="text-green-500 hover:text-green-700">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Código de cupón"
+                          value={couponInput}
+                          onChange={e => { setCouponInput(e.target.value); setCouponError('') }}
+                          onKeyDown={e => e.key === 'Enter' && handleApplyCoupon()}
+                          className="text-sm h-9"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleApplyCoupon}
+                          disabled={couponLoading || !couponInput.trim()}
+                          className="shrink-0 h-9"
+                        >
+                          {couponLoading ? '...' : 'Aplicar'}
+                        </Button>
+                      </div>
+                    )}
+                    {couponError && <p className="text-xs text-red-500">{couponError}</p>}
+                  </div>
+                )}
 
                 <div className="space-y-2 border-t pt-4">
                   {['Acceso inmediato', 'Certificado al completar', 'Comunidad incluida', 'Recursos descargables'].map(item => (

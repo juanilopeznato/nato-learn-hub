@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Eye, Globe, EyeOff, LogOut, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Eye, Globe, EyeOff, LogOut, ExternalLink, Download, Tag, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -7,6 +8,10 @@ import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { CourseForm, type CourseFormData } from '@/components/instructor/CourseForm'
+import { exportToCsv } from '@/lib/exportCsv'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { ModuleList } from '@/components/instructor/ModuleList'
 import { KpiDashboard } from '@/components/instructor/KpiDashboard'
 import { CourseCalendar } from '@/components/course/CourseCalendar'
@@ -17,6 +22,12 @@ export default function InstructorCoursePage() {
   const { profile, tenant, signOut } = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+
+  const [couponForm, setCouponForm] = useState<{
+    code: string; discount_type: 'percent' | 'fixed'; discount_value: string
+    max_uses: string; expires_at: string; course_specific: boolean
+  }>({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', expires_at: '', course_specific: false })
+  const [showCouponForm, setShowCouponForm] = useState(false)
 
   const { data: course, isLoading } = useQuery({
     queryKey: ['instructor-course', courseId],
@@ -59,6 +70,54 @@ export default function InstructorCoursePage() {
       data?.forEach(p => { map[p.enrollment_id] = p.progress_percent ?? 0 })
       return map
     },
+  })
+
+  const { data: coupons, refetch: refetchCoupons } = useQuery({
+    queryKey: ['instructor-coupons', courseId, tenant?.id],
+    enabled: !!tenant?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('tenant_id', tenant!.id)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data ?? []
+    },
+  })
+
+  const createCoupon = useMutation({
+    mutationFn: async () => {
+      const code = couponForm.code.trim().toUpperCase()
+      if (!code || !couponForm.discount_value) throw new Error('Completá los campos requeridos')
+      const { error } = await supabase.from('coupons').insert({
+        tenant_id: tenant!.id,
+        code,
+        discount_type: couponForm.discount_type,
+        discount_value: Number(couponForm.discount_value),
+        max_uses: couponForm.max_uses ? Number(couponForm.max_uses) : null,
+        expires_at: couponForm.expires_at || null,
+        course_id: couponForm.course_specific ? courseId : null,
+        is_active: true,
+      })
+      if (error) throw error
+    },
+    onSuccess: () => {
+      refetchCoupons()
+      setCouponForm({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', expires_at: '', course_specific: false })
+      setShowCouponForm(false)
+      toast.success('Cupón creado')
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  const toggleCoupon = useMutation({
+    mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
+      const { error } = await supabase.from('coupons').update({ is_active: !is_active }).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => refetchCoupons(),
+    onError: (e: Error) => toast.error(e.message),
   })
 
   const updateCourse = useMutation({
@@ -159,6 +218,7 @@ export default function InstructorCoursePage() {
             <TabsTrigger value="details">Info y ventas</TabsTrigger>
             <TabsTrigger value="calendar">Clases en vivo</TabsTrigger>
             <TabsTrigger value="students">Estudiantes</TabsTrigger>
+            <TabsTrigger value="coupons">Cupones</TabsTrigger>
             <TabsTrigger value="kpis">Métricas</TabsTrigger>
           </TabsList>
 
@@ -218,6 +278,144 @@ export default function InstructorCoursePage() {
             </div>
           </TabsContent>
 
+          {/* Tab: Cupones */}
+          <TabsContent value="coupons">
+            <div className="max-w-3xl space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-heading text-xl font-bold text-gray-900">Cupones de descuento</h2>
+                  <p className="text-sm text-gray-500 mt-1">Creá códigos de descuento para compartir con tu audiencia</p>
+                </div>
+                <Button size="sm" className="gap-2" onClick={() => setShowCouponForm(v => !v)}>
+                  <Plus className="w-4 h-4" />
+                  Nuevo cupón
+                </Button>
+              </div>
+
+              {showCouponForm && (
+                <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
+                  <h3 className="font-semibold text-gray-900">Crear cupón</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label>Código *</Label>
+                      <Input
+                        placeholder="BIENVENIDA20"
+                        value={couponForm.code}
+                        onChange={e => setCouponForm(f => ({ ...f, code: e.target.value.toUpperCase() }))}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Tipo de descuento *</Label>
+                      <select
+                        className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        value={couponForm.discount_type}
+                        onChange={e => setCouponForm(f => ({ ...f, discount_type: e.target.value as 'percent' | 'fixed' }))}
+                      >
+                        <option value="percent">Porcentaje (%)</option>
+                        <option value="fixed">Monto fijo (ARS)</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Valor *</Label>
+                      <Input
+                        type="number"
+                        placeholder={couponForm.discount_type === 'percent' ? 'ej: 20' : 'ej: 5000'}
+                        value={couponForm.discount_value}
+                        onChange={e => setCouponForm(f => ({ ...f, discount_value: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Usos máximos (vacío = ilimitado)</Label>
+                      <Input
+                        type="number"
+                        placeholder="ej: 50"
+                        value={couponForm.max_uses}
+                        onChange={e => setCouponForm(f => ({ ...f, max_uses: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Fecha de expiración (opcional)</Label>
+                      <Input
+                        type="date"
+                        value={couponForm.expires_at}
+                        onChange={e => setCouponForm(f => ({ ...f, expires_at: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-1 flex flex-col justify-end">
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={couponForm.course_specific}
+                          onCheckedChange={v => setCouponForm(f => ({ ...f, course_specific: v }))}
+                        />
+                        <Label>Solo para este curso</Label>
+                      </div>
+                      <p className="text-xs text-gray-400">Si está desactivado aplica a todos tus cursos</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button variant="outline" onClick={() => setShowCouponForm(false)}>Cancelar</Button>
+                    <Button onClick={() => createCoupon.mutate()} disabled={createCoupon.isPending}>
+                      {createCoupon.isPending ? 'Creando...' : 'Crear cupón'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {!coupons || coupons.length === 0 ? (
+                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
+                  <Tag className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm">Aún no creaste ningún cupón</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        {['Código', 'Descuento', 'Usos', 'Vence', 'Aplica a', 'Estado', ''].map(h => (
+                          <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {coupons.map((c: any) => (
+                        <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-4 py-3 font-mono font-semibold text-gray-900">{c.code}</td>
+                          <td className="px-4 py-3 text-gray-700">
+                            {c.discount_type === 'percent'
+                              ? `${c.discount_value}%`
+                              : `ARS ${Number(c.discount_value).toLocaleString('es-AR')}`}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500">
+                            {c.uses_count}{c.max_uses !== null ? ` / ${c.max_uses}` : ''}
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {c.expires_at ? new Date(c.expires_at).toLocaleDateString('es-AR') : '—'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {c.course_id ? 'Este curso' : 'Todos'}
+                          </td>
+                          <td className="px-4 py-3">
+                            <Badge variant={c.is_active ? 'default' : 'secondary'} className="text-xs">
+                              {c.is_active ? 'Activo' : 'Inactivo'}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => toggleCoupon.mutate({ id: c.id, is_active: c.is_active })}
+                              className="text-xs text-gray-400 hover:text-gray-600 underline"
+                            >
+                              {c.is_active ? 'Deshabilitar' : 'Habilitar'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
           {/* Tab: Métricas */}
           <TabsContent value="kpis">
             <KpiDashboard courseIds={[courseId!]} />
@@ -226,13 +424,39 @@ export default function InstructorCoursePage() {
           {/* Tab: Estudiantes */}
           <TabsContent value="students">
             <div className="max-w-4xl space-y-4">
-              <div>
-                <h2 className="font-heading text-xl font-bold text-gray-900">Estudiantes inscriptos</h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  {enrollments && enrollments.length > 0
-                    ? `${enrollments.length} estudiante${enrollments.length !== 1 ? 's' : ''} inscripto${enrollments.length !== 1 ? 's' : ''}`
-                    : 'Aún no hay estudiantes inscriptos'}
-                </p>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="font-heading text-xl font-bold text-gray-900">Estudiantes inscriptos</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {enrollments && enrollments.length > 0
+                      ? `${enrollments.length} estudiante${enrollments.length !== 1 ? 's' : ''} inscripto${enrollments.length !== 1 ? 's' : ''}`
+                      : 'Aún no hay estudiantes inscriptos'}
+                  </p>
+                </div>
+                {enrollments && enrollments.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 gap-2"
+                    onClick={() => {
+                      const rows = enrollments.map((e: any) => ({
+                        Nombre: e.student?.full_name ?? '',
+                        Email: e.student?.email ?? '',
+                        'Fecha inscripción': e.enrolled_at
+                          ? new Date(e.enrolled_at).toLocaleDateString('es-AR')
+                          : '',
+                        'Estado pago': e.mp_status === 'free' ? 'Gratis' : e.mp_status === 'approved' ? 'Pagado' : e.mp_status ?? '',
+                        'Monto pagado (ARS)': e.paid_amount ?? e.amount_paid ?? 0,
+                        'Progreso (%)': Math.round(progressData?.[e.id] ?? 0),
+                      }))
+                      const date = new Date().toISOString().slice(0, 10)
+                      exportToCsv(`estudiantes-${course.slug}-${date}.csv`, rows)
+                    }}
+                  >
+                    <Download className="w-4 h-4" />
+                    Exportar CSV
+                  </Button>
+                )}
               </div>
 
               {!enrollments || enrollments.length === 0 ? (
