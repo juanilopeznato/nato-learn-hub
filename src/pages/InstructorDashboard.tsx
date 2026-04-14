@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Eye, LogOut, BookOpen, TrendingUp, Users, Settings, Mail, CreditCard, Gift, Trash2 } from 'lucide-react'
+import { Plus, Eye, LogOut, BookOpen, TrendingUp, Users, Settings, Mail, CreditCard, Gift, Trash2, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
@@ -19,6 +19,7 @@ export default function InstructorDashboard() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null)
   const [deletingCourse, setDeletingCourse] = useState<{ id: string; title: string } | null>(null)
+  const [copiedAffiliateUrl, setCopiedAffiliateUrl] = useState(false)
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['instructor-courses', profile?.id],
@@ -48,8 +49,9 @@ export default function InstructorDashboard() {
     queryFn: async () => {
       const { data } = await supabase
         .from('affiliate_commissions')
-        .select('*')
+        .select('*, referred_tenant:referred_tenant_id(name)')
         .eq('referrer_tenant_id', tenant!.id)
+        .order('created_at', { ascending: false })
       return data ?? []
     },
   })
@@ -227,6 +229,10 @@ export default function InstructorDashboard() {
               <TrendingUp className="w-4 h-4" />
               KPIs
             </TabsTrigger>
+            <TabsTrigger value="affiliates" className="gap-1.5">
+              <Gift className="w-4 h-4" />
+              Afiliados
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="courses" className="mt-6">
@@ -355,6 +361,111 @@ export default function InstructorDashboard() {
                 <p className="text-gray-500">Creá al menos un curso para ver métricas.</p>
               </div>
             )}
+          </TabsContent>
+
+          {/* Tab: Afiliados */}
+          <TabsContent value="affiliates" className="mt-6">
+            <div className="max-w-3xl space-y-6">
+              <div>
+                <h2 className="font-heading text-xl font-bold text-gray-900">Programa de afiliados</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Ganá comisiones recomendando NATO University a otros instructores
+                </p>
+              </div>
+
+              {/* Tu link de afiliado */}
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border border-yellow-200 rounded-2xl p-6 space-y-3">
+                <p className="text-sm font-semibold text-gray-700">Tu link de referido</p>
+                <div className="flex gap-2">
+                  <div className="flex-1 bg-white border border-yellow-200 rounded-lg px-3 py-2 text-sm font-mono text-gray-700 truncate">
+                    {affiliateUrl}
+                  </div>
+                  <button
+                    className="shrink-0 flex items-center gap-1.5 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+                    onClick={() => {
+                      navigator.clipboard.writeText(affiliateUrl)
+                      setCopiedAffiliateUrl(true)
+                      setTimeout(() => setCopiedAffiliateUrl(false), 2000)
+                    }}
+                  >
+                    {copiedAffiliateUrl ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    {copiedAffiliateUrl ? 'Copiado' : 'Copiar'}
+                  </button>
+                </div>
+                <p className="text-xs text-yellow-700">
+                  Cuando alguien se registra con tu link y contrata un plan, recibís una comisión automática.
+                </p>
+              </div>
+
+              {/* KPI cards */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+                  <p className="text-2xl font-bold text-gray-900">{referredCount}</p>
+                  <p className="text-xs text-gray-500 mt-1">Escuelas referidas</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+                  <p className="text-2xl font-bold text-green-600">
+                    {totalEarned > 0 ? `ARS ${totalEarned.toLocaleString('es-AR')}` : '$0'}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Total cobrado</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+                  <p className="text-2xl font-bold text-yellow-600">
+                    {totalPending > 0 ? `ARS ${totalPending.toLocaleString('es-AR')}` : '$0'}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Pendiente de cobro</p>
+                </div>
+              </div>
+
+              {/* Historial de comisiones */}
+              {!affiliateCommissions || affiliateCommissions.length === 0 ? (
+                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
+                  <Gift className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm">Aún no tenés comisiones</p>
+                  <p className="text-xs text-gray-400 mt-1">Compartí tu link y empezá a ganar</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <h3 className="text-sm font-semibold text-gray-700">Historial de comisiones</h3>
+                  </div>
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        {['Escuela referida', 'Monto', 'Comisión %', 'Estado', 'Fecha'].map(h => (
+                          <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {affiliateCommissions.map((c: any) => (
+                        <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-4 py-3 font-medium text-gray-900">
+                            {(c.referred_tenant as any)?.name ?? '—'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-700 font-semibold">
+                            ARS {Number(c.amount_ars ?? 0).toLocaleString('es-AR')}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500">{c.commission_pct}%</td>
+                          <td className="px-4 py-3">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                              c.status === 'paid'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {c.status === 'paid' ? 'Pagado' : 'Pendiente'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {c.created_at ? new Date(c.created_at).toLocaleDateString('es-AR') : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </main>

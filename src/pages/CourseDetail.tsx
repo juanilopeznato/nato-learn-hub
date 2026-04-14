@@ -142,20 +142,30 @@ export default function CourseDetail() {
   const enrollMutation = useMutation({
     mutationFn: async () => {
       if (!profile || !course) throw new Error('No hay sesión')
-      const { error } = await supabase.from('enrollments').insert({
+      const { data: newEnrollment, error } = await supabase.from('enrollments').insert({
         course_id: course.id,
         student_id: profile.id,
         mp_status: 'free',
         amount_paid: 0,
-      })
+      }).select('id').single()
       if (error) throw error
+      return newEnrollment?.id
     },
-    onSuccess: () => {
+    onSuccess: async (enrollmentId) => {
       trackEnrollment()
       fbTrack('Purchase', { content_name: course?.title, value: 0, currency: 'ARS' })
       queryClient.invalidateQueries({ queryKey: ['enrollment'] })
       queryClient.invalidateQueries({ queryKey: ['enrollments'] })
       toast.success('¡Inscripción exitosa! Empezá a aprender.')
+      // Fire-and-forget welcome email
+      if (enrollmentId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-welcome-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
+          body: JSON.stringify({ enrollment_id: enrollmentId }),
+        }).catch(() => {/* ignore */})
+      }
       const firstLesson = sortedModules[0]?.lessons?.sort((a, b) => a.order_index - b.order_index)[0]
       if (firstLesson?.id) navigate(`/learn/${slug}/${firstLesson.id}`)
     },
