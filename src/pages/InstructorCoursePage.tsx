@@ -153,6 +153,21 @@ export default function InstructorCoursePage() {
 
   const togglePublish = useMutation({
     mutationFn: async () => {
+      const publishing = !course?.is_published
+
+      // Validate MP credentials before publishing a paid course
+      if (publishing && !course?.is_free) {
+        const { data: tenantData } = await supabase
+          .from('tenants')
+          .select('mp_access_token')
+          .eq('id', tenant!.id)
+          .single()
+
+        if (!tenantData?.mp_access_token) {
+          throw new Error('Necesitás configurar tu cuenta de Mercado Pago antes de publicar un curso pago. Ir a Configuración → Pagos.')
+        }
+      }
+
       const { error } = await supabase.from('courses')
         .update({ is_published: !course?.is_published })
         .eq('id', courseId!)
@@ -162,6 +177,7 @@ export default function InstructorCoursePage() {
       queryClient.invalidateQueries({ queryKey: ['instructor-course', courseId] })
       toast.success(course?.is_published ? 'Curso despublicado' : 'Curso publicado')
     },
+    onError: (e: Error) => toast.error(e.message),
   })
 
   if (isLoading || !course) {

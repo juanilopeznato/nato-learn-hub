@@ -315,18 +315,34 @@ export default function TenantSettings() {
 
           {/* Payments */}
           <TabsContent value="payments" className="mt-6 space-y-4">
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-700">
-              <p className="font-medium mb-1">¿Cómo funciona?</p>
-              <p>Cada estudiante que compra un curso de tu escuela paga directamente a tu cuenta de Mercado Pago. NATO University cobra una comisión del 5% sobre cada venta, que se descuenta automáticamente al momento del pago.</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <h2 className="font-heading font-semibold text-gray-900">¿Cómo funciona el cobro?</h2>
+              <p className="text-sm text-gray-500">
+                Cada estudiante que compra un curso de tu escuela paga directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-gray-700">5% de comisión</strong> sobre cada venta.
+              </p>
+              <ol className="space-y-3">
+                {[
+                  { n: '1', title: 'Creá una aplicación en Mercado Pago', desc: 'Entrá a mercadopago.com/developers, clic en "Tus aplicaciones" → "Crear aplicación". Elegí Checkout Pro y poné el nombre que quieras.' },
+                  { n: '2', title: 'Activá las credenciales de producción', desc: 'Dentro de tu aplicación, ir a "Credenciales de producción". Completá la industria (Educación) y el sitio web de tu escuela. Aceptá los términos y activá.' },
+                  { n: '3', title: 'Copiá el Access Token y la Public Key', desc: 'Una vez activadas, vas a ver dos claves. Copiá el Access Token (empieza con APP_USR-...) y la Public Key (también APP_USR-...).' },
+                  { n: '4', title: 'Pegá las credenciales acá abajo y guardá', desc: 'Con las dos claves cargadas, tus cursos van a poder recibir pagos reales.' },
+                ].map(step => (
+                  <li key={step.n} className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">{step.n}</span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{step.title}</p>
+                      <p className="text-sm text-gray-500">{step.desc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 text-xs text-amber-700">
+                <strong>Importante:</strong> sin las credenciales cargadas no vas a poder publicar cursos pagos. Los cursos gratuitos no requieren configuración.
+              </div>
             </div>
 
             <form onSubmit={mpForm.handleSubmit(d => saveMp.mutate(d))} className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
-              <h2 className="font-heading font-semibold text-gray-900">Credenciales de Mercado Pago</h2>
-              <p className="text-sm text-gray-500">
-                Encontrá tus credenciales en{' '}
-                <span className="text-primary">mercadopago.com/developers → Mis credenciales</span>.
-                Usá las credenciales de <strong>Producción</strong> cuando estés listo para cobrar.
-              </p>
+              <h2 className="font-heading font-semibold text-gray-900">Tus credenciales de Mercado Pago</h2>
 
               <div className="space-y-1.5">
                 <Label>Access Token</Label>
