@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Settings, LogOut, CreditCard, Palette, Globe, Save, Puzzle, Receipt, Check } from 'lucide-react'
+import { Settings, LogOut, CreditCard, Palette, Globe, Save, Puzzle, Receipt, Check, CheckCircle2, Link2 } from 'lucide-react'
 import { ImageUpload } from '@/components/ImageUpload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -315,59 +315,71 @@ export default function TenantSettings() {
 
           {/* Payments */}
           <TabsContent value="payments" className="mt-6 space-y-4">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-              <h2 className="font-heading font-semibold text-gray-900">¿Cómo funciona el cobro?</h2>
-              <p className="text-sm text-gray-500">
-                Cada estudiante que compra un curso de tu escuela paga directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-gray-700">5% de comisión</strong> sobre cada venta.
-              </p>
-              <ol className="space-y-3">
-                {[
-                  { n: '1', title: 'Creá una aplicación en Mercado Pago', desc: 'Entrá a mercadopago.com/developers, clic en "Tus aplicaciones" → "Crear aplicación". Elegí Checkout Pro y poné el nombre que quieras.' },
-                  { n: '2', title: 'Activá las credenciales de producción', desc: 'Dentro de tu aplicación, ir a "Credenciales de producción". Completá la industria (Educación) y el sitio web de tu escuela. Aceptá los términos y activá.' },
-                  { n: '3', title: 'Copiá el Access Token y la Public Key', desc: 'Una vez activadas, vas a ver dos claves. Copiá el Access Token (empieza con APP_USR-...) y la Public Key (también APP_USR-...).' },
-                  { n: '4', title: 'Pegá las credenciales acá abajo y guardá', desc: 'Con las dos claves cargadas, tus cursos van a poder recibir pagos reales.' },
-                ].map(step => (
-                  <li key={step.n} className="flex gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">{step.n}</span>
+            {/* Connection status */}
+            {(fullTenant as any)?.mp_collector_id ? (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{step.title}</p>
-                      <p className="text-sm text-gray-500">{step.desc}</p>
+                      <h2 className="font-heading font-semibold text-gray-900">Mercado Pago conectado</h2>
+                      <p className="text-xs text-gray-400 mt-0.5">ID: {(fullTenant as any).mp_collector_id}</p>
                     </div>
-                  </li>
-                ))}
-              </ol>
-              <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 text-xs text-amber-700">
-                <strong>Importante:</strong> sin las credenciales cargadas no vas a poder publicar cursos pagos. Los cursos gratuitos no requieren configuración.
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 text-gray-500"
+                    onClick={() => {
+                      const oauthUrl = `https://auth.mercadopago.com/authorization?client_id=8771179743002501&response_type=code&platform_id=mp&redirect_uri=https://nato-learn-hub.vercel.app/mp-oauth-callback&state=${tenant?.id}`
+                      window.location.href = oauthUrl
+                    }}
+                  >
+                    <Link2 className="w-4 h-4" />
+                    Reconectar
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-500">
+                  Cada venta va directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-gray-700">5% de comisión</strong> automáticamente en cada cobro.
+                </p>
               </div>
-            </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+                <h2 className="font-heading font-semibold text-gray-900">Conectá tu cuenta de Mercado Pago</h2>
+                <p className="text-sm text-gray-500">
+                  Para recibir pagos, necesitás conectar tu cuenta de Mercado Pago. El proceso tarda menos de un minuto y es completamente seguro — nunca vemos tu contraseña.
+                </p>
 
-            <form onSubmit={mpForm.handleSubmit(d => saveMp.mutate(d))} className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
-              <h2 className="font-heading font-semibold text-gray-900">Tus credenciales de Mercado Pago</h2>
+                <ol className="space-y-3">
+                  {[
+                    { n: '1', text: 'Hacé clic en el botón de abajo' },
+                    { n: '2', text: 'Iniciá sesión en Mercado Pago y autorizá a NATO University' },
+                    { n: '3', text: 'Listo — cada venta va directo a tu cuenta, NATO retiene el 5% automáticamente' },
+                  ].map(step => (
+                    <li key={step.n} className="flex items-center gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">{step.n}</span>
+                      <p className="text-sm text-gray-600">{step.text}</p>
+                    </li>
+                  ))}
+                </ol>
 
-              <div className="space-y-1.5">
-                <Label>Access Token</Label>
-                <Input
-                  type="password"
-                  placeholder="APP_USR-..."
-                  {...mpForm.register('mp_access_token')}
-                />
-                {mpForm.formState.errors.mp_access_token && <p className="text-xs text-red-500">{mpForm.formState.errors.mp_access_token.message}</p>}
+                <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 text-xs text-amber-700">
+                  <strong>Importante:</strong> sin conectar tu cuenta no vas a poder publicar cursos pagos. Los cursos gratuitos no requieren configuración.
+                </div>
+
+                <Button
+                  variant="hero"
+                  className="gap-2 w-full sm:w-auto"
+                  onClick={() => {
+                    const oauthUrl = `https://auth.mercadopago.com/authorization?client_id=8771179743002501&response_type=code&platform_id=mp&redirect_uri=https://nato-learn-hub.vercel.app/mp-oauth-callback&state=${tenant?.id}`
+                    window.location.href = oauthUrl
+                  }}
+                >
+                  <Link2 className="w-4 h-4" />
+                  Conectar con Mercado Pago
+                </Button>
               </div>
-
-              <div className="space-y-1.5">
-                <Label>Public Key</Label>
-                <Input
-                  placeholder="APP_USR-..."
-                  {...mpForm.register('mp_public_key')}
-                />
-                {mpForm.formState.errors.mp_public_key && <p className="text-xs text-red-500">{mpForm.formState.errors.mp_public_key.message}</p>}
-              </div>
-
-              <Button type="submit" variant="hero" disabled={saveMp.isPending} className="gap-2">
-                <Save className="w-4 h-4" />
-                {saveMp.isPending ? 'Guardando...' : 'Guardar credenciales'}
-              </Button>
-            </form>
+            )}
           </TabsContent>
 
           {/* Integrations */}

@@ -27,7 +27,9 @@ const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const CertificateVerify = React.lazy(() => import("./pages/CertificateVerify"));
 const ProfileSettings = React.lazy(() => import("./pages/ProfileSettings"));
 const EmailMarketing = React.lazy(() => import("./pages/EmailMarketing"));
-const NatoOwnerPanel = React.lazy(() => import("./pages/NatoOwnerPanel"));
+const NatoOwnerPanel = React.lazy(() => import("./pages/NatoOwnerPanel"))
+const CreateSchool = React.lazy(() => import("./pages/CreateSchool"));
+const MpOAuthCallback = React.lazy(() => import("./pages/MpOAuthCallback"));
 
 const queryClient = new QueryClient();
 
@@ -67,6 +69,16 @@ const App = () => (
             <Route path="/certificates/:code" element={
               <React.Suspense fallback={null}>
                 <CertificateVerify />
+              </React.Suspense>
+            } />
+            <Route path="/create-school" element={
+              <React.Suspense fallback={null}>
+                <CreateSchool />
+              </React.Suspense>
+            } />
+            <Route path="/mp-oauth-callback" element={
+              <React.Suspense fallback={null}>
+                <MpOAuthCallback />
               </React.Suspense>
             } />
 
