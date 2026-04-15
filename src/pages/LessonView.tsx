@@ -11,6 +11,7 @@ import { VideoEmbed } from '@/components/lesson/VideoEmbed'
 import { LessonSidebar } from '@/components/lesson/LessonSidebar'
 import { LessonComments } from '@/components/lesson/LessonComments'
 import { CertificateModal } from '@/components/CertificateModal'
+import { UpsellModal } from '@/components/lesson/UpsellModal'
 import { toast } from 'sonner'
 
 export default function LessonView() {
@@ -21,6 +22,7 @@ export default function LessonView() {
   const queryClient = useQueryClient()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const [certificateData, setCertificateData] = useState<{ code: string; issuedAt: string } | null>(null)
+  const [showUpsell, setShowUpsell] = useState(false)
 
   // Notes state
   const [noteContent, setNoteContent] = useState('')
@@ -463,12 +465,22 @@ export default function LessonView() {
       {certificateData && course && profile && (
         <CertificateModal
           open={!!certificateData}
-          onClose={() => setCertificateData(null)}
+          onClose={() => { setCertificateData(null); setShowUpsell(true) }}
           studentName={profile.full_name}
           courseTitle={course.title}
           tenantName={tenant?.name ?? 'NATO University'}
           verificationCode={certificateData.code}
           issuedAt={certificateData.issuedAt}
+        />
+      )}
+
+      {/* Upsell Modal — aparece al cerrar el certificado */}
+      {course && tenant && (
+        <UpsellModal
+          open={showUpsell}
+          onClose={() => setShowUpsell(false)}
+          tenantId={tenant.id}
+          completedCourseId={course.id}
         />
       )}
 

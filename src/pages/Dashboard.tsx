@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, LogOut, BookOpen, User, Users, Play } from 'lucide-react'
+import { ArrowRight, LogOut, BookOpen, User, Users, Play, MessageSquare } from 'lucide-react'
 import { StreakBadge } from '@/components/StreakBadge'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
@@ -57,6 +57,20 @@ export default function Dashboard() {
   })
   const continueCourse = continueEnrollment?.courses as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
   const continueProgress = continueEnrollment ? progressMap?.[continueEnrollment.id] : null
+
+  const { data: communityPosts } = useQuery({
+    queryKey: ['community-preview', tenant?.id],
+    enabled: !!tenant?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('community_posts')
+        .select('id, title, body, category, created_at, author:profiles(full_name, avatar_url)')
+        .eq('tenant_id', tenant!.id)
+        .order('created_at', { ascending: false })
+        .limit(3)
+      return data ?? []
+    },
+  })
 
   const firstName = profile?.full_name?.split(' ')[0] ?? 'estudiante'
 
@@ -149,6 +163,49 @@ export default function Dashboard() {
               </Button>
             </div>
           </div>
+        )}
+
+        {/* Preview comunidad */}
+        {communityPosts && communityPosts.length > 0 && (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-heading text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
+                Comunidad
+              </h2>
+              <Link to="/community" className="text-sm text-primary hover:underline flex items-center gap-1">
+                Ver todo <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {communityPosts.map((post: any) => {
+                const author = post.author as { full_name: string; avatar_url: string | null } | null
+                const initials = (author?.full_name ?? 'U').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+                return (
+                  <Link
+                    key={post.id}
+                    to="/community"
+                    className="flex items-start gap-3 bg-white border border-gray-100 rounded-xl p-4 hover:border-primary/30 hover:shadow-sm transition-all group"
+                  >
+                    {author?.avatar_url ? (
+                      <img src={author.avatar_url} alt={author.full_name} className="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="text-xs font-semibold text-primary">{initials}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate group-hover:text-primary transition-colors">{post.title}</p>
+                      {post.body && (
+                        <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{post.body}</p>
+                      )}
+                    </div>
+                    <MessageSquare className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors shrink-0 mt-0.5" />
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
         )}
 
         {/* Cursos */}

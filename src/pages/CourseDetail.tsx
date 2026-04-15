@@ -24,6 +24,7 @@ export default function CourseDetail() {
   const [expandedFaq, setExpandedFaq] = useState<Set<number>>(new Set())
   const [stickyVisible, setStickyVisible] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
+  const [installments, setInstallments] = useState(1)
   const [couponInput, setCouponInput] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<{ id: string; code: string; discount_type: string; discount_value: number } | null>(null)
   const [couponLoading, setCouponLoading] = useState(false)
@@ -185,7 +186,7 @@ export default function CourseDetail() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session?.access_token}`,
           },
-          body: JSON.stringify({ course_id: course.id, coupon_code: appliedCoupon?.code ?? undefined }),
+          body: JSON.stringify({ course_id: course.id, coupon_code: appliedCoupon?.code ?? undefined, installments }),
         }
       )
       const data = await res.json()
@@ -456,6 +457,33 @@ export default function CourseDetail() {
                     )}
                   </div>
 
+                  {/* Selector de cuotas — solo cursos pagos sin enrollment */}
+                  {!enrollment && !course.is_free && (
+                    <div className="space-y-1.5">
+                      <p className="text-xs font-medium text-gray-500">Pagá en cuotas</p>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {[1, 3, 6, 12].map(n => (
+                          <button
+                            key={n}
+                            onClick={() => setInstallments(n)}
+                            className={`rounded-lg border py-2 text-xs font-semibold transition-colors ${
+                              installments === n
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : 'border-gray-200 text-gray-600 hover:border-primary/40'
+                            }`}
+                          >
+                            {n === 1 ? '1 pago' : `${n}x`}
+                          </button>
+                        ))}
+                      </div>
+                      {installments > 1 && (
+                        <p className="text-xs text-gray-400 text-center">
+                          {installments} cuotas de ARS {Math.ceil(discountedPrice / installments).toLocaleString('es-AR')}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   <Button
                     variant="hero"
                     size="lg"
@@ -466,6 +494,14 @@ export default function CourseDetail() {
                     {ctaLabel}
                     <ArrowRight className="w-5 h-5" />
                   </Button>
+
+                  {/* Urgencia social — contador de alumnos */}
+                  {(enrollmentCount ?? 0) > 5 && (
+                    <p className="text-xs text-center text-gray-500 flex items-center justify-center gap-1">
+                      <Users className="w-3.5 h-3.5 text-primary" />
+                      <span><strong className="text-gray-700">{enrollmentCount}</strong> personas ya inscriptas</span>
+                    </p>
+                  )}
 
                   {/* Cupón de descuento (solo cursos pagos no inscriptos) */}
                   {!enrollment && !course.is_free && (

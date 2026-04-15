@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
-import { Check } from 'lucide-react'
+import { Check, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useQuery } from '@tanstack/react-query'
@@ -22,6 +23,8 @@ interface Plan {
 }
 
 export default function Pricing() {
+  const [annual, setAnnual] = useState(false)
+
   const { data: plans, isLoading } = useQuery<Plan[]>({
     queryKey: ['public-plans'],
     queryFn: async () => {
@@ -50,13 +53,53 @@ export default function Pricing() {
       <div className="pt-24 pb-20 px-4">
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
-          <div className="text-center mb-14">
+          <div className="text-center mb-10">
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-white mb-4">
               Elegí tu plan
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-gray-400 text-lg mb-6">
               Empezá gratis. Escalá cuando estés listo.
             </p>
+
+            {/* Toggle mensual/anual */}
+            <div className="inline-flex items-center gap-3 bg-gray-800 rounded-full p-1">
+              <button
+                onClick={() => setAnnual(false)}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                  !annual ? 'bg-white text-gray-900' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Mensual
+              </button>
+              <button
+                onClick={() => setAnnual(true)}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                  annual ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Anual
+                <span className="text-xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full font-semibold">
+                  −17%
+                </span>
+              </button>
+            </div>
+            {annual && (
+              <p className="text-sm text-green-400 mt-2">2 meses gratis incluidos</p>
+            )}
+          </div>
+
+          {/* Banner 14 días */}
+          <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-2xl p-4 mb-8 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+              <Zap className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white text-sm">14 días gratis en Creator o Pro</p>
+              <p className="text-gray-400 text-xs mt-0.5">Sin tarjeta de crédito. Cancelá cuando quieras.</p>
+            </div>
+            <Button variant="hero" size="sm" asChild className="shrink-0">
+              <Link to="/create-school">Empezar gratis</Link>
+            </Button>
           </div>
 
           {/* Plan cards */}
@@ -72,6 +115,10 @@ export default function Pricing() {
                 const isPopular = plan.name === 'creador'
                 const isFree = plan.name === 'gratis'
                 const features = Array.isArray(plan.features) ? plan.features : []
+                const monthlyPrice = plan.price_ars
+                const annualMonthlyPrice = Math.round(monthlyPrice * 10 / 12)
+                const displayPrice = annual ? annualMonthlyPrice : monthlyPrice
+                const annualSaving = monthlyPrice * 12 - monthlyPrice * 10
 
                 return (
                   <div
@@ -100,11 +147,18 @@ export default function Pricing() {
                       {isFree ? (
                         <span className="text-4xl font-bold text-white">Gratis</span>
                       ) : (
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-4xl font-bold text-white">
-                            ARS {plan.price_ars.toLocaleString('es-AR')}
-                          </span>
-                          <span className="text-gray-400 text-sm">/mes</span>
+                        <div className="space-y-1">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-4xl font-bold text-white">
+                              ARS {displayPrice.toLocaleString('es-AR')}
+                            </span>
+                            <span className="text-gray-400 text-sm">/mes</span>
+                          </div>
+                          {annual && (
+                            <p className="text-xs text-green-400">
+                              Ahorrás ARS {annualSaving.toLocaleString('es-AR')}/año
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>

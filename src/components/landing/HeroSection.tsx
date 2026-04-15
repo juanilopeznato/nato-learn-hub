@@ -35,7 +35,7 @@ export default function HeroSection() {
             Formación práctica, cursos con resultados reales y certificados verificables.
           </p>
 
-          {/* CTAs */}
+          {/* CTAs — Estudiantes */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="xl" asChild>
               <a href="#courses">
@@ -49,13 +49,22 @@ export default function HeroSection() {
               </Button>
             )}
           </div>
+
+          {/* Separador + CTA Creadores */}
           {!user && (
-            <p className="text-sm text-white/40 mt-2">
-              ¿Sos creador?{' '}
-              <Link to="/create-school" className="text-primary hover:text-primary/80 underline underline-offset-2 font-medium transition-colors">
-                Abrí tu escuela gratis →
-              </Link>
-            </p>
+            <div className="flex flex-col items-center gap-3 pt-2">
+              <div className="flex items-center gap-3 w-full max-w-xs">
+                <div className="flex-1 h-px bg-white/10" />
+                <span className="text-xs text-white/30 shrink-0">¿Querés vender tus cursos?</span>
+                <div className="flex-1 h-px bg-white/10" />
+              </div>
+              <Button variant="hero-outline" size="lg" asChild className="border-white/20 hover:border-white/40 hover:bg-white/5">
+                <Link to="/create-school">
+                  Creá tu escuela gratis
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            </div>
           )}
         </div>
       </div>
