@@ -11,22 +11,27 @@ interface AuthContextValue {
   session: Session | null
   profile: Profile | null
   tenant: Tenant | null
+  allProfiles: (Profile & { tenant: Tenant })[]
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
+  switchSchool: (profileId: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-// En desarrollo usamos localhost; en producción se detecta por custom_domain
-const DEV_TENANT_SLUG = 'nato'
+const DEV_TENANT_SLUG = import.meta.env.VITE_DEFAULT_TENANT_SLUG ?? 'nato'
 
 async function resolveTenant(): Promise<Tenant | null> {
   const hostname = window.location.hostname
+  const isDevOrStaging =
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname.endsWith('.vercel.app')
 
   try {
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    if (isDevOrStaging) {
       const { data, error } = await supabase
         .from('tenants')
         .select('*')
@@ -35,8 +40,6 @@ async function resolveTenant(): Promise<Tenant | null> {
       if (error) throw error
       return data
     }
-
-    // Producción: buscar por custom_domain
     const { data, error } = await supabase
       .from('tenants')
       .select('*')
@@ -55,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [tenant, setTenant] = useState<Tenant | null>(null)
+  const [allProfiles, setAllProfiles] = useState<(Profile & { tenant: Tenant })[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -75,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user) loadProfile(session.user.id)
       else {
         setProfile(null)
+        setAllProfiles([])
         setLoading(false)
       }
     })
@@ -82,14 +87,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  async function loadProfile(authId: string) {
-    const { data } = await supabase
+  async function loadProfile(authId: string, attempt = 1) {
+    const { data, error } = await supabase
       .from('profiles')
-      .select('*')
+      .select('*, tenant:tenants(*)')
       .eq('auth_id', authId)
-      .single()
-    setProfile(data)
+      .order('last_used_at', { ascending: false })
+
+    if (error && attempt < 3) {
+      await new Promise(r => setTimeout(r, 500 * attempt))
+      return loadProfile(authId, attempt + 1)
+    }
+
+    if (data && data.length > 0) {
+      const profiles = data as (Profile & { tenant: Tenant })[]
+      setAllProfiles(profiles)
+      // El primero es el más recientemente usado (activo)
+      const { tenant: profileTenant, ...activeProfile } = profiles[0] as any
+      setProfile(activeProfile)
+      if (profileTenant) setTenant(profileTenant as Tenant)
+    } else {
+      setProfile(null)
+      setAllProfiles([])
+    }
     setLoading(false)
+  }
+
+  async function switchSchool(profileId: string) {
+    const { error } = await supabase.rpc('switch_active_school', { p_profile_id: profileId })
+    if (error) throw error
+    if (user) await loadProfile(user.id)
   }
 
   async function signIn(email: string, password: string) {
@@ -104,7 +131,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) return { error: error.message }
     if (!data.user) return { error: 'Error al crear el usuario.' }
 
-    // Usar función SECURITY DEFINER para bypassear RLS al crear el profile
     const { error: profileError } = await supabase.rpc('create_profile', {
       p_auth_id: data.user.id,
       p_tenant_id: tenant.id,
@@ -121,7 +147,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, tenant, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, profile, tenant, allProfiles, loading, signIn, signUp, signOut, switchSchool }}>
       {children}
     </AuthContext.Provider>
   )

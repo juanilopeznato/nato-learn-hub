@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -36,6 +37,14 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      <Helmet>
+        <title>Planes y precios — NATO University</title>
+        <meta name="description" content="Elegí el plan que mejor se adapta a tu escuela online. Empezá gratis y escalá cuando estés listo. Planes para creadores en Argentina." />
+        <link rel="canonical" href="https://nato-learn-hub.vercel.app/pricing" />
+        <meta property="og:title" content="Planes y precios — NATO University" />
+        <meta property="og:description" content="Empezá gratis. Escalá cuando estés listo. Planes para creadores en Argentina." />
+        <meta property="og:url" content="https://nato-learn-hub.vercel.app/pricing" />
+      </Helmet>
       <Navbar />
 
       <div className="pt-24 pb-20 px-4">
@@ -117,7 +126,7 @@ export default function Pricing() {
                         className="w-full"
                         asChild
                       >
-                        <Link to="/signup">Empezar gratis</Link>
+                        <Link to="/create-school">Crear mi escuela gratis</Link>
                       </Button>
                     ) : (
                       <Button
@@ -125,7 +134,7 @@ export default function Pricing() {
                         className="w-full"
                         asChild
                       >
-                        <Link to={`/signup?plan=${plan.name}`}>Comenzar</Link>
+                        <Link to={`/create-school?plan=${plan.name}`}>Crear mi escuela</Link>
                       </Button>
                     )}
                   </div>

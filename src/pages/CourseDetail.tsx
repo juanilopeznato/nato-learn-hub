@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useCourseTracking } from '@/hooks/useCourseTracking'
 import {
@@ -248,7 +249,7 @@ export default function CourseDetail() {
     : Number(course?.price ?? 0)
 
   function handleCTA() {
-    if (!user) { navigate('/login'); return }
+    if (!user) { navigate(`/login?redirect=/courses/${slug}`); return }
     if (enrollment) {
       const first = sortedModules[0]?.lessons?.sort((a, b) => a.order_index - b.order_index)[0]
       if (first) navigate(`/learn/${slug}/${first.id}`)
@@ -266,28 +267,33 @@ export default function CourseDetail() {
     ? (enrollMutation.isPending ? 'Inscribiendo...' : 'Inscribirse gratis')
     : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${discountedPrice.toLocaleString('es-AR')}`)
 
-  // SEO meta tags
-  useEffect(() => {
-    if (!course) return
-    document.title = `${course.title} — ${tenant?.name ?? 'NATO University'}`
-    const setMeta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement
-      if (!el) { el = document.createElement('meta'); el.setAttribute('name', name); document.head.appendChild(el) }
-      el.content = content
-    }
-    const setOg = (prop: string, content: string) => {
-      let el = document.querySelector(`meta[property="${prop}"]`) as HTMLMetaElement
-      if (!el) { el = document.createElement('meta'); el.setAttribute('property', prop); document.head.appendChild(el) }
-      el.content = content
-    }
-    setMeta('description', course.description?.slice(0, 160) ?? course.title)
-    setOg('og:title', course.title)
-    setOg('og:description', course.description?.slice(0, 160) ?? course.title)
-    setOg('og:image', course.thumbnail_url ?? '')
-    setOg('og:url', window.location.href)
-    setOg('og:type', 'website')
-    return () => { document.title = tenant?.name ?? 'NATO University' }
-  }, [course, tenant])
+  // SEO — construido antes del return para que Helmet lo procese siempre
+  const seoTitle = course ? `${course.title} — ${tenant?.name ?? 'NATO University'}` : 'NATO University'
+  const seoDescription = course?.description?.slice(0, 160) ?? 'Curso online con certificado verificable.'
+  const seoImage = course?.thumbnail_url ?? 'https://nato-learn-hub.vercel.app/nato-logo.png'
+  const seoUrl = typeof window !== 'undefined' ? window.location.href : ''
+  const schemaOrg = course ? JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: course.title,
+    description: seoDescription,
+    url: seoUrl,
+    image: seoImage,
+    provider: {
+      '@type': 'Organization',
+      name: tenant?.name ?? 'NATO University',
+      url: typeof window !== 'undefined' ? window.location.origin : '',
+    },
+    offers: {
+      '@type': 'Offer',
+      price: course.is_free ? '0' : String(course.price ?? 0),
+      priceCurrency: 'ARS',
+      availability: 'https://schema.org/InStock',
+      url: seoUrl,
+    },
+    numberOfCredits: totalLessons,
+    educationalLevel: 'Beginner',
+  }) : null
 
   if (isLoading) return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -306,6 +312,23 @@ export default function CourseDetail() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href={seoUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:image" content={seoImage} />
+        <meta property="og:url" content={seoUrl} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={seoImage} />
+        {schemaOrg && (
+          <script type="application/ld+json">{schemaOrg}</script>
+        )}
+      </Helmet>
       {pixelId && <MetaPixel pixelId={pixelId} />}
       {/* Sticky CTA bar */}
       <div className={`fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-700 transition-all duration-300 ${stickyVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>

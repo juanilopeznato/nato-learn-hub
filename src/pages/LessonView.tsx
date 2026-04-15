@@ -1,5 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle, FileDown, Menu, X, Award, Pencil } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, FileDown, Menu, X, Award, Pencil, MessageSquare } from 'lucide-react'
+import { useConfetti } from '@/hooks/useConfetti'
+import { StreakBadge } from '@/components/StreakBadge'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
@@ -14,6 +16,7 @@ import { toast } from 'sonner'
 export default function LessonView() {
   const { courseSlug, lessonId } = useParams<{ courseSlug: string; lessonId: string }>()
   const { profile, tenant } = useAuth()
+  const { fireLesson, fireCourse } = useConfetti()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
@@ -145,6 +148,16 @@ export default function LessonView() {
     }, 1500)
   }
 
+  // Registrar última lección visitada al cargar
+  useEffect(() => {
+    if (!enrollment?.id || !lessonId) return
+    supabase
+      .from('enrollments')
+      .update({ last_lesson_id: lessonId, last_accessed_at: new Date().toISOString() })
+      .eq('id', enrollment.id)
+      .then(() => {/* fire-and-forget */})
+  }, [enrollment?.id, lessonId])
+
   const completeMutation = useMutation({
     mutationFn: async () => {
       if (!enrollment?.id || !lessonId) throw new Error('Sin enrollment')
@@ -159,6 +172,7 @@ export default function LessonView() {
       if (error) throw error
     },
     onSuccess: async () => {
+      fireLesson()
       await supabase.rpc('award_points', { p_action: 'complete_lesson' })
       queryClient.invalidateQueries({ queryKey: ['progress'] })
       queryClient.invalidateQueries({ queryKey: ['course-progress'] })
@@ -172,6 +186,7 @@ export default function LessonView() {
           .eq('enrollment_id', enrollment.id)
           .single()
         if (cp && Number(cp.progress_percent) >= 100) {
+          fireCourse()
           const { data: certId } = await supabase.rpc('issue_certificate', { p_enrollment_id: enrollment.id })
           if (certId) {
             const { data: cert } = await supabase
@@ -370,6 +385,27 @@ export default function LessonView() {
                   rows={5}
                   className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
                 />
+              </div>
+            )}
+
+            {/* Foro del curso */}
+            {enrollment && course && (
+              <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <MessageSquare className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Foro del curso</p>
+                    <p className="text-xs text-gray-500">Preguntá, compartí o conectá con otros estudiantes</p>
+                  </div>
+                </div>
+                <Link
+                  to={`/community?course=${course.id}`}
+                  className="text-sm font-semibold text-primary hover:text-primary/80 shrink-0 flex items-center gap-1 transition-colors"
+                >
+                  Ver foro →
+                </Link>
               </div>
             )}
 

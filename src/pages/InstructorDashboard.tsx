@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Eye, LogOut, BookOpen, TrendingUp, Users, Settings, Mail, CreditCard, Gift, Trash2, Copy, Check } from 'lucide-react'
+import { Plus, Eye, LogOut, BookOpen, TrendingUp, Users, Settings, Mail, CreditCard, Gift, Trash2, Copy, Check, ChevronDown, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
@@ -14,7 +14,9 @@ import { KpiDashboard } from '@/components/instructor/KpiDashboard'
 import { toast } from 'sonner'
 
 export default function InstructorDashboard() {
-  const { profile, tenant, signOut } = useAuth()
+  const { profile, tenant, allProfiles, signOut, switchSchool } = useAuth()
+  const [switching, setSwitching] = useState(false)
+  const [schoolMenuOpen, setSchoolMenuOpen] = useState(false)
   const queryClient = useQueryClient()
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null)
@@ -81,7 +83,7 @@ export default function InstructorDashboard() {
         .from('enrollments')
         .select('course_id')
         .in('course_id', courses!.map(c => c.id))
-        .eq('mp_status', 'free')
+        .in('mp_status', ['free', 'approved'])
       const counts: Record<string, number> = {}
       data?.forEach(e => { counts[e.course_id] = (counts[e.course_id] ?? 0) + 1 })
       return counts
@@ -182,7 +184,59 @@ export default function InstructorDashboard() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-8 w-auto object-contain" />
-            <Badge variant="secondary" className="ml-1 text-xs">Instructor</Badge>
+            {/* School switcher — solo visible si tiene más de 1 escuela */}
+            {allProfiles.length > 1 ? (
+              <div className="relative">
+                <button
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+                  onClick={() => setSchoolMenuOpen(o => !o)}
+                  disabled={switching}
+                >
+                  <Building2 className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="max-w-[120px] truncate">{tenant?.name}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                </button>
+                {schoolMenuOpen && (
+                  <div className="absolute left-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50">
+                    <p className="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wide">Mis escuelas</p>
+                    {allProfiles.map(p => (
+                      <button
+                        key={p.id}
+                        disabled={switching || p.tenant_id === profile?.tenant_id}
+                        onClick={async () => {
+                          setSchoolMenuOpen(false)
+                          setSwitching(true)
+                          try {
+                            await switchSchool(p.id)
+                            window.location.reload()
+                          } catch {
+                            toast.error('No se pudo cambiar la escuela')
+                            setSwitching(false)
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between gap-2 disabled:opacity-50"
+                      >
+                        <span className="truncate">{(p as any).tenant?.name ?? 'Escuela'}</span>
+                        {p.tenant_id === profile?.tenant_id && (
+                          <Check className="w-3.5 h-3.5 text-primary shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                    <div className="border-t border-gray-100 mt-1 pt-1">
+                      <Link
+                        to="/create-school"
+                        className="block px-3 py-2 text-sm text-primary hover:bg-primary/5 font-medium"
+                        onClick={() => setSchoolMenuOpen(false)}
+                      >
+                        + Crear nueva escuela
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Badge variant="secondary" className="ml-1 text-xs">Instructor</Badge>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>

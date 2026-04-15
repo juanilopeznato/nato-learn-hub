@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, LogOut, BookOpen, User, Users } from 'lucide-react'
+import { ArrowRight, LogOut, BookOpen, User, Users, Play } from 'lucide-react'
+import { StreakBadge } from '@/components/StreakBadge'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import { useQuery } from '@tanstack/react-query'
@@ -17,10 +18,13 @@ export default function Dashboard() {
     queryFn: async () => {
       const { data } = await supabase
         .from('enrollments')
-        .select(`id, course_id, courses (id, title, slug)`)
+        .select(`
+          id, course_id, last_lesson_id, last_accessed_at,
+          courses (id, title, slug, thumbnail_url)
+        `)
         .eq('student_id', profile!.id)
         .in('mp_status', ['free', 'approved'])
-        .order('enrolled_at', { ascending: false })
+        .order('last_accessed_at', { ascending: false })
       return data ?? []
     },
   })
@@ -45,6 +49,14 @@ export default function Dashboard() {
       return map
     },
   })
+
+  // Último curso accedido con progreso > 0 para el "Continuar" banner
+  const continueEnrollment = enrollments?.find(e => {
+    const prog = progressMap?.[e.id]
+    return e.last_lesson_id && prog && Number(prog.percent) > 0 && Number(prog.percent) < 100
+  })
+  const continueCourse = continueEnrollment?.courses as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
+  const continueProgress = continueEnrollment ? progressMap?.[continueEnrollment.id] : null
 
   const firstName = profile?.full_name?.split(' ')[0] ?? 'estudiante'
 
@@ -77,6 +89,7 @@ export default function Dashboard() {
               </Link>
               <span className="text-xs font-semibold text-primary">{(profile as any)?.points ?? 0} pts</span>
               <span className="text-xs text-gray-400">Nv.{(profile as any)?.level ?? 1}</span>
+              <StreakBadge streak={(profile as any)?.streak_days ?? 0} size="sm" />
             </div>
             <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400 hover:text-gray-700">
               <LogOut className="w-4 h-4" />
@@ -93,10 +106,50 @@ export default function Dashboard() {
           </h1>
           <p className="text-gray-500 mt-1">
             {enrollments?.length
-              ? `Tenés ${enrollments.length} curso${enrollments.length > 1 ? 's' : ''} en progreso`
+              ? `Tenés ${enrollments.length} curso${enrollments.length > 1 ? 's' : ''} activo${enrollments.length > 1 ? 's' : ''}`
               : 'Todavía no empezaste ningún curso'}
           </p>
         </div>
+
+        {/* "Continuar" banner — solo si hay progreso activo */}
+        {continueEnrollment && continueCourse && continueProgress && (
+          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-5 p-5">
+              {continueCourse.thumbnail_url ? (
+                <img
+                  src={continueCourse.thumbnail_url}
+                  alt={continueCourse.title}
+                  className="w-20 h-16 object-cover rounded-xl shrink-0 hidden sm:block"
+                />
+              ) : (
+                <div className="w-20 h-16 bg-primary/10 rounded-xl flex items-center justify-center shrink-0 hidden sm:block">
+                  <BookOpen className="w-7 h-7 text-primary" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0 space-y-2">
+                <p className="text-xs font-semibold text-primary uppercase tracking-wide">Continuar aprendiendo</p>
+                <h3 className="font-heading font-semibold text-gray-900 truncate">{continueCourse.title}</h3>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 bg-gray-100 rounded-full h-1.5">
+                    <div
+                      className="bg-primary h-1.5 rounded-full transition-all"
+                      style={{ width: `${Math.round(Number(continueProgress.percent))}%` }}
+                    />
+                  </div>
+                  <span className="text-xs text-gray-500 shrink-0">
+                    {continueProgress.completed}/{continueProgress.total} lecciones
+                  </span>
+                </div>
+              </div>
+              <Button variant="hero" size="sm" asChild className="shrink-0">
+                <Link to={`/learn/${continueCourse.slug}/${continueEnrollment.last_lesson_id}`}>
+                  <Play className="w-4 h-4" />
+                  Continuar
+                </Link>
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Cursos */}
         {isLoading ? (
@@ -140,7 +193,7 @@ export default function Dashboard() {
               Explorá los cursos disponibles y comenzá tu primer path de aprendizaje.
             </p>
             <Button variant="hero" asChild>
-              <Link to="/">
+              <Link to="/courses">
                 Ver cursos disponibles
                 <ArrowRight className="w-4 h-4" />
               </Link>

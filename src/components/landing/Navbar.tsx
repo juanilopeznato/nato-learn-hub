@@ -64,6 +64,9 @@ export default function Navbar() {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/login">Iniciar Sesión</Link>
               </Button>
+              <Button variant="outline" size="sm" asChild className="border-primary/40 text-primary hover:bg-primary/10">
+                <Link to="/create-school">Crear escuela</Link>
+              </Button>
               <Button variant="hero" size="sm" asChild>
                 <Link to="/signup">Comenzar gratis</Link>
               </Button>
@@ -106,6 +109,9 @@ export default function Navbar() {
               <>
                 <Button variant="ghost" size="sm" className="flex-1" asChild>
                   <Link to="/login">Iniciar Sesión</Link>
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1 border-primary/40 text-primary" asChild>
+                  <Link to="/create-school">Crear escuela</Link>
                 </Button>
                 <Button variant="hero" size="sm" className="flex-1" asChild>
                   <Link to="/signup">Comenzar gratis</Link>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -26,6 +26,8 @@ export default function Signup() {
   const { signUp, tenant } = useAuth()
   const tenantName = tenant?.name ?? 'NATO University'
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirect = new URLSearchParams(location.search).get('redirect') ?? '/dashboard'
   const [serverError, setServerError] = useState<string | null>(null)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
@@ -36,7 +38,7 @@ export default function Signup() {
     setServerError(null)
     const { error } = await signUp(data.email, data.password, data.fullName)
     if (error) { setServerError(error); return }
-    navigate('/dashboard', { replace: true })
+    navigate(redirect, { replace: true })
   }
 
   return (

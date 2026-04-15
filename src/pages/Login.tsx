@@ -20,7 +20,8 @@ export default function Login() {
   const tenantName = tenant?.name ?? 'NATO University'
   const navigate = useNavigate()
   const location = useLocation()
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/dashboard'
+  const queryRedirect = new URLSearchParams(location.search).get('redirect')
+  const from = queryRedirect ?? (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/dashboard'
   const [serverError, setServerError] = useState<string | null>(null)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({

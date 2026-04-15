@@ -49,6 +49,14 @@ export default function HeroSection() {
               </Button>
             )}
           </div>
+          {!user && (
+            <p className="text-sm text-white/40 mt-2">
+              ¿Sos creador?{' '}
+              <Link to="/create-school" className="text-primary hover:text-primary/80 underline underline-offset-2 font-medium transition-colors">
+                Abrí tu escuela gratis →
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </section>

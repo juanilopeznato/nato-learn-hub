@@ -78,6 +78,7 @@ export default function MemberProfile() {
 
   const saveBio = useMutation({
     mutationFn: async () => {
+      if (!isOwnProfile) throw new Error('No autorizado')
       const { error } = await supabase.from('profiles').update({ bio: bioValue }).eq('id', profileId!)
       if (error) throw error
     },

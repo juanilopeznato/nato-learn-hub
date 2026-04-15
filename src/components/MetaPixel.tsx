@@ -7,6 +7,8 @@ interface Props {
 export function MetaPixel({ pixelId }: Props) {
   useEffect(() => {
     if (!pixelId) return
+    // Validate pixelId is purely numeric to prevent code injection
+    if (!/^\d{1,20}$/.test(pixelId)) return
     // Inject Meta Pixel base code
     const script = document.createElement('script')
     script.innerHTML = `

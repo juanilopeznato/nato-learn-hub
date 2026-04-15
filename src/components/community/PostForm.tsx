@@ -10,6 +10,7 @@ const schema = z.object({
   title: z.string().min(3, 'Mínimo 3 caracteres'),
   body: z.string().min(10, 'Mínimo 10 caracteres'),
   category: z.enum(['question', 'win', 'resource', 'general']),
+  course_id: z.string().nullable().optional(),
 })
 
 export type PostFormData = z.infer<typeof schema>
@@ -24,16 +25,37 @@ const CATEGORIES = [
 interface Props {
   onSubmit: (data: PostFormData) => Promise<void>
   onCancel: () => void
+  enrolledCourses?: { id: string; title: string }[]
+  defaultCourseId?: string
 }
 
-export function PostForm({ onSubmit, onCancel }: Props) {
+export function PostForm({ onSubmit, onCancel, enrolledCourses = [], defaultCourseId }: Props) {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<PostFormData>({
     resolver: zodResolver(schema),
-    defaultValues: { category: 'general' },
+    defaultValues: {
+      category: 'general',
+      course_id: defaultCourseId ?? null,
+    },
   })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Curso opcional */}
+      {enrolledCourses.length > 0 && (
+        <div className="space-y-1.5">
+          <Label className="text-gray-700 font-medium">¿A qué curso pertenece? <span className="text-gray-400 font-normal">(opcional)</span></Label>
+          <select
+            {...register('course_id')}
+            className="w-full h-10 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">Toda la escuela</option>
+            {enrolledCourses.map(c => (
+              <option key={c.id} value={c.id}>{c.title}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="space-y-1.5">
         <Label className="text-gray-700 font-medium">Categoría</Label>
         <div className="flex gap-2 flex-wrap">
