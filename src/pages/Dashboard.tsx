@@ -55,7 +55,7 @@ export default function Dashboard() {
     const prog = progressMap?.[e.id]
     return e.last_lesson_id && prog && Number(prog.percent) > 0 && Number(prog.percent) < 100
   })
-  const continueCourse = continueEnrollment?.courses as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
+  const continueCourse = continueEnrollment?.courses as unknown as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
   const continueProgress = continueEnrollment ? progressMap?.[continueEnrollment.id] : null
 
   const { data: communityPosts } = useQuery({
@@ -220,7 +220,7 @@ export default function Dashboard() {
             <h2 className="font-heading text-lg font-semibold text-gray-900">Mis cursos</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {enrollments.map(enrollment => {
-                const course = enrollment.courses as { id: string; title: string; slug: string } | null
+                const course = enrollment.courses as unknown as { id: string; title: string; slug: string } | null
                 if (!course) return null
                 const progress = progressMap?.[enrollment.id] ?? { percent: 0, completed: 0, total: 0 }
                 return (
