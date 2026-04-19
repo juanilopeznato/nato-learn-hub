@@ -143,13 +143,12 @@ export default function NatoOwnerPanel() {
   const { data: productionCourses = [], isLoading: loadingProduction } = useQuery({
     queryKey: ['nato-production-courses'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_production_courses')
+      const { data, error } = await supabase.rpc('get_production_courses_with_forecast')
       if (error) throw error
       return data as {
         course_id: string; course_title: string; tenant_name: string
-        instructor_name: string; course_price: number
-        recovery_target: number; paid_sales: number
-        nato_sales: number; nato_revenue_ars: number; is_recovered: boolean
+        recovery_target: number; nato_sales: number; is_recovered: boolean
+        sales_last_30d: number; months_to_recovery: number | null
       }[]
     },
     enabled,
@@ -548,15 +547,15 @@ export default function NatoOwnerPanel() {
                     </p>
                   </div>
                   <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs text-gray-500 mb-1">Valor estimado total</p>
-                    <p className="text-xl font-bold text-purple-400">
-                      {fmtK(productionCourses.reduce((s, c) => s + (c.recovery_target * Number(c.course_price)), 0))}
+                    <p className="text-xs text-gray-500 mb-1">Sin ventas este mes</p>
+                    <p className="text-xl font-bold text-red-400">
+                      {productionCourses.filter(c => !c.is_recovered && c.sales_last_30d === 0).length}
                     </p>
                   </div>
                   <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs text-gray-500 mb-1">Total cobrado NATO</p>
+                    <p className="text-xs text-gray-500 mb-1">Ventas este mes</p>
                     <p className="text-xl font-bold text-green-400">
-                      {fmtK(productionCourses.reduce((s, c) => s + Number(c.nato_revenue_ars), 0))}
+                      {productionCourses.reduce((s, c) => s + (c.sales_last_30d ?? 0), 0)}
                     </p>
                   </div>
                 </div>
@@ -565,20 +564,12 @@ export default function NatoOwnerPanel() {
                 <div className="space-y-3">
                   {productionCourses.map(c => {
                     const pct = Math.min(100, Math.round((c.nato_sales / c.recovery_target) * 100))
-                    const estimatedValue = c.recovery_target * Number(c.course_price)
                     return (
                       <div key={c.course_id} className="bg-gray-900 rounded-2xl border border-gray-800 p-5">
                         <div className="flex items-start justify-between gap-4 mb-4">
                           <div>
                             <p className="font-semibold text-white">{c.course_title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {c.tenant_name} · Instructor: <span className="text-gray-400">{c.instructor_name}</span>
-                            </p>
-                            {Number(c.course_price) > 0 && (
-                              <p className="text-xs text-gray-600 mt-0.5">
-                                Precio: {fmt(Number(c.course_price))} · Valor contrato: <span className="text-purple-400">{fmtK(estimatedValue)}</span>
-                              </p>
-                            )}
+                            <p className="text-xs text-gray-500 mt-0.5">{c.tenant_name}</p>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             {c.is_recovered ? (
@@ -616,23 +607,36 @@ export default function NatoOwnerPanel() {
                           </div>
                           <p className="text-xs text-gray-600">
                             {c.is_recovered
-                              ? `${Number(c.paid_sales) - c.recovery_target} ventas ya van al creador`
+                              ? `✅ Recuperado — todas las ventas van al creador`
                               : `Faltan ${c.recovery_target - c.nato_sales} ventas para completar el recupero`}
                           </p>
                         </div>
 
-                        <div className="grid grid-cols-4 gap-3 pt-3 border-t border-gray-800">
-                          <div>
-                            <p className="text-xs text-gray-500">Ventas totales</p>
-                            <p className="text-sm font-semibold text-white mt-0.5">{c.paid_sales}</p>
+                        {/* Forecast */}
+                        {!c.is_recovered && (
+                          <div className={`rounded-lg px-3 py-2 mb-4 text-xs ${
+                            c.months_to_recovery === null
+                              ? 'bg-red-900/30 text-red-400'
+                              : c.months_to_recovery <= 2
+                              ? 'bg-green-900/30 text-green-400'
+                              : 'bg-yellow-900/20 text-yellow-400'
+                          }`}>
+                            {c.sales_last_30d === 0 || c.months_to_recovery === null
+                              ? `⚠️ Sin ventas este mes — sin ritmo actual no hay fecha de recupero`
+                              : c.months_to_recovery <= 1
+                              ? `🚀 A este ritmo (${c.sales_last_30d} ventas/mes) se recupera este mes`
+                              : `📅 A este ritmo (${c.sales_last_30d} ventas/mes) se recupera en ~${c.months_to_recovery} meses`}
                           </div>
+                        )}
+
+                        <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-800">
                           <div>
                             <p className="text-xs text-gray-500">Ventas NATO</p>
                             <p className="text-sm font-semibold text-yellow-400 mt-0.5">{c.nato_sales}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Revenue NATO</p>
-                            <p className="text-sm font-semibold text-purple-400 mt-0.5">{fmtK(Number(c.nato_revenue_ars))}</p>
+                            <p className="text-xs text-gray-500">Últ. 30 días</p>
+                            <p className="text-sm font-semibold text-white mt-0.5">{c.sales_last_30d}</p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500">Progreso</p>
