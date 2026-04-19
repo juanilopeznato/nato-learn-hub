@@ -180,7 +180,7 @@ export function LessonComments({ lessonId, tenantId, profileId, profileRole }: P
         .eq('lesson_id', lessonId)
         .order('created_at', { ascending: true })
       if (error) throw error
-      return (data ?? []) as Comment[]
+      return (data ?? []) as unknown as Comment[]
     },
   })
 

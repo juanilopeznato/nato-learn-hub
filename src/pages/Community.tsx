@@ -42,7 +42,7 @@ export default function Community() {
         .select('course_id, courses(id, title)')
         .eq('student_id', profile!.id)
         .in('mp_status', ['free', 'approved'])
-      return (data ?? []).map(e => e.courses as { id: string; title: string } | null).filter(Boolean) as { id: string; title: string }[]
+      return (data ?? []).map(e => e.courses as unknown as { id: string; title: string } | null).filter(Boolean) as { id: string; title: string }[]
     },
   })
 
