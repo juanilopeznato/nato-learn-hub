@@ -419,21 +419,39 @@ export default function TenantSettings() {
           {/* Billing */}
           <TabsContent value="billing" className="mt-6 space-y-6">
             {/* Current plan */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="font-heading font-semibold text-gray-900">Tu plan actual</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">
-                    {planExpiresAt
-                      ? `Activo hasta ${new Date(planExpiresAt).toLocaleDateString('es-AR')}`
-                      : currentPlanName === 'gratis' ? 'Plan gratuito sin vencimiento' : 'Activo'}
-                  </p>
+            {(() => {
+              const now = Date.now()
+              const expiresMs = planExpiresAt ? new Date(planExpiresAt).getTime() : null
+              const daysLeft = expiresMs ? Math.ceil((expiresMs - now) / (1000 * 60 * 60 * 24)) : null
+              const isExpired = daysLeft !== null && daysLeft <= 0
+              const expiringSoon = daysLeft !== null && daysLeft > 0 && daysLeft <= 7
+              return (
+                <div className={`bg-white rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-red-300' : expiringSoon ? 'border-orange-300' : 'border-gray-200'}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="font-heading font-semibold text-gray-900">Tu plan actual</h2>
+                      <p className="text-sm text-gray-500 mt-0.5">
+                        {isExpired
+                          ? '⚠️ Tu plan venció — renovalo para seguir usando todas las funciones'
+                          : expiringSoon
+                          ? `⏰ Tu plan vence en ${daysLeft} día${daysLeft === 1 ? '' : 's'} — renovalo ahora`
+                          : planExpiresAt
+                          ? `Activo hasta el ${new Date(planExpiresAt).toLocaleDateString('es-AR')} (${daysLeft} días restantes)`
+                          : currentPlanName === 'gratis' ? 'Plan gratuito sin vencimiento' : 'Activo'}
+                      </p>
+                    </div>
+                    <Badge className="capitalize text-sm px-3 py-1" variant={isExpired ? 'destructive' : currentPlanName === 'gratis' ? 'secondary' : 'default'}>
+                      {isExpired ? 'Vencido' : currentPlanName}
+                    </Badge>
+                  </div>
+                  {(isExpired || expiringSoon) && (
+                    <p className="text-xs text-gray-500">
+                      Elegí un plan abajo para renovar o actualizar tu suscripción.
+                    </p>
+                  )}
                 </div>
-                <Badge className="capitalize text-sm px-3 py-1" variant={currentPlanName === 'gratis' ? 'secondary' : 'default'}>
-                  {currentPlanName}
-                </Badge>
-              </div>
-            </div>
+              )
+            })()}
 
             {/* Plans comparison */}
             <div className="grid sm:grid-cols-3 gap-4">

@@ -234,6 +234,7 @@ export default function InstructorCoursePage() {
             <TabsTrigger value="details">Info y ventas</TabsTrigger>
             <TabsTrigger value="calendar">Clases en vivo</TabsTrigger>
             <TabsTrigger value="students">Estudiantes</TabsTrigger>
+            <TabsTrigger value="inactive">Inactivos</TabsTrigger>
             <TabsTrigger value="coupons">Cupones</TabsTrigger>
             <TabsTrigger value="kpis">Métricas</TabsTrigger>
           </TabsList>
@@ -429,6 +430,102 @@ export default function InstructorCoursePage() {
                   </table>
                 </div>
               )}
+            </div>
+          </TabsContent>
+
+          {/* Tab: Inactivos */}
+          <TabsContent value="inactive">
+            <div className="max-w-4xl space-y-4">
+              <div>
+                <h2 className="font-heading text-xl font-bold text-gray-900">Estudiantes inactivos</h2>
+                <p className="text-sm text-gray-500 mt-1">Alumnos sin actividad en los últimos 3 días con curso incompleto.</p>
+              </div>
+              {(() => {
+                const now = Date.now()
+                const d3 = 3 * 24 * 60 * 60 * 1000
+                const d7 = 7 * 24 * 60 * 60 * 1000
+                const inactive = (enrollments ?? [])
+                  .filter((e: any) => {
+                    const progress = progressData?.[e.id] ?? 0
+                    if (progress >= 100) return false
+                    if (!e.last_accessed_at) return true
+                    return now - new Date(e.last_accessed_at).getTime() >= d3
+                  })
+                  .map((e: any) => {
+                    const daysSince = e.last_accessed_at
+                      ? Math.floor((now - new Date(e.last_accessed_at).getTime()) / (1000 * 60 * 60 * 24))
+                      : null
+                    return { ...e, daysSince }
+                  })
+                  .sort((a: any, b: any) => (b.daysSince ?? 999) - (a.daysSince ?? 999))
+
+                if (inactive.length === 0) {
+                  return (
+                    <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+                      <p className="text-green-600 font-medium">Todos los estudiantes están activos 🎉</p>
+                    </div>
+                  )
+                }
+
+                return (
+                  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                          {['Estudiante', 'Progreso', 'Última actividad', 'Inactividad'].map(h => (
+                            <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {inactive.map((enrollment: any) => {
+                          const student = enrollment.student
+                          const progress = progressData?.[enrollment.id] ?? 0
+                          const days = enrollment.daysSince
+                          const badgeColor = days === null ? 'bg-gray-100 text-gray-500'
+                            : days >= 7 ? 'bg-red-100 text-red-700'
+                            : 'bg-orange-100 text-orange-700'
+                          return (
+                            <tr key={enrollment.id} className="hover:bg-gray-50 transition-colors">
+                              <td className="px-4 py-3">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                                    <span className="text-xs text-gray-500 font-medium">
+                                      {(student?.full_name ?? '?').charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-gray-900">{student?.full_name ?? '—'}</p>
+                                    <p className="text-xs text-gray-400">{student?.email ?? ''}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">
+                                <div className="flex items-center gap-2 min-w-[100px]">
+                                  <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+                                    <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.min(100, progress)}%` }} />
+                                  </div>
+                                  <span className="text-xs text-gray-500 shrink-0">{Math.round(progress)}%</span>
+                                </div>
+                              </td>
+                              <td className="px-4 py-3 text-gray-400 text-xs">
+                                {enrollment.last_accessed_at
+                                  ? new Date(enrollment.last_accessed_at).toLocaleDateString('es-AR')
+                                  : 'Nunca'}
+                              </td>
+                              <td className="px-4 py-3">
+                                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${badgeColor}`}>
+                                  {days === null ? 'Sin actividad' : `${days} días`}
+                                </span>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )
+              })()}
             </div>
           </TabsContent>
 
