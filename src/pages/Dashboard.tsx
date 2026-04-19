@@ -1,16 +1,21 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, LogOut, BookOpen, User, Users, Play, MessageSquare } from 'lucide-react'
 import { StreakBadge } from '@/components/StreakBadge'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { EnrolledCourseCard } from '@/components/dashboard/EnrolledCourseCard'
 import { Leaderboard } from '@/components/dashboard/Leaderboard'
 import { NotificationBell } from '@/components/NotificationBell'
+import OnboardingModal from '@/components/OnboardingModal'
 
 export default function Dashboard() {
   const { profile, tenant, signOut } = useAuth()
+  const queryClient = useQueryClient()
+  const [onboardingDone, setOnboardingDone] = useState(false)
+  const showOnboarding = profile && !(profile as any).onboarding_completed && !onboardingDone
 
   const { data: enrollments, isLoading } = useQuery({
     queryKey: ['enrollments', profile?.id],
@@ -266,6 +271,18 @@ export default function Dashboard() {
           </section>
         )}
       </main>
+
+      {/* Onboarding modal — solo en el primer login */}
+      {showOnboarding && tenant && (
+        <OnboardingModal
+          profileId={profile.id}
+          tenantId={tenant.id}
+          onComplete={() => {
+            setOnboardingDone(true)
+            queryClient.invalidateQueries({ queryKey: ['profile'] })
+          }}
+        />
+      )}
     </div>
   )
 }

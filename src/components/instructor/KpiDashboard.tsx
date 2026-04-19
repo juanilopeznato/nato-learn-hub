@@ -297,6 +297,55 @@ export function KpiDashboard({ courseIds }: Props) {
           </div>
         </div>
       )}
+
+      {/* Abandoned lessons — single course only */}
+      {singleCourseId && <AbandonedLessons courseId={singleCourseId} />}
+    </div>
+  )
+}
+
+function AbandonedLessons({ courseId }: { courseId: string }) {
+  const { data: rows = [] } = useQuery({
+    queryKey: ['kpi-abandoned-lessons', courseId],
+    queryFn: async () => {
+      const { data } = await supabase.rpc('get_abandoned_lessons', { p_course_id: courseId })
+      return data ?? []
+    },
+  })
+
+  if (rows.length === 0) return null
+
+  return (
+    <div className="bg-white border border-red-100 rounded-xl p-4">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-3">
+        <span className="w-4 h-4 text-red-400">⚠️</span>
+        Lecciones con más abandono
+      </h4>
+      <div className="space-y-2">
+        {rows.map((row: any, i: number) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <span className="text-sm text-gray-700 truncate block">{row.lesson_title}</span>
+                  <span className="text-xs text-gray-400">{row.module_title}</span>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-xs font-semibold text-red-500">{row.abandoned_count} abandonaron</span>
+                  <span className="text-xs text-gray-400 block">{row.abandon_rate}% tasa</span>
+                </div>
+              </div>
+              <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-red-400 rounded-full"
+                  style={{ width: `${row.abandon_rate}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-gray-400 mt-3">Estas lecciones tienen alumnos que las empezaron pero no las terminaron. Revisá el contenido.</p>
     </div>
   )
 }
