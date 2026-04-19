@@ -31,6 +31,7 @@ const EmailMarketing = React.lazy(() => import("./pages/EmailMarketing"));
 const NatoOwnerPanel = React.lazy(() => import("./pages/NatoOwnerPanel"))
 const CreateSchool = React.lazy(() => import("./pages/CreateSchool"));
 const MpOAuthCallback = React.lazy(() => import("./pages/MpOAuthCallback"));
+const Affiliates = React.lazy(() => import("./pages/Affiliates"));
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,11 @@ const App = () => (
               </React.Suspense>
             } />
             <Route path="/courses/:slug" element={<CourseDetail />} />
+            <Route path="/affiliates" element={
+              <React.Suspense fallback={null}>
+                <Affiliates />
+              </React.Suspense>
+            } />
             <Route path="/pricing" element={
               <React.Suspense fallback={null}>
                 <Pricing />

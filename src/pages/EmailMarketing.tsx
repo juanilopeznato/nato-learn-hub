@@ -59,6 +59,33 @@ const defaultFormData: CampaignFormData = {
   target_course_id: '',
 }
 
+const EMAIL_TEMPLATES = [
+  {
+    label: 'Nuevo módulo disponible',
+    subject: '¡Hay contenido nuevo en [Nombre del curso]!',
+    preview_text: 'Ya podés ver el nuevo módulo en tu panel',
+    body_html: '<h2>¡Nuevo módulo disponible! 🎉</h2><p>Hola,</p><p>Acabamos de publicar un nuevo módulo en <strong>[Nombre del curso]</strong>. Ya está disponible en tu panel de estudiante.</p><p>Es el momento perfecto para avanzar y no perder el ritmo.</p><a href="[URL del curso]" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">Ver nuevo contenido →</a><p>¡Seguimos!</p>',
+  },
+  {
+    label: 'Última semana para terminar',
+    subject: 'Última semana para completar [Nombre del curso]',
+    preview_text: 'No dejes que el tiempo se acabe',
+    body_html: '<h2>⏰ Última semana</h2><p>Hola,</p><p>Esta es tu última oportunidad de completar <strong>[Nombre del curso]</strong> antes de que cierre el acceso.</p><p>No pierdas todo el avance que ya hiciste.</p><a href="[URL del curso]" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">Terminar ahora →</a>',
+  },
+  {
+    label: 'Descuento especial',
+    subject: '🔥 [X]% de descuento por tiempo limitado',
+    preview_text: 'Código exclusivo para vos',
+    body_html: '<h2>🔥 Oferta exclusiva</h2><p>Hola,</p><p>Por ser parte de nuestra comunidad, tenés un <strong>[X]% de descuento</strong> en [Nombre del curso].</p><p>Usá el código <strong>[CODIGO]</strong> al momento de pagar. Válido hasta [FECHA].</p><a href="[URL del curso]" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">Aprovechar descuento →</a>',
+  },
+  {
+    label: '¡Gracias por inscribirte!',
+    subject: '¡Bienvenido/a a [Nombre del curso]!',
+    preview_text: 'Tu acceso ya está listo',
+    body_html: '<h2>¡Bienvenido/a! 🎉</h2><p>Hola,</p><p>Gracias por inscribirte en <strong>[Nombre del curso]</strong>. Tu acceso ya está activo.</p><p>Podés empezar cuando quieras desde tu panel:</p><a href="[URL del curso]" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">Empezar ahora →</a><p>¡Cualquier duda, respondé este mail!</p>',
+  },
+]
+
 const STATUS_LABELS: Record<CampaignStatus, string> = {
   draft: 'Borrador',
   sending: 'Enviando',
@@ -77,6 +104,7 @@ export default function EmailMarketing() {
   const [showEditor, setShowEditor] = useState(false)
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null)
   const [formData, setFormData] = useState<CampaignFormData>(defaultFormData)
+  const [showTemplates, setShowTemplates] = useState(false)
   const [confirmSendCampaign, setConfirmSendCampaign] = useState<Campaign | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
@@ -363,6 +391,39 @@ export default function EmailMarketing() {
             </TabsList>
 
             <TabsContent value="content" className="space-y-4 mt-4">
+              {/* Templates selector */}
+              <div className="space-y-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setShowTemplates(v => !v)}
+                >
+                  <Mail className="w-4 h-4" />
+                  Usar template
+                  {showTemplates ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </Button>
+                {showTemplates && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {EMAIL_TEMPLATES.map((t, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className="text-left px-3 py-2 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 text-sm transition-all"
+                        onClick={() => {
+                          setFormData(f => ({ ...f, subject: t.subject, preview_text: t.preview_text, body_html: t.body_html }))
+                          setShowTemplates(false)
+                        }}
+                      >
+                        <p className="font-medium text-gray-900 text-xs">{t.label}</p>
+                        <p className="text-gray-400 text-xs mt-0.5 truncate">{t.subject}</p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-1.5">
                 <Label>Asunto *</Label>
                 <Input

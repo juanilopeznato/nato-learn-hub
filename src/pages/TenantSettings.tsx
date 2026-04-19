@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
@@ -68,6 +68,7 @@ interface SubscriptionPayment {
 export default function TenantSettings() {
   const { profile, tenant, signOut } = useAuth()
   const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null)
+  const [billingAnnual, setBillingAnnual] = useState(false)
 
   const { control: brandControl, ...brandFormRest } = useForm<BrandData>({ resolver: zodResolver(brandSchema) })
   const brandForm = { control: brandControl, ...brandFormRest }
@@ -178,16 +179,16 @@ export default function TenantSettings() {
     onError: (e: Error) => toast.error(e.message),
   })
 
-  async function handleUpgrade(plan_name: string) {
+  async function handleUpgrade(plan_name: string, billing_period: 'monthly' | 'annual' = 'monthly') {
     setUpgradingPlan(plan_name)
     try {
       const { data: { session } } = await supabase.auth.getSession()
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-subscription`,
+        `${import.meta.env.VITE_SUPABASE_URL ?? 'https://hoolsigtquohayhpqgtb.supabase.co'}/functions/v1/create-subscription`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
-          body: JSON.stringify({ plan_name }),
+          body: JSON.stringify({ plan_name, billing_period }),
         }
       )
       const data = await res.json()
@@ -453,10 +454,38 @@ export default function TenantSettings() {
               )
             })()}
 
+            {/* Toggle mensual/anual */}
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={() => setBillingAnnual(false)}
+                className={`text-sm font-medium transition-colors ${!billingAnnual ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                Mensual
+              </button>
+              <button
+                onClick={() => setBillingAnnual(b => !b)}
+                className={`relative w-11 h-6 rounded-full transition-colors ${billingAnnual ? 'bg-primary' : 'bg-gray-300'}`}
+              >
+                <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${billingAnnual ? 'translate-x-5' : ''}`} />
+              </button>
+              <button
+                onClick={() => setBillingAnnual(true)}
+                className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${billingAnnual ? 'text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                Anual
+                <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">−17%</span>
+              </button>
+            </div>
+
             {/* Plans comparison */}
             <div className="grid sm:grid-cols-3 gap-4">
               {(plans ?? []).map(plan => {
                 const isCurrent = plan.name === currentPlanName
+                const monthlyPrice = Number(plan.price_ars)
+                const displayPrice = billingAnnual && monthlyPrice > 0
+                  ? Math.round(monthlyPrice * 10 / 12)
+                  : monthlyPrice
+                const annualTotal = monthlyPrice * 10
                 return (
                   <div
                     key={plan.id}
@@ -471,9 +500,14 @@ export default function TenantSettings() {
                         )}
                       </div>
                       <p className="text-2xl font-bold text-gray-900">
-                        {plan.price_ars === 0 ? 'Gratis' : `ARS ${Number(plan.price_ars).toLocaleString('es-AR')}`}
-                        {plan.price_ars > 0 && <span className="text-sm font-normal text-gray-400">/mes</span>}
+                        {displayPrice === 0 ? 'Gratis' : `ARS ${displayPrice.toLocaleString('es-AR')}`}
+                        {displayPrice > 0 && <span className="text-sm font-normal text-gray-400">/mes</span>}
                       </p>
+                      {billingAnnual && monthlyPrice > 0 && (
+                        <p className="text-xs text-green-600 mt-0.5">
+                          ARS {annualTotal.toLocaleString('es-AR')}/año — 2 meses gratis
+                        </p>
+                      )}
                     </div>
                     <ul className="space-y-1.5">
                       {(plan.features as string[]).map((f, i) => (
@@ -489,7 +523,7 @@ export default function TenantSettings() {
                         size="sm"
                         className="w-full"
                         disabled={upgradingPlan === plan.name}
-                        onClick={() => handleUpgrade(plan.name)}
+                        onClick={() => handleUpgrade(plan.name, billingAnnual ? 'annual' : 'monthly')}
                       >
                         {upgradingPlan === plan.name ? 'Procesando...' : `Mejorar a ${plan.display_name}`}
                       </Button>

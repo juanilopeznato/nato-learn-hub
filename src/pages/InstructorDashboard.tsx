@@ -352,10 +352,13 @@ export default function InstructorDashboard() {
             ) : (
               <div className="space-y-6">
                 <div className="text-center py-4">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <span className="text-2xl">🚀</span>
+                  </div>
                   <h2 className="font-heading text-xl font-bold text-gray-900">¡Bienvenido a NATO University!</h2>
-                  <p className="text-gray-500 text-sm mt-1">Seguí estos pasos para lanzar tu primera escuela online.</p>
+                  <p className="text-gray-500 text-sm mt-1">Seguí estos 4 pasos para lanzar tu primera escuela online.</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Step 1 */}
                   <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-3">
                     <div className="flex items-center gap-3">
@@ -399,6 +402,22 @@ export default function InstructorDashboard() {
                     </div>
                     <Button variant="hero-outline" size="sm" asChild className="mt-auto">
                       <Link to="/settings">Conectar MP</Link>
+                    </Button>
+                  </div>
+
+                  {/* Step 4 */}
+                  <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20 rounded-2xl p-6 flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                      <TrendingUp className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 text-sm">Publicar y compartir</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">Publicá tu curso y compartí el link con tu audiencia.</p>
+                    </div>
+                    <Button variant="hero" size="sm" className="mt-auto" onClick={() => setShowCreateDialog(true)}>
+                      <Plus className="w-3.5 h-3.5" />
+                      Crear mi primer curso
                     </Button>
                   </div>
                 </div>

@@ -188,7 +188,7 @@ export default function Pricing() {
                         className="w-full"
                         asChild
                       >
-                        <Link to={`/create-school?plan=${plan.name}`}>Crear mi escuela</Link>
+                        <Link to={`/create-school?plan=${plan.name}&billing=${annual ? 'annual' : 'monthly'}`}>Crear mi escuela</Link>
                       </Button>
                     )}
                   </div>
