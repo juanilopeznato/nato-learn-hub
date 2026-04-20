@@ -125,7 +125,7 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
                           isCurrent
                             ? 'text-primary font-semibold'
                             : isCompleted
-                            ? 'text-gray-400 line-through text-xs'
+                            ? 'text-green-700 text-xs hover:text-green-800'
                             : 'text-gray-600 hover:text-gray-900'
                         } text-xs leading-snug`}
                       >

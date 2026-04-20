@@ -320,26 +320,13 @@ export default function LessonView() {
               </div>
             )}
 
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
               <h1 className="font-heading text-xl font-semibold text-gray-900">{currentLesson.title}</h1>
-              {isCompleted ? (
-                <span className="flex items-center gap-1.5 text-sm text-green-600 shrink-0">
-                  <CheckCircle className="w-4 h-4" />
+              {isCompleted && (
+                <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 border border-green-200 rounded-full px-2.5 py-1 shrink-0">
+                  <CheckCircle className="w-3.5 h-3.5" />
                   Completada
                 </span>
-              ) : !enrollment ? (
-                <span className="text-xs text-gray-400 shrink-0">Inscribite al curso para marcar lecciones</span>
-              ) : (
-                <Button
-                  variant="hero"
-                  size="sm"
-                  onClick={() => completeMutation.mutate()}
-                  disabled={completeMutation.isPending}
-                  className="shrink-0"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  Marcar completada
-                </Button>
               )}
             </div>
 
@@ -421,27 +408,8 @@ export default function LessonView() {
               />
             )}
 
-            {/* Navegación anterior/siguiente */}
-            <div className="flex justify-between gap-3 pt-2">
-              <Button
-                variant="hero-outline"
-                size="sm"
-                disabled={!prevLesson}
-                onClick={() => prevLesson && navigate(`/learn/${courseSlug}/${prevLesson.id}`)}
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Anterior
-              </Button>
-              <Button
-                variant="hero"
-                size="sm"
-                disabled={!nextLesson}
-                onClick={() => nextLesson && navigate(`/learn/${courseSlug}/${nextLesson.id}`)}
-              >
-                Siguiente
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
+            {/* Spacer para el sticky bar */}
+            <div className="h-20" />
           </div>
 
           {/* Right: sidebar (desktop) */}
@@ -458,6 +426,72 @@ export default function LessonView() {
               />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Sticky action bar — siempre visible */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-gray-200 shadow-lg">
+        <div className="container mx-auto px-4 h-16 flex items-center gap-3 max-w-5xl">
+          {/* Anterior */}
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={!prevLesson}
+            onClick={() => prevLesson && navigate(`/learn/${courseSlug}/${prevLesson.id}`)}
+            className="shrink-0 text-gray-500"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:block">Anterior</span>
+          </Button>
+
+          {/* Progreso central */}
+          <div className="flex-1 flex flex-col items-center gap-1">
+            <div className="text-xs text-gray-400">
+              {currentIndex + 1} de {allLessons.length} lecciones
+            </div>
+            <div className="w-full max-w-xs h-1 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-500"
+                style={{ width: `${Math.round(Number(progressData?.percent ?? 0))}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Acción principal derecha */}
+          {!enrollment ? (
+            <Button variant="hero-outline" size="sm" asChild className="shrink-0">
+              <a href={`/courses/${courseSlug}`}>Inscribirse</a>
+            </Button>
+          ) : isCompleted ? (
+            nextLesson ? (
+              <Button
+                variant="hero"
+                size="sm"
+                className="shrink-0"
+                onClick={() => navigate(`/learn/${courseSlug}/${nextLesson.id}`)}
+              >
+                Siguiente
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            ) : (
+              <span className="flex items-center gap-1.5 text-sm text-green-600 font-semibold shrink-0">
+                <CheckCircle className="w-4 h-4" />
+                Curso completado
+              </span>
+            )
+          ) : (
+            <Button
+              variant="hero"
+              size="sm"
+              onClick={() => completeMutation.mutate()}
+              disabled={completeMutation.isPending}
+              className="shrink-0 bg-green-600 hover:bg-green-700"
+            >
+              <CheckCircle className="w-4 h-4" />
+              {completeMutation.isPending ? 'Guardando...' : 'Completar'}
+              {nextLesson && <ArrowRight className="w-4 h-4" />}
+            </Button>
+          )}
         </div>
       </div>
 

@@ -235,6 +235,7 @@ export default function Dashboard() {
                     courseId={course.id}
                     courseTitle={course.title}
                     courseSlug={course.slug}
+                    thumbnailUrl={(course as any).thumbnail_url ?? null}
                     progressPercent={Number(progress.percent)}
                     completedLessons={progress.completed}
                     totalLessons={progress.total}
