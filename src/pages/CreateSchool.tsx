@@ -322,30 +322,37 @@ export default function CreateSchool() {
           {/* Step 3 — Listo! */}
           {step === 3 && (
             <div className="text-center space-y-6">
-              <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-8 h-8 text-green-400" />
+              {/* Celebration */}
+              <div className="space-y-3">
+                <div className="w-20 h-20 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-10 h-10 text-green-400" />
+                </div>
+                <div>
+                  <h1 className="font-heading text-2xl font-bold text-white">
+                    ¡{schoolName || 'Tu escuela'} está lista!
+                  </h1>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Estás a minutos de tu primera venta.
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <h1 className="font-heading text-2xl font-bold text-white">
-                  ¡Tu escuela está lista!
-                </h1>
-                <p className="text-gray-400">
-                  <span className="text-white font-semibold">{schoolName || 'Tu escuela'}</span> fue creada correctamente.
-                  <br />Empezá agregando tu primer curso.
-                </p>
-              </div>
-
-              <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 text-left space-y-2">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Próximos pasos</p>
+              {/* What happens next — outcomes, not tasks */}
+              <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-5 text-left space-y-4">
+                <p className="text-xs font-semibold text-primary uppercase tracking-wide">Tu camino al primer cobro</p>
                 {[
-                  'Creá tu primer módulo y subí tus lecciones',
-                  'Configurá el precio o poné el curso gratis',
-                  'Publicá y compartí el link con tu audiencia',
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                    <span className="text-primary font-bold shrink-0">{i + 1}.</span>
-                    {item}
+                  { step: '1', action: 'Subís 3 lecciones', outcome: 'Tu curso ya puede recibir inscriptos' },
+                  { step: '2', action: 'Configurás el precio', outcome: 'Mercado Pago activo en minutos' },
+                  { step: '3', action: 'Compartís el link', outcome: 'Tu primer alumno puede pagar hoy' },
+                ].map((item) => (
+                  <div key={item.step} className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      {item.step}
+                    </div>
+                    <div>
+                      <span className="text-white text-sm font-medium">{item.action}</span>
+                      <span className="text-gray-400 text-sm"> → {item.outcome}</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -356,7 +363,7 @@ export default function CreateSchool() {
                 onClick={handleGoToPanel}
               >
                 <GraduationCap className="w-4 h-4" />
-                Ir a mi panel de instructor
+                Ir a mi panel — crear mi primer curso
               </Button>
 
               <p className="text-xs text-gray-600">

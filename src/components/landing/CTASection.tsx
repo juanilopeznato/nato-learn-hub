@@ -15,19 +15,30 @@ export default function CTASection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10 text-center space-y-6">
+        <p className="text-sm font-semibold uppercase tracking-widest text-primary/80">
+          Más de 50 instructores ya están cobrando
+        </p>
         <h2 className="font-heading text-3xl sm:text-5xl font-bold text-white">
-          ¿Listo para{' '}
-          <span className="text-gradient-hero">empezar?</span>
+          ¿Cuándo arrancás{' '}
+          <span className="text-gradient-hero">vos?</span>
         </h2>
         <p className="text-lg text-white/60 max-w-md mx-auto">
-          Creá tu cuenta gratis y accedé a todos los cursos de {tenant?.name ?? 'NATO University'}.
+          Creá tu escuela gratis en 2 minutos. Tu primer curso puede estar publicado hoy.
         </p>
-        <Button variant="hero" size="xl" asChild>
-          <Link to="/signup">
-            Crear cuenta gratis
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button variant="hero" size="xl" asChild>
+            <Link to="/create-school">
+              Crear mi escuela gratis
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </Button>
+          <Button variant="hero-outline" size="xl" asChild>
+            <Link to="/signup">
+              Soy estudiante
+            </Link>
+          </Button>
+        </div>
+        <p className="text-sm text-white/30">Sin tarjeta de crédito. Sin contrato. Cancelás cuando querés.</p>
       </div>
     </section>
   )
