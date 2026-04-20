@@ -100,7 +100,6 @@ export default function Pricing() {
             {annual && (
               <p className="text-sm text-green-400 mt-2">2 meses gratis incluidos</p>
             )}
-          </div>
 
           {/* Banner 14 días */}
           <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-2xl p-4 mb-8 flex items-center gap-4">
