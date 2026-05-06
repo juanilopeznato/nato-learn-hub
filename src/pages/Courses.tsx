@@ -16,6 +16,7 @@ type Course = {
   description: string | null
   price: number | null
   is_free: boolean
+  billing_type: 'free' | 'one_time' | 'monthly' | 'annual' | null
   thumbnail_url: string | null
   category: string | null
   is_featured: boolean
@@ -81,7 +82,7 @@ export default function Courses() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('courses')
-        .select('id, title, slug, description, price, is_free, thumbnail_url, category, is_featured')
+        .select('id, title, slug, description, price, is_free, billing_type, thumbnail_url, category, is_featured')
         .eq('is_published', true)
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false })
@@ -253,15 +254,43 @@ export default function Courses() {
             {[1, 2, 3].map(i => <CourseCardSkeleton key={i} />)}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl p-14 text-center space-y-4 border border-gray-100">
+          <div className="bg-white rounded-2xl p-14 text-center space-y-5 border border-gray-100">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
               <BookOpen className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="font-heading text-xl font-semibold text-gray-900">Sin resultados</h3>
-            <p className="text-gray-500 max-w-xs mx-auto">
-              No encontramos cursos con esos criterios.
-            </p>
-            <Button variant="ghost" size="sm" onClick={() => { setSearch(''); setCategory(''); setPriceFilter('all') }}>
+            <div>
+              <h3 className="font-heading text-xl font-semibold text-gray-900">Sin resultados</h3>
+              <p className="text-gray-500 max-w-xs mx-auto mt-1">
+                No encontramos cursos{search ? ` para "${search}"` : ' con esos filtros'}.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {category && (
+                <button
+                  onClick={() => setCategory('')}
+                  className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition-colors"
+                >
+                  Quitar categoría
+                </button>
+              )}
+              {priceFilter !== 'all' && (
+                <button
+                  onClick={() => setPriceFilter('all')}
+                  className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition-colors"
+                >
+                  Ver todos los precios
+                </button>
+              )}
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition-colors"
+                >
+                  Limpiar búsqueda
+                </button>
+              )}
+            </div>
+            <Button variant="hero" size="sm" onClick={() => { setSearch(''); setCategory(''); setPriceFilter('all') }}>
               Ver todos los cursos
             </Button>
           </div>
@@ -312,16 +341,22 @@ export default function Courses() {
                       <p className="text-sm text-gray-500 line-clamp-2 flex-1">{course.description}</p>
                     )}
                     <div className="flex items-center justify-between pt-1">
-                      <div className="flex items-center gap-2">
-                        {course.is_free || !course.price ? (
-                          <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 text-xs font-semibold">
-                            Gratis
-                          </Badge>
-                        ) : (
-                          <span className="text-sm font-bold text-gray-900">
-                            ARS {Number(course.price).toLocaleString('es-AR')}
-                          </span>
-                        )}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {(() => {
+                          const bt = course.billing_type ?? (course.is_free ? 'free' : 'one_time')
+                          if (bt === 'free' || !course.price) return (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 text-xs font-semibold">Gratis</Badge>
+                          )
+                          const suffix = bt === 'monthly' ? '/mes' : bt === 'annual' ? '/año' : ''
+                          return (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-bold text-gray-900">
+                                ARS {Number(course.price).toLocaleString('es-AR')}
+                              </span>
+                              {suffix && <span className="text-xs text-gray-400 font-medium">{suffix}</span>}
+                            </div>
+                          )
+                        })()}
                         {totalLessons > 0 && (
                           <span className="text-xs text-gray-400 flex items-center gap-1">
                             <BookOpen className="w-3 h-3" />

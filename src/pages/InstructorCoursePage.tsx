@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, Eye, Globe, EyeOff, LogOut, ExternalLink, Download,
@@ -16,9 +16,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { ModuleList } from '@/components/instructor/ModuleList'
-import { KpiDashboard } from '@/components/instructor/KpiDashboard'
 import { CourseCalendar } from '@/components/course/CourseCalendar'
 import { toast } from 'sonner'
+
+const KpiDashboard = React.lazy(() => import('@/components/instructor/KpiDashboard').then(m => ({ default: m.KpiDashboard })))
 
 export default function InstructorCoursePage() {
   const { courseId } = useParams<{ courseId: string }>()
@@ -127,15 +128,17 @@ export default function InstructorCoursePage() {
 
   const updateCourse = useMutation({
     mutationFn: async (data: CourseFormData) => {
+      const isFree = data.billing_type === 'free'
       const { error } = await supabase.from('courses').update({
         title: data.title,
         slug: data.slug,
         description: data.description ?? null,
         thumbnail_url: data.thumbnail_url ?? null,
         intro_video_url: (data as any).intro_video_url ?? null,
-        price: data.is_free ? 0 : data.price,
-        original_price: data.is_free ? null : ((data as any).original_price || null),
-        is_free: data.is_free,
+        price: isFree ? 0 : data.price,
+        original_price: isFree ? null : ((data as any).original_price || null),
+        is_free: isFree,
+        billing_type: data.billing_type,
         is_published: data.is_published,
         learning_outcomes: (data as any).learning_outcomes?.filter(Boolean) ?? [],
         for_who: (data as any).for_who ?? null,
@@ -159,7 +162,7 @@ export default function InstructorCoursePage() {
   const togglePublish = useMutation({
     mutationFn: async () => {
       const publishing = !course?.is_published
-      if (publishing && !course?.is_free) {
+      if (publishing && (course as any)?.billing_type !== 'free') {
         const { data: tenantData } = await supabase
           .from('tenants')
           .select('mp_access_token')
@@ -238,7 +241,7 @@ export default function InstructorCoursePage() {
             </button>
 
             <Button variant="ghost" size="sm" asChild className="text-gray-400 hover:text-gray-700">
-              <Link to={`/courses/${course.slug}`} target="_blank" title="Ver página pública">
+              <Link to={`/courses/${course.slug}`} target="_blank" rel="noopener noreferrer" title="Ver página pública">
                 <ExternalLink className="w-4 h-4" />
                 <span className="hidden sm:block ml-1 text-xs">Ver landing</span>
               </Link>
@@ -300,7 +303,7 @@ export default function InstructorCoursePage() {
                     description: course.description ?? '',
                     price: Number(course.price ?? 0),
                     original_price: Number((course as any).original_price ?? 0),
-                    is_free: course.is_free ?? true,
+                    billing_type: ((course as any).billing_type ?? (course.is_free ? 'free' : 'one_time')) as 'free' | 'one_time' | 'monthly' | 'annual',
                     is_published: course.is_published ?? false,
                     thumbnail_url: course.thumbnail_url ?? '',
                     intro_video_url: (course as any).intro_video_url ?? '',
@@ -686,7 +689,7 @@ export default function InstructorCoursePage() {
                 </button>
                 {openSection === 'metrics' && (
                   <div className="border-t border-gray-100 p-5">
-                    <KpiDashboard courseIds={[courseId!]} />
+                    <Suspense fallback={<div className="text-sm text-gray-500">Cargando métricas…</div>}><KpiDashboard courseIds={[courseId!]} /></Suspense>
                   </div>
                 )}
               </div>

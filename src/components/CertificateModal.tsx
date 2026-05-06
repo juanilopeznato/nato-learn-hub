@@ -1,8 +1,8 @@
-import { useRef } from 'react'
-import { toPng } from 'html-to-image'
+import { useRef, useState } from 'react'
 import { Download, Award, X, Linkedin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { events } from '@/lib/analytics'
 
 interface Props {
   open: boolean
@@ -16,14 +16,21 @@ interface Props {
 
 export function CertificateModal({ open, onClose, studentName, courseTitle, tenantName, verificationCode, issuedAt }: Props) {
   const certRef = useRef<HTMLDivElement>(null)
+  const [downloading, setDownloading] = useState(false)
 
   async function handleDownload() {
-    if (!certRef.current) return
-    const dataUrl = await toPng(certRef.current, { pixelRatio: 2 })
-    const link = document.createElement('a')
-    link.download = `certificado-${courseTitle.toLowerCase().replace(/\s+/g, '-')}.png`
-    link.href = dataUrl
-    link.click()
+    if (!certRef.current || downloading) return
+    setDownloading(true)
+    try {
+      const { toPng } = await import('html-to-image')
+      const dataUrl = await toPng(certRef.current, { pixelRatio: 2 })
+      const link = document.createElement('a')
+      link.download = `certificado-${courseTitle.toLowerCase().replace(/\s+/g, '-')}.png`
+      link.href = dataUrl
+      link.click()
+    } finally {
+      setDownloading(false)
+    }
   }
 
   const dateStr = new Date(issuedAt).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -37,14 +44,17 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
       organizationName: tenantName,
       issueYear: String(issuedDate.getFullYear()),
       issueMonth: String(issuedDate.getMonth() + 1),
-      certUrl: verificationUrl,
+      certUrl: `${verificationUrl}?utm_source=linkedin&utm_medium=certificate&utm_campaign=share`,
       certId: verificationCode,
     })
+    events.certificateShared({ channel: 'linkedin', course: courseTitle })
     window.open(`https://www.linkedin.com/profile/add?${params.toString()}`, '_blank', 'noopener,noreferrer')
   }
 
   function handleWhatsApp() {
-    const text = `¡Completé el curso "${courseTitle}" en ${tenantName}! 🎓\nPodés verificar mi certificado acá: ${verificationUrl}`
+    const url = `${verificationUrl}?utm_source=whatsapp&utm_medium=certificate&utm_campaign=share`
+    const text = `¡Completé el curso "${courseTitle}" en ${tenantName}! 🎓\nPodés verificar mi certificado acá: ${url}`
+    events.certificateShared({ channel: 'whatsapp', course: courseTitle })
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer')
   }
 
@@ -123,9 +133,9 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
 
         {/* Botones fuera del cert */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-3 pb-1">
-          <Button variant="hero" onClick={handleDownload} className="gap-2 w-full sm:w-auto">
+          <Button variant="hero" onClick={handleDownload} disabled={downloading} className="gap-2 w-full sm:w-auto">
             <Download className="w-4 h-4" />
-            Descargar
+            {downloading ? 'Generando...' : 'Descargar'}
           </Button>
           <Button
             variant="outline"

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/context/AuthContext'
+import { events } from '@/lib/analytics'
 
 const schema = z.object({
   fullName: z.string().min(2, 'Ingresá tu nombre'),
@@ -36,8 +37,10 @@ export default function Signup() {
 
   async function onSubmit(data: FormData) {
     setServerError(null)
+    events.signupStarted({ tenant: tenant?.slug })
     const { error } = await signUp(data.email, data.password, data.fullName)
     if (error) { setServerError(error); return }
+    events.signupCompleted({ tenant: tenant?.slug })
     navigate(redirect, { replace: true })
   }
 

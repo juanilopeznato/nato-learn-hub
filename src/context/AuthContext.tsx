@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/types/database.types'
@@ -65,6 +65,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     resolveTenant().then(setTenant)
   }, [])
 
+  const loadProfile = useCallback(async (authId: string, attempt = 1): Promise<void> => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*, tenant:tenants(*)')
+      .eq('auth_id', authId)
+      .order('last_used_at', { ascending: false })
+
+    if (error && attempt < 3) {
+      await new Promise(r => setTimeout(r, 500 * attempt))
+      return loadProfile(authId, attempt + 1)
+    }
+
+    if (data && data.length > 0) {
+      const profiles = data as (Profile & { tenant: Tenant })[]
+      setAllProfiles(profiles)
+      const { tenant: profileTenant, ...activeProfile } = profiles[0] as any
+      setProfile(activeProfile)
+      if (profileTenant) setTenant(profileTenant as Tenant)
+    } else {
+      setProfile(null)
+      setAllProfiles([])
+    }
+    setLoading(false)
+  }, [])
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -85,46 +110,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [loadProfile])
 
-  async function loadProfile(authId: string, attempt = 1) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*, tenant:tenants(*)')
-      .eq('auth_id', authId)
-      .order('last_used_at', { ascending: false })
-
-    if (error && attempt < 3) {
-      await new Promise(r => setTimeout(r, 500 * attempt))
-      return loadProfile(authId, attempt + 1)
-    }
-
-    if (data && data.length > 0) {
-      const profiles = data as (Profile & { tenant: Tenant })[]
-      setAllProfiles(profiles)
-      // El primero es el más recientemente usado (activo)
-      const { tenant: profileTenant, ...activeProfile } = profiles[0] as any
-      setProfile(activeProfile)
-      if (profileTenant) setTenant(profileTenant as Tenant)
-    } else {
-      setProfile(null)
-      setAllProfiles([])
-    }
-    setLoading(false)
-  }
-
-  async function switchSchool(profileId: string) {
+  const switchSchool = useCallback(async (profileId: string) => {
     const { error } = await supabase.rpc('switch_active_school', { p_profile_id: profileId })
     if (error) throw error
     if (user) await loadProfile(user.id)
-  }
+  }, [user, loadProfile])
 
-  async function signIn(email: string, password: string) {
+  const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return { error: error?.message ?? null }
-  }
+  }, [])
 
-  async function signUp(email: string, password: string, fullName: string) {
+  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
     if (!tenant) return { error: 'No se pudo detectar la escuela. Intentá de nuevo.' }
 
     const { data, error } = await supabase.auth.signUp({ email, password })
@@ -140,14 +139,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (profileError) return { error: profileError.message }
     return { error: null }
-  }
+  }, [tenant])
 
-  async function signOut() {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut()
-  }
+  }, [])
+
+  const value = useMemo<AuthContextValue>(() => ({
+    user, session, profile, tenant, allProfiles, loading,
+    signIn, signUp, signOut, switchSchool,
+  }), [user, session, profile, tenant, allProfiles, loading, signIn, signUp, signOut, switchSchool])
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, tenant, allProfiles, loading, signIn, signUp, signOut, switchSchool }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

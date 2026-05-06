@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/context/AuthContext'
+import { events } from '@/lib/analytics'
 
 const schema = z.object({
   email: z.string().email('Email inválido'),
@@ -32,6 +33,7 @@ export default function Login() {
     setServerError(null)
     const { error } = await signIn(data.email, data.password)
     if (error) { setServerError(error); return }
+    events.loginCompleted({ tenant: tenant?.slug })
     navigate(from, { replace: true })
   }
 

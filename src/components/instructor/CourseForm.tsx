@@ -2,7 +2,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { ImageUpload } from '@/components/ImageUpload'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, Gift, ShoppingBag, RefreshCw, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,15 +24,54 @@ const CATEGORIES = [
   { value: 'otro', label: 'Otro' },
 ]
 
+const BILLING_OPTIONS = [
+  {
+    value: 'free',
+    label: 'Gratis',
+    description: 'Acceso sin costo',
+    icon: Gift,
+    color: 'text-green-600',
+    bg: 'bg-green-50 border-green-200',
+    activeBg: 'bg-green-500',
+  },
+  {
+    value: 'one_time',
+    label: 'Pago único',
+    description: 'Se paga una sola vez',
+    icon: ShoppingBag,
+    color: 'text-primary',
+    bg: 'bg-primary/5 border-primary/20',
+    activeBg: 'bg-primary',
+  },
+  {
+    value: 'monthly',
+    label: 'Mensual',
+    description: 'Cobro automático por mes',
+    icon: RefreshCw,
+    color: 'text-blue-600',
+    bg: 'bg-blue-50 border-blue-200',
+    activeBg: 'bg-blue-500',
+  },
+  {
+    value: 'annual',
+    label: 'Anual',
+    description: 'Cobro automático por año',
+    icon: Calendar,
+    color: 'text-purple-600',
+    bg: 'bg-purple-50 border-purple-200',
+    activeBg: 'bg-purple-500',
+  },
+] as const
+
 const faqItemSchema = z.object({ q: z.string(), a: z.string() })
 
 const schema = z.object({
   title: z.string().min(3, 'Mínimo 3 caracteres'),
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/, 'Solo minúsculas, números y guiones'),
   description: z.string().optional(),
+  billing_type: z.enum(['free', 'one_time', 'monthly', 'annual']),
   price: z.coerce.number().min(0),
   original_price: z.coerce.number().min(0).optional(),
-  is_free: z.boolean(),
   is_published: z.boolean(),
   thumbnail_url: z.string().optional(),
   intro_video_url: z.string().optional(),
@@ -61,14 +100,17 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
   const { register, handleSubmit, watch, setValue, control, formState: { errors, isSubmitting } } = useForm<CourseFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      price: 0, is_free: true, is_published: false,
+      price: 0,
+      billing_type: 'one_time',
+      is_published: false,
       learning_outcomes: [''],
       faq: [{ q: '', a: '' }],
       ...defaultValues,
     },
   })
 
-  const isFree = watch('is_free')
+  const billingType = watch('billing_type')
+  const isPaid = billingType !== 'free'
   const outcomes = watch('learning_outcomes') ?? ['']
   const faqItems = watch('faq') ?? [{ q: '', a: '' }]
 
@@ -150,21 +192,66 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
             <Input placeholder="https://youtube.com/watch?v=..." className="bg-gray-100 border-border/50 text-foreground" {...register('intro_video_url')} />
           </div>
 
-          <div className="flex items-center gap-3">
-            <Switch checked={isFree} onCheckedChange={v => setValue('is_free', v)} id="is_free" />
-            <Label htmlFor="is_free" className="text-foreground cursor-pointer">Curso gratuito</Label>
+          {/* Tipo de venta */}
+          <div className="space-y-2">
+            <Label className="text-foreground font-semibold">Tipo de venta</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {BILLING_OPTIONS.map(opt => {
+                const Icon = opt.icon
+                const isSelected = billingType === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setValue('billing_type', opt.value)}
+                    className={`flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all ${
+                      isSelected
+                        ? 'border-primary bg-primary/5'
+                        : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                      isSelected ? 'bg-primary/10' : 'bg-white border border-gray-200'
+                    }`}>
+                      <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-gray-400'}`} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-gray-700'}`}>{opt.label}</p>
+                      <p className="text-xs text-gray-400 leading-tight">{opt.description}</p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
-          {!isFree && (
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-foreground">Precio (ARS)</Label>
-                <Input type="number" min={0} className="bg-gray-100 border-border/50 text-foreground" {...register('price')} />
+          {/* Precio — solo si no es gratis */}
+          {isPaid && (
+            <div className="space-y-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-foreground text-sm">
+                    Precio ARS
+                    {billingType === 'monthly' && <span className="text-gray-400 font-normal"> / mes</span>}
+                    {billingType === 'annual' && <span className="text-gray-400 font-normal"> / año</span>}
+                  </Label>
+                  <Input type="number" min={0} className="bg-white border-border/50 text-foreground" {...register('price')} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-foreground text-sm">Precio tachado (opcional)</Label>
+                  <Input type="number" min={0} placeholder="Precio original" className="bg-white border-border/50 text-foreground" {...register('original_price')} />
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-foreground">Precio tachado (opcional)</Label>
-                <Input type="number" min={0} placeholder="Precio original" className="bg-gray-100 border-border/50 text-foreground" {...register('original_price')} />
-              </div>
+              {billingType === 'monthly' && (
+                <p className="text-xs text-blue-600 bg-blue-50 rounded-lg px-3 py-2">
+                  El alumno será cobrado automáticamente cada mes via Mercado Pago. El acceso se revoca si el pago falla.
+                </p>
+              )}
+              {billingType === 'annual' && (
+                <p className="text-xs text-purple-600 bg-purple-50 rounded-lg px-3 py-2">
+                  El alumno paga una vez por año. Si no renueva, pierde acceso al vencer.
+                </p>
+              )}
             </div>
           )}
 

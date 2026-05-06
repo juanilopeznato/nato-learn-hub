@@ -3,15 +3,16 @@ import { Controller, useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { User, LogOut, Save, ArrowLeft } from 'lucide-react'
+import { LogOut, Save, ArrowLeft, Trophy, Flame, Star, BookOpen, Award, Zap } from 'lucide-react'
 import { ImageUpload } from '@/components/ImageUpload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/context/AuthContext'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { StreakBadge } from '@/components/StreakBadge'
 
 const profileSchema = z.object({
   full_name: z.string().min(1, 'Nombre requerido'),
@@ -48,6 +49,41 @@ export default function ProfileSettings() {
     })
   }, [profile, reset])
 
+  // Certificados obtenidos
+  const { data: certificates } = useQuery({
+    queryKey: ['my-certificates', profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('certificates')
+        .select('id, issued_at, verification_code, enrollment_id, enrollments(courses(title))')
+        .eq('enrollment_id', supabase.from('enrollments').select('id').eq('student_id', profile!.id) as any)
+      // Simpler approach: join through enrollments
+      const { data: certs } = await supabase
+        .from('certificates')
+        .select(`
+          id, issued_at, verification_code,
+          enrollments!inner(student_id, courses(title))
+        `)
+        .eq('enrollments.student_id', profile!.id)
+      return certs ?? []
+    },
+  })
+
+  // Cursos completados
+  const { data: completedCourses } = useQuery({
+    queryKey: ['completed-courses', profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('course_progress')
+        .select('enrollment_id, progress_percent, enrollments!inner(student_id, courses(title, slug))')
+        .eq('enrollments.student_id', profile!.id)
+        .eq('progress_percent', 100)
+      return data ?? []
+    },
+  })
+
   async function onSubmit(data: ProfileData) {
     if (!profile) return
     const { error } = await supabase
@@ -71,6 +107,14 @@ export default function ProfileSettings() {
     toast.success('Perfil actualizado')
     queryClient.invalidateQueries({ queryKey: ['profile'] })
   }
+
+  const points = (profile as any)?.points ?? 0
+  const level = (profile as any)?.level ?? 1
+  const streak = (profile as any)?.streak_days ?? 0
+
+  // Level progress (100 pts per level)
+  const levelProgress = Math.min((points % 100) / 100 * 100, 100)
+  const nextLevelPts = (level) * 100
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -96,7 +140,136 @@ export default function ProfileSettings() {
       <main className="container mx-auto px-4 py-10 max-w-2xl space-y-8">
         <div>
           <h1 className="font-heading text-3xl font-bold text-gray-900">Mi perfil</h1>
-          <p className="text-gray-500 mt-1">Actualizá tu información personal y redes sociales</p>
+          <p className="text-gray-500 mt-1">Tus logros y configuración personal</p>
+        </div>
+
+        {/* Stats de logros */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center gap-4 mb-6">
+            {/* Avatar grande */}
+            <div className="relative shrink-0">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt={profile.full_name ?? ''} className="w-16 h-16 rounded-full object-cover" />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-primary">
+                    {(profile?.full_name ?? 'U')[0].toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <div className="absolute -bottom-1 -right-1 bg-primary text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
+                {level}
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="font-heading font-semibold text-gray-900 text-lg truncate">{profile?.full_name}</h2>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm text-primary font-semibold">{points} pts</span>
+                <span className="text-gray-300">·</span>
+                <StreakBadge streak={streak} size="sm" />
+              </div>
+            </div>
+          </div>
+
+          {/* Nivel y progreso */}
+          <div className="space-y-1.5 mb-6">
+            <div className="flex justify-between text-xs text-gray-500">
+              <span className="font-medium">Nivel {level}</span>
+              <span>{points} / {nextLevelPts} pts para nivel {level + 1}</span>
+            </div>
+            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-700"
+                style={{ width: `${levelProgress}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Stat cards */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-xl bg-yellow-50 border border-yellow-100 p-3 text-center">
+              <Trophy className="w-5 h-5 text-yellow-500 mx-auto mb-1" />
+              <p className="text-lg font-bold text-gray-900">{completedCourses?.length ?? 0}</p>
+              <p className="text-xs text-gray-500">Completados</p>
+            </div>
+            <div className="rounded-xl bg-orange-50 border border-orange-100 p-3 text-center">
+              <Flame className="w-5 h-5 text-orange-500 mx-auto mb-1" />
+              <p className="text-lg font-bold text-gray-900">{streak}</p>
+              <p className="text-xs text-gray-500">Días seguidos</p>
+            </div>
+            <div className="rounded-xl bg-purple-50 border border-purple-100 p-3 text-center">
+              <Award className="w-5 h-5 text-purple-500 mx-auto mb-1" />
+              <p className="text-lg font-bold text-gray-900">{certificates?.length ?? 0}</p>
+              <p className="text-xs text-gray-500">Certificados</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Certificados */}
+        {certificates && certificates.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Award className="w-4 h-4 text-primary" />
+              <h2 className="font-heading font-semibold text-gray-900">Mis certificados</h2>
+            </div>
+            <div className="space-y-2">
+              {certificates.map((cert: any) => {
+                const courseTitle = cert.enrollments?.courses?.title ?? 'Curso'
+                const issuedAt = new Date(cert.issued_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })
+                return (
+                  <div key={cert.id} className="flex items-center justify-between gap-3 p-3 rounded-lg bg-yellow-50 border border-yellow-100">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center shrink-0">
+                        <Star className="w-4 h-4 text-yellow-600" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{courseTitle}</p>
+                        <p className="text-xs text-gray-500">{issuedAt}</p>
+                      </div>
+                    </div>
+                    <Link
+                      to={`/certificates/${cert.verification_code}`}
+                      className="text-xs text-primary hover:underline shrink-0"
+                    >
+                      Ver →
+                    </Link>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Insignias de nivel */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" />
+            <h2 className="font-heading font-semibold text-gray-900">Insignias</h2>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            {[
+              { label: 'Primer paso', icon: BookOpen, earned: points >= 10, color: 'green' },
+              { label: 'Racha 3 días', icon: Flame, earned: streak >= 3, color: 'orange' },
+              { label: '50 puntos', icon: Star, earned: points >= 50, color: 'yellow' },
+              { label: 'Graduado', icon: Award, earned: (completedCourses?.length ?? 0) >= 1, color: 'purple' },
+            ].map(badge => (
+              <div
+                key={badge.label}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-center transition-all ${
+                  badge.earned
+                    ? 'bg-primary/5 border-primary/20'
+                    : 'bg-gray-50 border-gray-100 opacity-40 grayscale'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                  badge.earned ? 'bg-primary/10' : 'bg-gray-100'
+                }`}>
+                  <badge.icon className={`w-4 h-4 ${badge.earned ? 'text-primary' : 'text-gray-400'}`} />
+                </div>
+                <span className="text-xs text-gray-600 leading-tight">{badge.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

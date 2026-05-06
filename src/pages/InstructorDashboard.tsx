@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Plus, Eye, LogOut, BookOpen, TrendingUp, Users, Settings, Mail,
@@ -13,8 +13,9 @@ import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { CourseForm, type CourseFormData } from '@/components/instructor/CourseForm'
-import { KpiDashboard } from '@/components/instructor/KpiDashboard'
 import { toast } from 'sonner'
+
+const KpiDashboard = React.lazy(() => import('@/components/instructor/KpiDashboard').then(m => ({ default: m.KpiDashboard })))
 
 export default function InstructorDashboard() {
   const { profile, tenant, allProfiles, signOut, switchSchool } = useAuth()
@@ -357,7 +358,7 @@ export default function InstructorDashboard() {
 
                         {/* Ver en público */}
                         <Button variant="ghost" size="icon" asChild title="Ver página pública">
-                          <Link to={`/courses/${course.slug}`} target="_blank">
+                          <Link to={`/courses/${course.slug}`} target="_blank" rel="noopener noreferrer">
                             <Eye className="w-4 h-4 text-gray-400" />
                           </Link>
                         </Button>
@@ -459,7 +460,7 @@ export default function InstructorDashboard() {
           {/* Tab: Estadísticas */}
           <TabsContent value="kpis" className="mt-6">
             {courses && courses.length > 0 ? (
-              <KpiDashboard courseIds={courses.map(c => c.id)} />
+              <Suspense fallback={<div className="text-sm text-gray-500">Cargando métricas…</div>}><KpiDashboard courseIds={courses.map(c => c.id)} /></Suspense>
             ) : (
               <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
                 <BarChart3 className="w-10 h-10 text-gray-200 mx-auto mb-3" />

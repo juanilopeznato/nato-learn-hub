@@ -7,17 +7,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import CourseDetail from "./pages/CourseDetail";
-import LessonView from "./pages/LessonView";
-import InstructorDashboard from "./pages/InstructorDashboard";
-import Community from "./pages/Community";
-import MemberProfile from "./pages/MemberProfile";
 
+const Index = React.lazy(() => import("./pages/Index"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const CourseDetail = React.lazy(() => import("./pages/CourseDetail"));
+const LessonView = React.lazy(() => import("./pages/LessonView"));
+const InstructorDashboard = React.lazy(() => import("./pages/InstructorDashboard"));
+const Community = React.lazy(() => import("./pages/Community"));
+const MemberProfile = React.lazy(() => import("./pages/MemberProfile"));
 const Courses = React.lazy(() => import("./pages/Courses"));
 const Pricing = React.lazy(() => import("./pages/Pricing"));
 const AdminPanel = React.lazy(() => import("./pages/AdminPanel"));
@@ -28,156 +28,72 @@ const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const CertificateVerify = React.lazy(() => import("./pages/CertificateVerify"));
 const ProfileSettings = React.lazy(() => import("./pages/ProfileSettings"));
 const EmailMarketing = React.lazy(() => import("./pages/EmailMarketing"));
-const NatoOwnerPanel = React.lazy(() => import("./pages/NatoOwnerPanel"))
+const NatoOwnerPanel = React.lazy(() => import("./pages/NatoOwnerPanel"));
 const CreateSchool = React.lazy(() => import("./pages/CreateSchool"));
 const MpOAuthCallback = React.lazy(() => import("./pages/MpOAuthCallback"));
 const Affiliates = React.lazy(() => import("./pages/Affiliates"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      gcTime: 5 * 60_000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <HelmetProvider>
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Públicas */}
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/courses" element={
-              <React.Suspense fallback={null}>
-                <Courses />
-              </React.Suspense>
-            } />
-            <Route path="/courses/:slug" element={<CourseDetail />} />
-            <Route path="/affiliates" element={
-              <React.Suspense fallback={null}>
-                <Affiliates />
-              </React.Suspense>
-            } />
-            <Route path="/pricing" element={
-              <React.Suspense fallback={null}>
-                <Pricing />
-              </React.Suspense>
-            } />
-            <Route path="/forgot-password" element={
-              <React.Suspense fallback={null}>
-                <ForgotPassword />
-              </React.Suspense>
-            } />
-            <Route path="/reset-password" element={
-              <React.Suspense fallback={null}>
-                <ResetPassword />
-              </React.Suspense>
-            } />
-            <Route path="/certificates/:code" element={
-              <React.Suspense fallback={null}>
-                <CertificateVerify />
-              </React.Suspense>
-            } />
-            <Route path="/create-school" element={
-              <React.Suspense fallback={null}>
-                <CreateSchool />
-              </React.Suspense>
-            } />
-            <Route path="/mp-oauth-callback" element={
-              <React.Suspense fallback={null}>
-                <MpOAuthCallback />
-              </React.Suspense>
-            } />
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <React.Suspense fallback={null}>
+              <Routes>
+                {/* Públicas */}
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/courses" element={<Courses />} />
+                <Route path="/courses/:slug" element={<CourseDetail />} />
+                <Route path="/affiliates" element={<Affiliates />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/certificates/:code" element={<CertificateVerify />} />
+                <Route path="/create-school" element={<CreateSchool />} />
+                <Route path="/mp-oauth-callback" element={<MpOAuthCallback />} />
 
-            {/* Protegidas: estudiantes */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/learn/:courseSlug/:lessonId" element={
-              <ProtectedRoute>
-                <LessonView />
-              </ProtectedRoute>
-            } />
+                {/* Protegidas: estudiantes */}
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/learn/:courseSlug/:lessonId" element={<ProtectedRoute><LessonView /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
 
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <React.Suspense fallback={null}>
-                  <ProfileSettings />
-                </React.Suspense>
-              </ProtectedRoute>
-            } />
+                {/* Protegidas: comunidad y perfiles */}
+                <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                <Route path="/members/:profileId" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
 
-            {/* Protegidas: comunidad y perfiles */}
-            <Route path="/community" element={
-              <ProtectedRoute>
-                <Community />
-              </ProtectedRoute>
-            } />
-            <Route path="/members/:profileId" element={
-              <ProtectedRoute>
-                <MemberProfile />
-              </ProtectedRoute>
-            } />
+                {/* Protegidas: instructores */}
+                <Route path="/instructor" element={<ProtectedRoute requiredRole="instructor"><InstructorDashboard /></ProtectedRoute>} />
+                <Route path="/instructor/courses/:courseId" element={<ProtectedRoute requiredRole="instructor"><InstructorCoursePage /></ProtectedRoute>} />
+                <Route path="/instructor/email" element={<ProtectedRoute requiredRole="instructor"><EmailMarketing /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute requiredRole="instructor"><TenantSettings /></ProtectedRoute>} />
 
-            {/* Protegidas: instructores */}
-            <Route path="/instructor" element={
-              <ProtectedRoute requiredRole="instructor">
-                <InstructorDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/instructor/courses/:courseId" element={
-              <ProtectedRoute requiredRole="instructor">
-                <React.Suspense fallback={null}>
-                  <InstructorCoursePage />
-                </React.Suspense>
-              </ProtectedRoute>
-            } />
+                {/* Protegidas: admin / NATO */}
+                <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminPanel /></ProtectedRoute>} />
+                <Route path="/nato" element={<ProtectedRoute requiredRole="nato_owner"><NatoOwnerPanel /></ProtectedRoute>} />
 
-            {/* Protegidas: configuración de escuela */}
-            <Route path="/settings" element={
-              <ProtectedRoute requiredRole="instructor">
-                <React.Suspense fallback={null}>
-                  <TenantSettings />
-                </React.Suspense>
-              </ProtectedRoute>
-            } />
-
-            {/* Protegidas: email marketing */}
-            <Route path="/instructor/email" element={
-              <ProtectedRoute requiredRole="instructor">
-                <React.Suspense fallback={null}>
-                  <EmailMarketing />
-                </React.Suspense>
-              </ProtectedRoute>
-            } />
-
-            {/* Protegidas: admin */}
-            <Route path="/admin" element={
-              <ProtectedRoute requiredRole="admin">
-                <React.Suspense fallback={null}>
-                  <AdminPanel />
-                </React.Suspense>
-              </ProtectedRoute>
-            } />
-
-            {/* Protegidas: NATO owner */}
-            <Route path="/nato" element={
-              <ProtectedRoute requiredRole="nato_owner">
-                <React.Suspense fallback={null}>
-                  <NatoOwnerPanel />
-                </React.Suspense>
-              </ProtectedRoute>
-            } />
-
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </React.Suspense>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   </HelmetProvider>
 );
 

@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { events } from '@/lib/analytics'
 import { toast } from 'sonner'
 
 const brandSchema = z.object({
@@ -154,11 +155,18 @@ export default function TenantSettings() {
 
   const saveMp = useMutation({
     mutationFn: async (data: MpData) => {
-      const { error } = await supabase
-        .from('tenants')
-        .update({ mp_access_token: data.mp_access_token, mp_public_key: data.mp_public_key } as any)
-        .eq('id', tenant!.id)
-      if (error) throw error
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('No hay sesión activa')
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL ?? 'https://hoolsigtquohayhpqgtb.supabase.co'}/functions/v1/update-tenant-mp-config`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+          body: JSON.stringify({ mp_access_token: data.mp_access_token, mp_public_key: data.mp_public_key }),
+        }
+      )
+      const out = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(out?.error ?? 'Error al guardar credenciales')
     },
     onSuccess: () => toast.success('Credenciales de Mercado Pago guardadas'),
     onError: (e: Error) => toast.error(e.message),
@@ -192,7 +200,10 @@ export default function TenantSettings() {
         }
       )
       const data = await res.json()
-      if (data.init_point) window.location.href = data.init_point
+      if (data.init_point) {
+        events.subscriptionStarted({ plan: plan_name, period: billing_period })
+        window.location.href = data.init_point
+      }
       else toast.error(data.error ?? 'Error al procesar')
     } catch (e: any) {
       toast.error(e.message ?? 'Error al procesar')

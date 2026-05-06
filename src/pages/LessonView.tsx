@@ -12,6 +12,7 @@ import { LessonSidebar } from '@/components/lesson/LessonSidebar'
 import { LessonComments } from '@/components/lesson/LessonComments'
 import { CertificateModal } from '@/components/CertificateModal'
 import { UpsellModal } from '@/components/lesson/UpsellModal'
+import { events } from '@/lib/analytics'
 import { toast } from 'sonner'
 
 export default function LessonView() {
@@ -175,6 +176,7 @@ export default function LessonView() {
     },
     onSuccess: async () => {
       fireLesson()
+      events.lessonCompleted({ course: courseSlug, lesson: lessonId })
       await supabase.rpc('award_points', { p_action: 'complete_lesson' })
       queryClient.invalidateQueries({ queryKey: ['progress'] })
       queryClient.invalidateQueries({ queryKey: ['course-progress'] })
@@ -189,6 +191,7 @@ export default function LessonView() {
           .single()
         if (cp && Number(cp.progress_percent) >= 100) {
           fireCourse()
+          events.courseCompleted({ course: courseSlug })
           const { data: certId } = await supabase.rpc('issue_certificate', { p_enrollment_id: enrollment.id })
           if (certId) {
             const { data: cert } = await supabase

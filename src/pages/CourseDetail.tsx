@@ -14,6 +14,7 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useState, useEffect, useRef } from 'react'
 import { MetaPixel, fbTrack } from '@/components/MetaPixel'
+import { events } from '@/lib/analytics'
 
 export default function CourseDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -193,7 +194,7 @@ export default function CourseDetail() {
       if (!res.ok || data.error) throw new Error(data.error ?? 'Error al procesar el pago')
       return data.init_point as string
     },
-    onSuccess: (initPoint) => { trackCheckoutStart(); fbTrack('InitiateCheckout', { content_name: course?.title, value: discountedPrice, currency: 'ARS' }); window.location.href = initPoint },
+    onSuccess: (initPoint) => { trackCheckoutStart(); fbTrack('InitiateCheckout', { content_name: course?.title, value: discountedPrice, currency: 'ARS' }); events.checkoutStarted({ course: course?.slug, value: discountedPrice }); window.location.href = initPoint },
     onError: (e: Error) => toast.error(e.message),
   })
 
@@ -249,6 +250,9 @@ export default function CourseDetail() {
       : Math.max(0, Number(course.price) - appliedCoupon.discount_value)
     : Number(course?.price ?? 0)
 
+  const billingType: 'free' | 'one_time' | 'monthly' | 'annual' = (course as any)?.billing_type ?? (course?.is_free ? 'free' : 'one_time')
+  const billingLabel = billingType === 'monthly' ? '/mes' : billingType === 'annual' ? '/año' : ''
+
   function handleCTA() {
     if (!user) { navigate(`/login?redirect=/courses/${slug}`); return }
     if (enrollment) {
@@ -258,14 +262,18 @@ export default function CourseDetail() {
     }
     trackCtaClick()
     fbTrack('AddToCart', { content_name: course?.title, value: Number(course?.price ?? 0), currency: 'ARS' })
-    if (course?.is_free) enrollMutation.mutate()
+    if (billingType === 'free') enrollMutation.mutate()
     else buyMutation.mutate()
   }
 
   const ctaLabel = enrollment
     ? 'Ir al curso'
-    : course?.is_free
+    : billingType === 'free'
     ? (enrollMutation.isPending ? 'Inscribiendo...' : 'Inscribirse gratis')
+    : billingType === 'monthly'
+    ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — ARS ${discountedPrice.toLocaleString('es-AR')}/mes`)
+    : billingType === 'annual'
+    ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — ARS ${discountedPrice.toLocaleString('es-AR')}/año`)
     : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${discountedPrice.toLocaleString('es-AR')}`)
 
   // SEO — construido antes del return para que Helmet lo procese siempre
@@ -436,13 +444,16 @@ export default function CourseDetail() {
                 {/* Price + CTA */}
                 <div className="p-6 space-y-4">
                   <div className="space-y-1">
-                    {course.is_free ? (
+                    {billingType === 'free' ? (
                       <span className="font-heading text-3xl font-bold text-gray-900">Gratis</span>
                     ) : (
-                      <div className="flex items-baseline gap-2">
+                      <div className="flex items-baseline gap-2 flex-wrap">
                         <span className="font-heading text-3xl font-bold text-gray-900">
                           ARS {Number(course.price).toLocaleString('es-AR')}
                         </span>
+                        {billingLabel && (
+                          <span className="text-gray-500 text-base font-medium">{billingLabel}</span>
+                        )}
                         {originalPrice > 0 && (
                           <span className="text-gray-400 text-lg line-through">
                             ARS {originalPrice.toLocaleString('es-AR')}
@@ -454,6 +465,12 @@ export default function CourseDetail() {
                           </Badge>
                         )}
                       </div>
+                    )}
+                    {billingType === 'monthly' && (
+                      <p className="text-xs text-blue-600">Renovación automática mensual · Cancelás cuando quieras</p>
+                    )}
+                    {billingType === 'annual' && (
+                      <p className="text-xs text-purple-600">Pago anual · Acceso por 12 meses completos</p>
                     )}
                   </div>
 
@@ -563,6 +580,20 @@ export default function CourseDetail() {
                         {item}
                       </div>
                     ))}
+                    {avgRating !== null && (
+                      <a
+                        href="#reviews"
+                        className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary transition-colors pt-1"
+                      >
+                        <div className="flex">
+                          {[1,2,3,4,5].map(s => (
+                            <Star key={s} className={`w-3 h-3 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                          ))}
+                        </div>
+                        <span className="font-semibold text-gray-700">{avgRating.toFixed(1)}</span>
+                        <span className="hover:underline">({reviews?.length ?? 0} {(reviews?.length ?? 0) === 1 ? 'opinión' : 'opiniones'})</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -701,7 +732,7 @@ export default function CourseDetail() {
 
             {/* Reviews */}
             {((reviews && reviews.length > 0) || (enrollment && myEnrollmentId && !myReview)) && (
-              <section>
+              <section id="reviews">
                 <div className="flex items-baseline gap-3 mb-6">
                   <h2 className="font-heading text-2xl font-bold text-gray-900">Opiniones</h2>
                   {avgRating !== null && (
