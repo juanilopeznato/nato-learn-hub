@@ -312,10 +312,23 @@ export default function CourseDetail() {
   )
 
   if (!course) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center space-y-3">
-        <p className="text-gray-900 font-medium">Curso no encontrado.</p>
-        <Link to="/courses" className="text-primary text-sm hover:underline">Ver todos los cursos</Link>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="max-w-sm w-full bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-4">
+        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto" aria-hidden>
+          <BookOpen className="w-6 h-6 text-gray-400" />
+        </div>
+        <div className="space-y-1">
+          <h1 className="font-heading text-lg font-semibold text-gray-900">No encontramos este curso</h1>
+          <p className="text-sm text-gray-500">El link puede estar mal o el curso ya no está disponible.</p>
+        </div>
+        <div className="flex gap-2">
+          <Button asChild variant="hero" className="flex-1">
+            <Link to="/courses">Ver cursos</Link>
+          </Button>
+          <Button asChild variant="outline" className="flex-1">
+            <Link to="/">Ir al inicio</Link>
+          </Button>
+        </div>
       </div>
     </div>
   )

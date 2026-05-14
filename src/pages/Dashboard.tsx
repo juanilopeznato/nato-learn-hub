@@ -252,19 +252,28 @@ export default function Dashboard() {
           </section>
         ) : (
           <div className="bg-white rounded-2xl p-12 text-center space-y-4 border border-gray-100">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto" aria-hidden>
               <BookOpen className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="font-heading text-xl font-semibold text-gray-900">Empezá a aprender</h3>
+            <h3 className="font-heading text-xl font-semibold text-gray-900">
+              Tu lista está vacía
+            </h3>
             <p className="text-gray-500 max-w-sm mx-auto">
-              Explorá los cursos disponibles y comenzá tu primer path de aprendizaje.
+              Tenés <strong>{(tenant as { name?: string } | null)?.name ?? 'la escuela'}</strong> entera para explorar. Hay cursos gratuitos para arrancar sin pagar.
             </p>
-            <Button variant="hero" asChild>
-              <Link to="/courses">
-                Ver cursos disponibles
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
+              <Button variant="hero" asChild>
+                <Link to="/courses">
+                  Ver cursos disponibles
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/community">
+                  Ver la comunidad
+                </Link>
+              </Button>
+            </div>
           </div>
         )}
 

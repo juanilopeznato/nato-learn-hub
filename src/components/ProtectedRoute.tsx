@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { PageLoading } from '@/components/PageLoading'
 
 interface Props {
   children: React.ReactNode
@@ -11,11 +12,7 @@ export function ProtectedRoute({ children, requiredRole }: Props) {
   const location = useLocation()
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
+    return <PageLoading />
   }
 
   if (!user) {
@@ -23,11 +20,7 @@ export function ProtectedRoute({ children, requiredRole }: Props) {
   }
 
   if (requiredRole && !profile) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
+    return <PageLoading />
   }
 
   // Defense in depth: el usuario debe pertenecer al tenant del hostname actual.
@@ -41,12 +34,8 @@ export function ProtectedRoute({ children, requiredRole }: Props) {
     if (!otherProfile) {
       return <Navigate to="/dashboard" replace />
     }
-    // Hay otro profile válido — AuthContext debería switcharlo. Spinner mientras tanto.
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
+    // Hay otro profile válido — AuthContext debería switcharlo. Skeleton mientras tanto.
+    return <PageLoading />
   }
 
   if (requiredRole && profile) {

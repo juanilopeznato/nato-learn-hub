@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import DOMPurify from 'dompurify'
+import { SanitizedHtml } from '@/components/SanitizedHtml'
 import { Link } from 'react-router-dom'
 import { Plus, LogOut, Mail, Send, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -354,9 +354,9 @@ export default function EmailMarketing() {
                 {expandedId === campaign.id && campaign.body_html && (
                   <div className="border-t border-gray-100 px-5 py-4 bg-gray-50">
                     <p className="text-xs text-gray-500 mb-2 font-medium">Vista previa del contenido:</p>
-                    <div
+                    <SanitizedHtml
+                      html={campaign.body_html}
                       className="text-sm text-gray-700 whitespace-pre-wrap bg-white border border-gray-200 rounded-lg p-4 max-h-48 overflow-y-auto"
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaign.body_html) }}
                     />
                   </div>
                 )}

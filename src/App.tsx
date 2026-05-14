@@ -8,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { PageLoading } from "@/components/PageLoading";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -54,7 +55,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
-              <React.Suspense fallback={null}>
+              <React.Suspense fallback={<PageLoading />}>
                 <Routes>
                 {/* Públicas */}
                   <Route path="/" element={<Index />} />
