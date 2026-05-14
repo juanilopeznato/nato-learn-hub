@@ -67,6 +67,30 @@ interface SubscriptionPayment {
   created_at: string
 }
 
+/**
+ * Shape "completo" del tenant tal como viene de la DB. Los tipos generados de
+ * supabase no se están consumiendo (ver nota en lib/supabase.ts), entonces
+ * declaramos acá los campos que usamos para evitar `as any`.
+ */
+interface FullTenant {
+  id: string
+  name: string | null
+  slug: string | null
+  logo_url: string | null
+  primary_color: string | null
+  tagline: string | null
+  support_email: string | null
+  social_instagram: string | null
+  social_whatsapp: string | null
+  meta_pixel_id: string | null
+  resend_api_key: string | null
+  mp_collector_id: string | null
+  plan_name: string | null
+  plan_expires_at: string | null
+}
+
+type TenantUpdate = Partial<Omit<FullTenant, 'id'>>
+
 export default function TenantSettings() {
   const { profile, tenant, signOut } = useAuth()
   const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null)
@@ -77,7 +101,7 @@ export default function TenantSettings() {
   const mpForm = useForm<MpData>({ resolver: zodResolver(mpSchema) })
   const integrationsForm = useForm<IntegrationsData>({ resolver: zodResolver(integrationsSchema) })
 
-  const { data: fullTenant } = useQuery({
+  const { data: fullTenant } = useQuery<FullTenant | null>({
     queryKey: ['tenant-full', tenant?.id],
     enabled: !!tenant?.id,
     queryFn: async () => {
@@ -86,7 +110,7 @@ export default function TenantSettings() {
         .select('*')
         .eq('id', tenant!.id)
         .single()
-      return data
+      return (data ?? null) as FullTenant | null
     },
   })
 
@@ -121,32 +145,33 @@ export default function TenantSettings() {
     if (!fullTenant) return
     brandForm.reset({
       name: fullTenant.name ?? '',
-      tagline: (fullTenant as any).tagline ?? '',
+      tagline: fullTenant.tagline ?? '',
       logo_url: fullTenant.logo_url ?? '',
       primary_color: fullTenant.primary_color ?? '',
-      support_email: (fullTenant as any).support_email ?? '',
-      social_instagram: (fullTenant as any).social_instagram ?? '',
-      social_whatsapp: (fullTenant as any).social_whatsapp ?? '',
+      support_email: fullTenant.support_email ?? '',
+      social_instagram: fullTenant.social_instagram ?? '',
+      social_whatsapp: fullTenant.social_whatsapp ?? '',
     })
     integrationsForm.reset({
-      meta_pixel_id: (fullTenant as any).meta_pixel_id ?? '',
-      resend_api_key: (fullTenant as any).resend_api_key ?? '',
+      meta_pixel_id: fullTenant.meta_pixel_id ?? '',
+      resend_api_key: fullTenant.resend_api_key ?? '',
     })
   }, [fullTenant])
 
   const saveBrand = useMutation({
     mutationFn: async (data: BrandData) => {
+      const update: TenantUpdate = {
+        name: data.name,
+        tagline: data.tagline || null,
+        logo_url: data.logo_url || null,
+        primary_color: data.primary_color || null,
+        support_email: data.support_email || null,
+        social_instagram: data.social_instagram || null,
+        social_whatsapp: data.social_whatsapp || null,
+      }
       const { error } = await supabase
         .from('tenants')
-        .update({
-          name: data.name,
-          tagline: data.tagline || null,
-          logo_url: data.logo_url || null,
-          primary_color: data.primary_color || undefined,
-          support_email: data.support_email || null,
-          social_instagram: data.social_instagram || null,
-          social_whatsapp: data.social_whatsapp || null,
-        } as any)
+        .update(update)
         .eq('id', tenant!.id)
       if (error) throw error
     },
@@ -175,12 +200,13 @@ export default function TenantSettings() {
 
   const saveIntegrations = useMutation({
     mutationFn: async (data: IntegrationsData) => {
+      const update: TenantUpdate = {
+        meta_pixel_id: data.meta_pixel_id || null,
+        resend_api_key: data.resend_api_key || null,
+      }
       const { error } = await supabase
         .from('tenants')
-        .update({
-          meta_pixel_id: data.meta_pixel_id || null,
-          resend_api_key: data.resend_api_key || null,
-        } as any)
+        .update(update)
         .eq('id', tenant!.id)
       if (error) throw error
     },
@@ -206,15 +232,17 @@ export default function TenantSettings() {
         window.location.href = data.init_point
       }
       else toast.error(data.error ?? 'Error al procesar')
-    } catch (e: any) {
-      toast.error(e.message ?? 'Error al procesar')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Error al procesar'
+      toast.error(msg)
     } finally {
       setUpgradingPlan(null)
     }
   }
 
-  const currentPlanName = (tenant as any)?.plan_name ?? 'gratis'
-  const planExpiresAt = (tenant as any)?.plan_expires_at as string | null
+  const tenantExtras = tenant as (typeof tenant & Partial<FullTenant>) | null
+  const currentPlanName = tenantExtras?.plan_name ?? 'gratis'
+  const planExpiresAt = tenantExtras?.plan_expires_at ?? null
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -329,14 +357,14 @@ export default function TenantSettings() {
           {/* Payments */}
           <TabsContent value="payments" className="mt-6 space-y-4">
             {/* Connection status */}
-            {(fullTenant as any)?.mp_collector_id ? (
+            {fullTenant?.mp_collector_id ? (
               <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500" />
                     <div>
                       <h2 className="font-heading font-semibold text-gray-900">Mercado Pago conectado</h2>
-                      <p className="text-xs text-gray-400 mt-0.5">ID: {(fullTenant as any).mp_collector_id}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">ID: {fullTenant.mp_collector_id}</p>
                     </div>
                   </div>
                   <Button
