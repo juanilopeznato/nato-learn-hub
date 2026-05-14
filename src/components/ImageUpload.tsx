@@ -1,8 +1,23 @@
 import { useRef, useState } from 'react'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
-import { uploadImage, type ImageKind } from '@/lib/storage'
+import { uploadImage, deleteImageByUrl, type ImageKind } from '@/lib/storage'
 import { useAuth } from '@/context/AuthContext'
 import { toast } from 'sonner'
+
+/**
+ * Si la URL es nuestra (de uno de los buckets) la borramos del storage.
+ * Si es externa (URL legacy o de otro origen) la ignoramos.
+ * No falla si el delete tira error — log silencioso.
+ */
+async function cleanupOldImage(oldUrl: string | undefined) {
+  if (!oldUrl) return
+  if (!oldUrl.includes('/storage/v1/object/public/')) return
+  try {
+    await deleteImageByUrl(oldUrl)
+  } catch (e) {
+    console.warn('[ImageUpload] No se pudo borrar imagen vieja:', e)
+  }
+}
 
 interface Props {
   value?: string
@@ -50,17 +65,26 @@ export function ImageUpload({
       return
     }
     setUploading(true)
+    const oldUrl = value
     try {
       const result = await uploadImage(file, { kind: resolvedKind, tenantId: tenant.id })
       onChange(result.url)
       const kb = Math.round(result.bytes / 1024)
       toast.success(`Imagen subida (${kb} KB)`)
+      // Cleanup en background — no bloquea la UI ni rompe si falla
+      void cleanupOldImage(oldUrl)
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Error al subir la imagen'
       toast.error(msg)
     } finally {
       setUploading(false)
     }
+  }
+
+  function removeImage() {
+    const oldUrl = value
+    onChange('')
+    void cleanupOldImage(oldUrl)
   }
 
   function handleDrop(e: React.DragEvent) {
@@ -105,7 +129,7 @@ export function ImageUpload({
               </button>
               <button
                 type="button"
-                onClick={e => { e.stopPropagation(); onChange('') }}
+                onClick={e => { e.stopPropagation(); removeImage() }}
                 className="p-2 rounded-full bg-white/20 hover:bg-red-500/70 transition-colors text-white"
                 title="Eliminar imagen"
                 aria-label="Eliminar imagen"

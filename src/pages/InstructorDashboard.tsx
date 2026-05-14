@@ -62,12 +62,15 @@ export default function InstructorDashboard() {
   })
 
   const { data: enrollmentCounts } = useQuery({
-    queryKey: ['enrollment-counts', courses?.map(c => c.id)],
-    enabled: !!courses?.length,
+    queryKey: ['enrollment-counts', tenant?.id, courses?.map(c => c.id)],
+    enabled: !!courses?.length && !!tenant?.id,
     queryFn: async () => {
+      // tenant_id filter explícito: defense in depth — un instructor de otra
+      // escuela que conoce los course_ids no debería ver enrollments.
       const { data } = await supabase
         .from('enrollments')
         .select('course_id')
+        .eq('tenant_id', tenant!.id)
         .in('course_id', courses!.map(c => c.id))
         .in('mp_status', ['free', 'approved'])
       const counts: Record<string, number> = {}
@@ -142,8 +145,24 @@ export default function InstructorDashboard() {
 
   const deleteCourse = useMutation({
     mutationFn: async (id: string) => {
+      // Recuperar imágenes para limpiar storage después
+      const { data: course } = await supabase
+        .from('courses')
+        .select('thumbnail_url, instructor_avatar_url')
+        .eq('id', id)
+        .single()
+
       const { error } = await supabase.from('courses').delete().eq('id', id)
       if (error) throw error
+
+      // Cleanup de storage en background — no bloquea
+      if (course) {
+        const { deleteImageByUrl } = await import('@/lib/storage')
+        void Promise.allSettled([
+          (course as { thumbnail_url?: string }).thumbnail_url ? deleteImageByUrl((course as { thumbnail_url: string }).thumbnail_url) : null,
+          (course as { instructor_avatar_url?: string }).instructor_avatar_url ? deleteImageByUrl((course as { instructor_avatar_url: string }).instructor_avatar_url) : null,
+        ].filter(Boolean) as Promise<void>[])
+      }
     },
     onSuccess: () => {
       setDeletingCourse(null)

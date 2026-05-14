@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { MessageCircle, Trash2, CornerDownRight } from 'lucide-react'
+import { SmartAvatar } from '@/components/SmartImage'
 import { toast } from 'sonner'
 
 interface Props {
@@ -24,12 +25,9 @@ interface Comment {
 }
 
 function Avatar({ name, url }: { name: string; url: string | null }) {
-  if (url) return <img src={url} alt={name} className="w-8 h-8 rounded-full object-cover shrink-0" />
   const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
   return (
-    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-      <span className="text-xs font-semibold text-primary">{initials}</span>
-    </div>
+    <SmartAvatar src={url} alt={name} size={32} fallbackInitials={initials} className="shrink-0" />
   )
 }
 
@@ -172,12 +170,14 @@ export function LessonComments({ lessonId, tenantId, profileId, profileRole }: P
   const queryClient = useQueryClient()
 
   const { data: comments = [] } = useQuery({
-    queryKey: ['lesson-comments', lessonId],
+    queryKey: ['lesson-comments', tenantId, lessonId],
     queryFn: async () => {
+      // tenant_id filter explícito: defense in depth aunque RLS deba cubrirlo.
       const { data, error } = await supabase
         .from('lesson_comments')
         .select('id, body, created_at, parent_id, author:profiles(id, full_name, avatar_url)')
         .eq('lesson_id', lessonId)
+        .eq('tenant_id', tenantId)
         .order('created_at', { ascending: true })
       if (error) throw error
       return (data ?? []) as unknown as Comment[]

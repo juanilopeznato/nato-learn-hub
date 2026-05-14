@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { BookOpen, Search, LogIn, Star } from 'lucide-react'
+import { SmartImage } from '@/components/SmartImage'
 
 type Course = {
   id: string
@@ -308,7 +309,7 @@ export default function Courses() {
                   {/* Thumbnail */}
                   <div className="relative">
                     {course.thumbnail_url ? (
-                      <img src={course.thumbnail_url} alt={course.title} className="h-44 w-full object-cover" />
+                      <SmartImage src={course.thumbnail_url} alt={course.title} size="sm" className="h-44 w-full object-cover" />
                     ) : (
                       <CourseInitialGradient title={course.title} />
                     )}

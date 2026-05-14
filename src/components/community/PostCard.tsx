@@ -7,6 +7,7 @@ import { es } from 'date-fns/locale'
 import { Heart, MessageCircle, Pin } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { SmartAvatar } from '@/components/SmartImage'
 import { toast } from 'sonner'
 
 type Category = 'question' | 'win' | 'resource' | 'general'
@@ -37,12 +38,9 @@ const CATEGORY_STYLES: Record<Category, { label: string; class: string }> = {
 }
 
 function Avatar({ name, url }: { name: string; url: string | null }) {
-  if (url) return <img src={url} alt={name} className="w-9 h-9 rounded-full object-cover shrink-0" />
   const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
   return (
-    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-      <span className="text-xs font-semibold text-primary">{initials}</span>
-    </div>
+    <SmartAvatar src={url} alt={name} size={36} fallbackInitials={initials} className="shrink-0" />
   )
 }
 

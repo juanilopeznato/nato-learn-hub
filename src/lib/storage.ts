@@ -238,11 +238,15 @@ export async function uploadImage(
  */
 export async function deleteImageByUrl(url: string): Promise<void> {
   // Formato esperado: `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`
-  const match = url.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+)$/)
+  const match = url.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+?)(?:\?.*)?$/)
   if (!match) return
   const [, bucket, path] = match
-  const thumbPath = path.replace(/\.webp$/, '.thumb.webp')
-  await supabase.storage.from(bucket).remove([path, thumbPath].filter(p => p !== path || true))
+  const targets = [path]
+  // Si la URL era la principal `.webp`, también borrar el thumb hermano
+  if (path.endsWith('.webp') && !path.endsWith('.thumb.webp')) {
+    targets.push(path.replace(/\.webp$/, '.thumb.webp'))
+  }
+  await supabase.storage.from(bucket).remove(targets)
 }
 
 /**

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { Link } from 'react-router-dom'
 import { Trophy } from 'lucide-react'
+import { SmartAvatar } from '@/components/SmartImage'
 
 interface Props {
   tenantId: string
@@ -56,13 +57,14 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
                 <span className={`text-sm font-bold w-5 text-center shrink-0 ${RANK_STYLES[i] ?? 'text-gray-400'}`}>
                   {i + 1}
                 </span>
-                {row.avatar_url ? (
-                  <img src={row.avatar_url} alt={row.full_name ?? ''} className="w-7 h-7 rounded-full object-cover shrink-0" />
-                ) : (
-                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-semibold text-primary">{initials}</span>
-                  </div>
-                )}
+                <SmartAvatar
+                  src={row.avatar_url}
+                  alt={row.full_name ?? ''}
+                  size={28}
+                  fallbackInitials={initials}
+                  className="shrink-0 bg-primary/10 text-primary"
+                />
+
                 <span className="flex-1 text-sm text-gray-900 truncate">
                   {row.full_name ?? 'Usuario'}
                   {isMe && <span className="ml-1 text-xs text-primary">(vos)</span>}

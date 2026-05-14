@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { SmartImage } from '@/components/SmartImage'
 
 export default function CoursesSection() {
   const { tenant } = useAuth()
@@ -77,9 +78,10 @@ export default function CoursesSection() {
               >
                 {/* Thumbnail o placeholder */}
                 {course.thumbnail_url ? (
-                  <img
+                  <SmartImage
                     src={course.thumbnail_url}
                     alt={course.title}
+                    size="sm"
                     className="w-full h-40 object-cover"
                   />
                 ) : (

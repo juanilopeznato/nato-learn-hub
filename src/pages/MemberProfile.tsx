@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { ArrowLeft, Edit2, Check, X, Star, BookOpen, Zap } from 'lucide-react'
+import { SmartAvatar } from '@/components/SmartImage'
 import { toast } from 'sonner'
 
 const ACTION_LABELS: Record<string, string> = {
@@ -132,13 +133,13 @@ export default function MemberProfile() {
         {/* Profile card */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
           <div className="flex items-start gap-4">
-            {member.avatar_url ? (
-              <img src={member.avatar_url} alt={member.full_name} className="w-16 h-16 rounded-full object-cover shrink-0" />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="text-xl font-bold text-primary">{initials}</span>
-              </div>
-            )}
+            <SmartAvatar
+              src={member.avatar_url}
+              alt={member.full_name}
+              size={64}
+              fallbackInitials={initials}
+              className="shrink-0 bg-primary/10 text-primary"
+            />
             <div className="flex-1 min-w-0 space-y-1.5">
               <h1 className="font-heading text-xl font-bold text-gray-900">{member.full_name}</h1>
               <LevelBadge level={member.level ?? 1} />

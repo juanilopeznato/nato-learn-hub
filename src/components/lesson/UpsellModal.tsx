@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { SmartImage } from '@/components/SmartImage'
 
 interface Props {
   open: boolean
@@ -63,9 +64,10 @@ export function UpsellModal({ open, onClose, tenantId, completedCourseId }: Prop
                     className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-primary/40 hover:bg-primary/5 transition-all group"
                   >
                     {course.thumbnail_url ? (
-                      <img
+                      <SmartImage
                         src={course.thumbnail_url}
                         alt={course.title}
+                        size="thumb"
                         className="w-14 h-10 rounded-lg object-cover shrink-0"
                       />
                     ) : (

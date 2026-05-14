@@ -10,6 +10,7 @@ import { EnrolledCourseCard } from '@/components/dashboard/EnrolledCourseCard'
 import { Leaderboard } from '@/components/dashboard/Leaderboard'
 import { NotificationBell } from '@/components/NotificationBell'
 import OnboardingModal from '@/components/OnboardingModal'
+import { SmartImage, SmartAvatar } from '@/components/SmartImage'
 
 export default function Dashboard() {
   const { profile, tenant, signOut } = useAuth()
@@ -96,11 +97,11 @@ export default function Dashboard() {
             </Button>
             {profile?.id && <NotificationBell profileId={profile.id} />}
             <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 mr-1">
-              <Link to="/profile" className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors shrink-0" title="Editar perfil">
+              <Link to="/profile" className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors shrink-0" title="Editar perfil" aria-label="Editar perfil">
                 {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt={profile.full_name ?? ''} className="w-7 h-7 rounded-full object-cover" />
+                  <SmartAvatar src={profile.avatar_url} alt={profile.full_name ?? ''} size={28} />
                 ) : (
-                  <User className="w-3.5 h-3.5 text-primary" />
+                  <User className="w-3.5 h-3.5 text-primary" aria-hidden />
                 )}
               </Link>
               <Link to={`/members/${profile?.id}`} className="hover:text-primary transition-colors">
@@ -135,9 +136,10 @@ export default function Dashboard() {
           <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
             <div className="flex items-center gap-5 p-5">
               {continueCourse.thumbnail_url ? (
-                <img
+                <SmartImage
                   src={continueCourse.thumbnail_url}
                   alt={continueCourse.title}
+                  size="thumb"
                   className="w-20 h-16 object-cover rounded-xl shrink-0 hidden sm:block"
                 />
               ) : (
@@ -192,13 +194,15 @@ export default function Dashboard() {
                     to="/community"
                     className="flex items-start gap-3 bg-white border border-gray-100 rounded-xl p-4 hover:border-primary/30 hover:shadow-sm transition-all group"
                   >
-                    {author?.avatar_url ? (
-                      <img src={author.avatar_url} alt={author.full_name} className="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-xs font-semibold text-primary">{initials}</span>
-                      </div>
-                    )}
+                    <div className="mt-0.5">
+                      <SmartAvatar
+                        src={author?.avatar_url ?? null}
+                        alt={author?.full_name ?? ''}
+                        size={32}
+                        fallbackInitials={initials}
+                        className="shrink-0 bg-primary/10 text-primary"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate group-hover:text-primary transition-colors">{post.title}</p>
                       {post.body && (

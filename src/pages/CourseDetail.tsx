@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { SmartImage, SmartAvatar } from '@/components/SmartImage'
 import { toast } from 'sonner'
 import { useState, useEffect, useRef } from 'react'
 import { MetaPixel, fbTrack } from '@/components/MetaPixel'
@@ -424,7 +425,7 @@ export default function CourseDetail() {
                 {/* Thumbnail / preview */}
                 {thumbnailUrl ? (
                   <div className="relative aspect-video bg-gray-100 overflow-hidden">
-                    <img src={thumbnailUrl} alt={course.title} className="w-full h-full object-cover" />
+                    <SmartImage src={thumbnailUrl} alt={course.title} size="lg" eager className="w-full h-full object-cover" />
                     {introVideo && (
                       <button className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition-colors group">
                         <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -692,7 +693,7 @@ export default function CourseDetail() {
                 <h2 className="font-heading text-2xl font-bold text-gray-900 mb-6">Tu instructor</h2>
                 <div className="flex items-start gap-5">
                   {instructorAvatar ? (
-                    <img src={instructorAvatar} alt="Instructor" className="w-20 h-20 rounded-full object-cover shrink-0 border-2 border-primary/20" />
+                    <SmartAvatar src={instructorAvatar} alt="Instructor" size={80} className="shrink-0 border-2 border-primary/20" />
                   ) : (
                     <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <Users className="w-9 h-9 text-primary" />
@@ -785,12 +786,13 @@ export default function CourseDetail() {
                 <div className="space-y-4">
                   {(reviews ?? []).map((r: any) => (
                     <div key={r.id} className="flex gap-4">
-                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
-                        {r.reviewer?.avatar_url
-                          ? <img src={r.reviewer.avatar_url} alt={r.reviewer.full_name} className="w-full h-full object-cover" />
-                          : <span className="text-xs font-bold text-primary">{(r.reviewer?.full_name ?? '?')[0].toUpperCase()}</span>
-                        }
-                      </div>
+                      <SmartAvatar
+                        src={r.reviewer?.avatar_url ?? null}
+                        alt={r.reviewer?.full_name ?? ''}
+                        size={36}
+                        fallbackInitials={(r.reviewer?.full_name ?? '?')[0].toUpperCase()}
+                        className="shrink-0 bg-primary/10 text-primary"
+                      />
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-semibold text-gray-900">{r.reviewer?.full_name ?? 'Estudiante'}</span>
