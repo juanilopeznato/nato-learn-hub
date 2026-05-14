@@ -15,6 +15,10 @@ Plataforma LMS multi-tenant para vender cursos online. Similar a Teachable/Gumro
 ```bash
 npm run dev          # Dev server en localhost:5173
 npm run build        # Build de producción
+npm test             # Unit tests (Vitest)
+npm run lint         # ESLint
+npm run lint:storage # BLOQUEANTE — todos los uploads pasan por lib/storage.ts
+npm run check        # Lint + storage + tests todo junto
 npx playwright test  # 45 tests E2E (requiere dev server corriendo)
 git push origin main # Lovable lo importa (natouniversity.lovable.app es la prod real)
 ```
@@ -23,7 +27,20 @@ git push origin main # Lovable lo importa (natouniversity.lovable.app es la prod
 ```
 VITE_SUPABASE_URL=https://hoolsigtquohayhpqgtb.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGci...
+VITE_MP_CLIENT_ID=8771179743002501             # Mercado Pago OAuth Client ID
+VITE_MP_REDIRECT_URI=https://natouniversity.lovable.app/mp-oauth-callback
 ```
+
+## Pipeline de uploads (post-Ranerzzz)
+**TODO** upload de imagen pasa por `src/lib/storage.ts` → `uploadImage()`.
+Comprime + convierte a WebP + genera thumb + path con prefijo de tenant.
+NUNCA llamar `supabase.storage.from(...).upload()` directo — el lint
+`npm run lint:storage` lo bloquea. Para mostrar imágenes usar
+`<SmartImage>` o `<SmartAvatar>` que automáticamente piden la versión
+optimizada según el tamaño.
+
+Monitoreo: `/nato` → tab **Storage** (requiere aplicar `docs/storage-metrics.sql`
+una vez en Supabase SQL Editor).
 
 ## Supabase
 - **Project ID**: `hoolsigtquohayhpqgtb`
