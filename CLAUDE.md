@@ -16,7 +16,7 @@ Plataforma LMS multi-tenant para vender cursos online. Similar a Teachable/Gumro
 npm run dev          # Dev server en localhost:5173
 npm run build        # Build de producción
 npx playwright test  # 45 tests E2E (requiere dev server corriendo)
-git push origin main # Deploy automático en Vercel
+git push origin main # Lovable lo importa (natouniversity.lovable.app es la prod real)
 ```
 
 ## Variables de entorno (.env)
@@ -163,6 +163,6 @@ src/
 ## Decisiones importantes
 
 - **Todo en ARS** — no hay soporte multi-moneda. `toLocaleString('es-AR')` en todos los precios.
-- **Sin Lovable** — el proyecto empezó con Lovable pero se migró completamente a Claude Code.
+- **Lovable + Claude Code en paralelo** — el proyecto vive en Lovable (`natouniversity.lovable.app`) sincronizado con este repo. UI desde Lovable, lógica/Supabase/edge functions desde Claude Code. Mergear desde Lovable antes de pushear desde acá si se tocaron los dos lados.
 - **45/45 tests** — Playwright E2E cubre auth, dashboard, cursos, instructor, lección, comunidad, landing.
 - **nato_owner ≠ admin** — nato_owner ve toda la plataforma; admin gestiona solo su tenant.

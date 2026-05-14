@@ -18,6 +18,7 @@ import {
   Clock, CreditCard, Wifi, WifiOff, Pencil, Check, X,
   ToggleLeft, ToggleRight, Search, Receipt,
 } from 'lucide-react'
+import { StorageMetrics } from '@/components/StorageMetrics'
 
 /* ─── helpers ──────────────────────────────────────────────────────── */
 const fmt = (n: number) => `ARS ${Number(n).toLocaleString('es-AR')}`
@@ -254,6 +255,7 @@ export default function NatoOwnerPanel() {
               { value: 'escuelas', label: 'Escuelas' },
               { value: 'suscripciones', label: 'Suscripciones' },
               { value: 'produccion', label: 'Producción NATO' },
+              { value: 'storage', label: 'Storage' },
             ].map(t => (
               <TabsTrigger
                 key={t.value}
@@ -649,6 +651,11 @@ export default function NatoOwnerPanel() {
                 </div>
               </>
             )}
+          </TabsContent>
+
+          {/* ── Storage ── */}
+          <TabsContent value="storage" className="mt-6">
+            <StorageMetrics />
           </TabsContent>
         </Tabs>
       </div>

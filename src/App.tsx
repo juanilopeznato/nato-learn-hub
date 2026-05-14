@@ -83,8 +83,9 @@ const App = () => (
                 <Route path="/instructor/email" element={<ProtectedRoute requiredRole="instructor"><EmailMarketing /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute requiredRole="instructor"><TenantSettings /></ProtectedRoute>} />
 
-                {/* Protegidas: admin / NATO */}
-                <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminPanel /></ProtectedRoute>} />
+                {/* Protegidas: admin / NATO
+                    AdminPanel es un panel cross-tenant (lista tenants, queries globales) — solo NATO. */}
+                <Route path="/admin" element={<ProtectedRoute requiredRole="nato_owner"><AdminPanel /></ProtectedRoute>} />
                 <Route path="/nato" element={<ProtectedRoute requiredRole="nato_owner"><NatoOwnerPanel /></ProtectedRoute>} />
 
                 <Route path="*" element={<NotFound />} />

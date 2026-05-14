@@ -14,7 +14,9 @@
 3. Producción NATO Creative (recupero de costos: las primeras N ventas van a NATO, el resto al instructor).
 4. Programa de afiliados (referidor se lleva % por cada nueva escuela que paga).
 
-**Producción**: `https://nato-learn-hub.vercel.app` — deploy automático en Vercel cada push a `main`.
+**Producción**: `https://natouniversity.lovable.app` — Lovable conectado al repo de GitHub. Push a `main` queda importado automáticamente.
+
+> El deploy `nato-learn-hub.vercel.app` existe pero no se usa: ignorar.
 
 ---
 
@@ -32,7 +34,7 @@
 | Pagos | Mercado Pago ARS (Checkout Pro + Preaprobación + OAuth) |
 | Email | Resend API |
 | SEO | react-helmet-async + sitemap dinámico (edge function) |
-| Hosting | Vercel |
+| Hosting | Lovable (sincronizado con GitHub) |
 | Tests | Playwright (E2E) + Vitest (unit, casi vacío) |
 
 **Decisiones**: ARS único (sin multi-moneda), SPA pura (sin SSR), sin Next.js, sin Lovable (migrado a Claude Code).
@@ -43,7 +45,7 @@
 
 | Recurso | URL / ID |
 |---|---|
-| Producción | `https://nato-learn-hub.vercel.app` |
+| Producción | `https://natouniversity.lovable.app` |
 | Repo GitHub | `https://github.com/juanilopeznato/nato-learn-hub` |
 | Supabase Project ID | `hoolsigtquohayhpqgtb` |
 | Supabase API | `https://hoolsigtquohayhpqgtb.supabase.co` |
@@ -58,7 +60,7 @@
 [Usuario]
    │
    ▼
-[Vercel — SPA React]                                         [Mercado Pago]
+[Lovable — SPA React]                                        [Mercado Pago]
    │                                                              ▲
    │ supabase-js (fetch + WS realtime)                            │
    ▼                                                              │
@@ -306,7 +308,7 @@ npm run build        # Build de producción → dist/
 npm run lint         # ESLint
 npm run test         # Vitest unit (1 test placeholder)
 npx playwright test  # 45 E2E (requiere dev server arriba)
-git push origin main # Deploy automático en Vercel
+git push origin main # Lovable lo importa (natouniversity.lovable.app)
 ```
 
 ---
@@ -316,7 +318,7 @@ git push origin main # Deploy automático en Vercel
 Última auditoría completa: 5 agentes paralelos. Resumen:
 
 ### Críticos pendientes
-1. **Rotar Supabase anon key** (en `.env` y Vercel envs).
+1. **Rotar Supabase anon key** (en `.env` y en las env vars de Lovable).
 2. **`mp-webhook` y `subscription-webhook` sin validar firma `x-signature`** — endpoints abiertos al pago falso.
 3. **23 RPCs `SECURITY DEFINER` con EXECUTE para `anon`** (ej: `toggle_tenant_active`, `mark_course_recovered`, `update_tenant_commission`). Migration de REVOKE pendiente.
 4. **Vistas `SECURITY DEFINER` saltan RLS cross-tenant** (`admin_enrollments`, `leaderboard_monthly`, `course_progress`, `course_instructors`). Cambiar a `security_invoker=true`.

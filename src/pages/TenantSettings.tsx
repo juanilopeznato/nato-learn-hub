@@ -15,6 +15,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { events } from '@/lib/analytics'
+import { buildMpOAuthUrl } from '@/lib/mp-oauth'
 import { toast } from 'sonner'
 
 const brandSchema = z.object({
@@ -343,8 +344,8 @@ export default function TenantSettings() {
                     size="sm"
                     className="gap-2 text-gray-500"
                     onClick={() => {
-                      const oauthUrl = `https://auth.mercadopago.com/authorization?client_id=8771179743002501&response_type=code&platform_id=mp&redirect_uri=https://nato-learn-hub.vercel.app/mp-oauth-callback&state=${tenant?.id}`
-                      window.location.href = oauthUrl
+                      if (!tenant?.id) return
+                      window.location.href = buildMpOAuthUrl(tenant.id)
                     }}
                   >
                     <Link2 className="w-4 h-4" />
@@ -383,8 +384,8 @@ export default function TenantSettings() {
                   variant="hero"
                   className="gap-2 w-full sm:w-auto"
                   onClick={() => {
-                    const oauthUrl = `https://auth.mercadopago.com/authorization?client_id=8771179743002501&response_type=code&platform_id=mp&redirect_uri=https://nato-learn-hub.vercel.app/mp-oauth-callback&state=${tenant?.id}`
-                    window.location.href = oauthUrl
+                    if (!tenant?.id) return
+                    window.location.href = buildMpOAuthUrl(tenant.id)
                   }}
                 >
                   <Link2 className="w-4 h-4" />
