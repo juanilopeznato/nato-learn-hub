@@ -21,6 +21,61 @@ import { toast } from 'sonner'
 
 const KpiDashboard = React.lazy(() => import('@/components/instructor/KpiDashboard').then(m => ({ default: m.KpiDashboard })))
 
+/**
+ * Shape "completo" del curso desde la DB. Los tipos generados de Supabase
+ * no se consumen (ver lib/supabase.ts), entonces declaramos los campos
+ * que tocamos para no propagar `as any`.
+ */
+type BillingType = 'free' | 'one_time' | 'monthly' | 'annual'
+
+interface InstructorCourse {
+  id: string
+  title: string | null
+  slug: string | null
+  description: string | null
+  price: number | null
+  original_price: number | null
+  is_free: boolean | null
+  is_published: boolean | null
+  billing_type: BillingType | null
+  thumbnail_url: string | null
+  intro_video_url: string | null
+  learning_outcomes: string[] | null
+  for_who: string | null
+  instructor_bio: string | null
+  instructor_avatar_url: string | null
+  faq: { q: string; a: string }[] | null
+  meta_pixel_id: string | null
+  nato_produced: boolean | null
+  production_recovery_sales: number | null
+}
+
+interface EnrollmentRow {
+  id: string
+  enrolled_at: string | null
+  paid_amount: number | null
+  mp_status: string | null
+  last_accessed_at: string | null
+  student: { id: string; full_name: string | null; email: string | null; avatar_url: string | null; created_at: string | null } | null
+}
+
+interface InactiveEnrollment extends EnrollmentRow {
+  daysSince: number | null
+}
+
+interface CouponRow {
+  id: string
+  code: string
+  discount_type: 'percent' | 'fixed'
+  discount_value: number
+  max_uses: number | null
+  used_count: number | null
+  expires_at: string | null
+  course_id: string | null
+  is_active: boolean
+  created_at: string
+}
+
 export default function InstructorCoursePage() {
   const { courseId } = useParams<{ courseId: string }>()
   const { profile, tenant, signOut } = useAuth()
@@ -35,7 +90,7 @@ export default function InstructorCoursePage() {
   const [showInactive, setShowInactive] = useState(false)
   const [openSection, setOpenSection] = useState<'coupons' | 'calendar' | 'metrics' | null>('coupons')
 
-  const { data: course, isLoading } = useQuery({
+  const { data: course, isLoading } = useQuery<InstructorCourse | null>({
     queryKey: ['instructor-course', courseId],
     enabled: !!courseId,
     queryFn: async () => {
@@ -45,11 +100,11 @@ export default function InstructorCoursePage() {
         .eq('id', courseId!)
         .single()
       if (error) throw error
-      return data
+      return (data ?? null) as InstructorCourse | null
     },
   })
 
-  const { data: enrollments } = useQuery({
+  const { data: enrollments } = useQuery<EnrollmentRow[]>({
     queryKey: ['instructor-course-students', courseId],
     enabled: !!courseId,
     queryFn: async () => {
@@ -60,7 +115,7 @@ export default function InstructorCoursePage() {
         .in('mp_status', ['free', 'approved'])
         .order('enrolled_at', { ascending: false })
       if (error) throw error
-      return data ?? []
+      return (data ?? []) as unknown as EnrollmentRow[]
     },
   })
 
@@ -78,7 +133,7 @@ export default function InstructorCoursePage() {
     },
   })
 
-  const { data: coupons, refetch: refetchCoupons } = useQuery({
+  const { data: coupons, refetch: refetchCoupons } = useQuery<CouponRow[]>({
     queryKey: ['instructor-coupons', courseId, tenant?.id],
     enabled: !!tenant?.id,
     queryFn: async () => {
@@ -88,7 +143,7 @@ export default function InstructorCoursePage() {
         .eq('tenant_id', tenant!.id)
         .order('created_at', { ascending: false })
       if (error) throw error
-      return data ?? []
+      return (data ?? []) as unknown as CouponRow[]
     },
   })
 
@@ -134,21 +189,21 @@ export default function InstructorCoursePage() {
         slug: data.slug,
         description: data.description ?? null,
         thumbnail_url: data.thumbnail_url ?? null,
-        intro_video_url: (data as any).intro_video_url ?? null,
+        intro_video_url: data.intro_video_url ?? null,
         price: isFree ? 0 : data.price,
-        original_price: isFree ? null : ((data as any).original_price || null),
+        original_price: isFree ? null : (data.original_price || null),
         is_free: isFree,
         billing_type: data.billing_type,
         is_published: data.is_published,
-        learning_outcomes: (data as any).learning_outcomes?.filter(Boolean) ?? [],
-        for_who: (data as any).for_who ?? null,
-        instructor_bio: (data as any).instructor_bio ?? null,
-        instructor_avatar_url: (data as any).instructor_avatar_url ?? null,
-        faq: (data as any).faq?.filter((f: any) => f.q) ?? [],
-        meta_pixel_id: (data as any).meta_pixel_id ?? null,
-        nato_produced: (data as any).nato_produced ?? false,
-        production_recovery_sales: (data as any).production_recovery_sales ?? 10,
-      } as any).eq('id', courseId!)
+        learning_outcomes: data.learning_outcomes?.filter(Boolean) ?? [],
+        for_who: data.for_who ?? null,
+        instructor_bio: data.instructor_bio ?? null,
+        instructor_avatar_url: data.instructor_avatar_url ?? null,
+        faq: data.faq?.filter(f => f.q) ?? [],
+        meta_pixel_id: data.meta_pixel_id ?? null,
+        nato_produced: data.nato_produced ?? false,
+        production_recovery_sales: data.production_recovery_sales ?? 10,
+      }).eq('id', courseId!)
       if (error) throw error
     },
     onSuccess: () => {
@@ -162,7 +217,7 @@ export default function InstructorCoursePage() {
   const togglePublish = useMutation({
     mutationFn: async () => {
       const publishing = !course?.is_published
-      if (publishing && (course as any)?.billing_type !== 'free') {
+      if (publishing && course?.billing_type !== 'free') {
         const { data: tenantData } = await supabase
           .from('tenants')
           .select('mp_access_token')
@@ -188,22 +243,22 @@ export default function InstructorCoursePage() {
   const now = Date.now()
   const d3 = 3 * 24 * 60 * 60 * 1000
   const d7 = 7 * 24 * 60 * 60 * 1000
-  const inactiveEnrollments = (enrollments ?? [])
-    .filter((e: any) => {
+  const inactiveEnrollments: InactiveEnrollment[] = (enrollments ?? [])
+    .filter(e => {
       const progress = progressData?.[e.id] ?? 0
       if (progress >= 100) return false
       if (!e.last_accessed_at) return true
       return now - new Date(e.last_accessed_at).getTime() >= d3
     })
-    .map((e: any) => ({
+    .map(e => ({
       ...e,
       daysSince: e.last_accessed_at
         ? Math.floor((now - new Date(e.last_accessed_at).getTime()) / (1000 * 60 * 60 * 24))
         : null,
     }))
-    .sort((a: any, b: any) => (b.daysSince ?? 999) - (a.daysSince ?? 999))
+    .sort((a, b) => (b.daysSince ?? 999) - (a.daysSince ?? 999))
 
-  const displayedEnrollments = showInactive ? inactiveEnrollments : (enrollments ?? [])
+  const displayedEnrollments: (EnrollmentRow | InactiveEnrollment)[] = showInactive ? inactiveEnrollments : (enrollments ?? [])
 
   if (isLoading || !course) {
     return (
@@ -302,19 +357,19 @@ export default function InstructorCoursePage() {
                     slug: course.slug ?? '',
                     description: course.description ?? '',
                     price: Number(course.price ?? 0),
-                    original_price: Number((course as any).original_price ?? 0),
-                    billing_type: ((course as any).billing_type ?? (course.is_free ? 'free' : 'one_time')) as 'free' | 'one_time' | 'monthly' | 'annual',
+                    original_price: Number(course.original_price ?? 0),
+                    billing_type: course.billing_type ?? (course.is_free ? 'free' : 'one_time'),
                     is_published: course.is_published ?? false,
                     thumbnail_url: course.thumbnail_url ?? '',
-                    intro_video_url: (course as any).intro_video_url ?? '',
-                    learning_outcomes: (course as any).learning_outcomes?.length ? (course as any).learning_outcomes : [''],
-                    for_who: (course as any).for_who ?? '',
-                    instructor_bio: (course as any).instructor_bio ?? '',
-                    instructor_avatar_url: (course as any).instructor_avatar_url ?? '',
-                    faq: (course as any).faq?.length ? (course as any).faq : [{ q: '', a: '' }],
-                    meta_pixel_id: (course as any).meta_pixel_id ?? '',
-                    nato_produced: (course as any).nato_produced ?? false,
-                    production_recovery_sales: (course as any).production_recovery_sales ?? 10,
+                    intro_video_url: course.intro_video_url ?? '',
+                    learning_outcomes: course.learning_outcomes?.length ? course.learning_outcomes : [''],
+                    for_who: course.for_who ?? '',
+                    instructor_bio: course.instructor_bio ?? '',
+                    instructor_avatar_url: course.instructor_avatar_url ?? '',
+                    faq: course.faq?.length ? course.faq : [{ q: '', a: '' }],
+                    meta_pixel_id: course.meta_pixel_id ?? '',
+                    nato_produced: course.nato_produced ?? false,
+                    production_recovery_sales: course.production_recovery_sales ?? 10,
                   }}
                   onSubmit={updateCourse.mutateAsync}
                   onCancel={() => navigate('/instructor')}
@@ -368,7 +423,7 @@ export default function InstructorCoursePage() {
                       size="sm"
                       className="gap-1.5 text-xs"
                       onClick={() => {
-                        const rows = enrollments.map((e: any) => ({
+                        const rows = enrollments.map(e => ({
                           Nombre: e.student?.full_name ?? '',
                           Email: e.student?.email ?? '',
                           'Fecha inscripción': e.enrolled_at ? new Date(e.enrolled_at).toLocaleDateString('es-AR') : '',
@@ -417,9 +472,10 @@ export default function InstructorCoursePage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {displayedEnrollments.map((enrollment: any) => {
+                      {displayedEnrollments.map(enrollment => {
                         const student = enrollment.student
                         const progress = progressData?.[enrollment.id] ?? 0
+                        const days = 'daysSince' in enrollment ? (enrollment as InactiveEnrollment).daysSince : null
                         return (
                           <tr key={enrollment.id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-4 py-3">
@@ -455,7 +511,6 @@ export default function InstructorCoursePage() {
                                 </td>
                                 <td className="px-4 py-3">
                                   {(() => {
-                                    const days = (enrollment as any).daysSince
                                     const color = days === null ? 'bg-gray-100 text-gray-500'
                                       : days >= 7 ? 'bg-red-100 text-red-700'
                                       : 'bg-orange-100 text-orange-700'
@@ -614,14 +669,14 @@ export default function InstructorCoursePage() {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-100">
-                            {coupons.map((c: any) => (
+                            {coupons.map(c => (
                               <tr key={c.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 font-mono font-semibold text-gray-900 text-xs">{c.code}</td>
                                 <td className="px-4 py-3 text-gray-700 text-xs">
                                   {c.discount_type === 'percent' ? `${c.discount_value}%` : `ARS ${Number(c.discount_value).toLocaleString('es-AR')}`}
                                 </td>
                                 <td className="px-4 py-3 text-gray-500 text-xs">
-                                  {c.uses_count}{c.max_uses !== null ? ` / ${c.max_uses}` : ''}
+                                  {c.used_count ?? 0}{c.max_uses !== null ? ` / ${c.max_uses}` : ''}
                                 </td>
                                 <td className="px-4 py-3">
                                   <Badge variant={c.is_active ? 'default' : 'secondary'} className="text-xs">

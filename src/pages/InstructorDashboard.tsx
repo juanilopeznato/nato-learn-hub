@@ -17,6 +17,41 @@ import { toast } from 'sonner'
 
 const KpiDashboard = React.lazy(() => import('@/components/instructor/KpiDashboard').then(m => ({ default: m.KpiDashboard })))
 
+/** Campos del tenant que no están en el tipo base (ver lib/supabase.ts) */
+interface TenantExtras {
+  plan_name?: string | null
+  affiliate_code?: string | null
+}
+
+interface InstructorCourseRow {
+  id: string
+  title: string | null
+  slug: string | null
+  description: string | null
+  thumbnail_url: string | null
+  is_free: boolean | null
+  is_published: boolean | null
+  price: number | null
+  created_at: string | null
+  category: string | null
+  billing_type: 'free' | 'one_time' | 'monthly' | 'annual' | null
+}
+
+interface AffiliateCommissionRow {
+  id: string
+  status: 'paid' | 'pending' | string
+  amount_ars: number | null
+  referred_tenant_id: string | null
+  referred_tenant: { name: string | null } | null
+  created_at: string
+}
+
+interface ProfileWithTenant {
+  id: string
+  tenant_id: string
+  tenant: { name: string | null } | null
+}
+
 export default function InstructorDashboard() {
   const { profile, tenant, allProfiles, signOut, switchSchool } = useAuth()
   const [switching, setSwitching] = useState(false)
@@ -26,7 +61,9 @@ export default function InstructorDashboard() {
   const [deletingCourse, setDeletingCourse] = useState<{ id: string; title: string } | null>(null)
   const [copiedAffiliateUrl, setCopiedAffiliateUrl] = useState(false)
 
-  const { data: courses, isLoading } = useQuery({
+  const tenantExtras = tenant as (typeof tenant & TenantExtras) | null
+
+  const { data: courses, isLoading } = useQuery<InstructorCourseRow[]>({
     queryKey: ['instructor-courses', profile?.id],
     enabled: !!profile?.id,
     queryFn: async () => {
@@ -35,15 +72,15 @@ export default function InstructorDashboard() {
         .select('*')
         .eq('instructor_id', profile!.id)
         .order('created_at', { ascending: false })
-      return data ?? []
+      return (data ?? []) as unknown as InstructorCourseRow[]
     },
   })
 
   const { data: currentPlan } = useQuery({
-    queryKey: ['plan', (tenant as any)?.plan_name],
-    enabled: !!(tenant as any)?.plan_name,
+    queryKey: ['plan', tenantExtras?.plan_name],
+    enabled: !!tenantExtras?.plan_name,
     queryFn: async () => {
-      const { data } = await supabase.from('plans').select('*').eq('name', (tenant as any).plan_name).single()
+      const { data } = await supabase.from('plans').select('*').eq('name', tenantExtras!.plan_name!).single()
       return data
     },
   })
@@ -84,17 +121,18 @@ export default function InstructorDashboard() {
     currentPlan?.max_courses !== undefined &&
     (courses?.length ?? 0) >= currentPlan.max_courses
 
-  const affiliateUrl = `${window.location.origin}/signup?ref=${(tenant as any)?.affiliate_code ?? ''}`
+  const affiliateUrl = `${window.location.origin}/signup?ref=${tenantExtras?.affiliate_code ?? ''}`
 
-  const totalEarned = affiliateCommissions
-    ?.filter((c: any) => c.status === 'paid')
-    .reduce((sum: number, c: any) => sum + (c.amount_ars ?? 0), 0) ?? 0
+  const commissions = (affiliateCommissions ?? []) as unknown as AffiliateCommissionRow[]
+  const totalEarned = commissions
+    .filter(c => c.status === 'paid')
+    .reduce((sum, c) => sum + (c.amount_ars ?? 0), 0)
 
-  const totalPending = affiliateCommissions
-    ?.filter((c: any) => c.status === 'pending')
-    .reduce((sum: number, c: any) => sum + (c.amount_ars ?? 0), 0) ?? 0
+  const totalPending = commissions
+    .filter(c => c.status === 'pending')
+    .reduce((sum, c) => sum + (c.amount_ars ?? 0), 0)
 
-  const referredCount = new Set(affiliateCommissions?.map((c: any) => c.referred_tenant_id)).size
+  const referredCount = new Set(commissions.map(c => c.referred_tenant_id).filter(Boolean)).size
 
   const publishedCount = courses?.filter(c => c.is_published).length ?? 0
   const totalStudents = Object.values(enrollmentCounts ?? {}).reduce((a, b) => a + b, 0)
@@ -103,6 +141,7 @@ export default function InstructorDashboard() {
   const createCourse = useMutation({
     mutationFn: async (data: CourseFormData) => {
       if (!profile) throw new Error('Sin sesión')
+      const isFree = data.billing_type === 'free'
       const { error } = await supabase.from('courses').insert({
         tenant_id: profile.tenant_id,
         instructor_id: profile.id,
@@ -110,20 +149,21 @@ export default function InstructorDashboard() {
         slug: data.slug,
         description: data.description ?? null,
         thumbnail_url: data.thumbnail_url ?? null,
-        intro_video_url: (data as any).intro_video_url ?? null,
-        price: data.is_free ? 0 : data.price,
-        original_price: data.is_free ? null : ((data as any).original_price || null),
+        intro_video_url: data.intro_video_url ?? null,
+        price: isFree ? 0 : data.price,
+        original_price: isFree ? null : (data.original_price || null),
         currency: 'ARS',
-        is_free: data.is_free,
+        is_free: isFree,
+        billing_type: data.billing_type,
         is_published: data.is_published,
-        learning_outcomes: (data as any).learning_outcomes?.filter(Boolean) ?? [],
-        for_who: (data as any).for_who ?? null,
-        instructor_bio: (data as any).instructor_bio ?? null,
-        instructor_avatar_url: (data as any).instructor_avatar_url ?? null,
-        faq: (data as any).faq?.filter((f: any) => f.q) ?? [],
-        meta_pixel_id: (data as any).meta_pixel_id ?? null,
-        nato_produced: (data as any).nato_produced ?? false,
-        production_recovery_sales: (data as any).production_recovery_sales ?? 10,
+        learning_outcomes: data.learning_outcomes?.filter(Boolean) ?? [],
+        for_who: data.for_who ?? null,
+        instructor_bio: data.instructor_bio ?? null,
+        instructor_avatar_url: data.instructor_avatar_url ?? null,
+        faq: data.faq?.filter(f => f.q) ?? [],
+        meta_pixel_id: data.meta_pixel_id ?? null,
+        nato_produced: data.nato_produced ?? false,
+        production_recovery_sales: data.production_recovery_sales ?? 10,
       })
       if (error) throw error
     },
@@ -216,7 +256,7 @@ export default function InstructorDashboard() {
                         }}
                         className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between gap-2 disabled:opacity-50"
                       >
-                        <span className="truncate">{(p as any).tenant?.name ?? 'Escuela'}</span>
+                        <span className="truncate">{(p as unknown as ProfileWithTenant).tenant?.name ?? 'Escuela'}</span>
                         {p.tenant_id === profile?.tenant_id && (
                           <Check className="w-3.5 h-3.5 text-primary shrink-0" />
                         )}
@@ -558,9 +598,9 @@ export default function InstructorDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {affiliateCommissions.map((c: any) => (
+                      {commissions.map(c => (
                         <tr key={c.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 font-medium text-gray-900">{(c.referred_tenant as any)?.name ?? '—'}</td>
+                          <td className="px-4 py-3 font-medium text-gray-900">{c.referred_tenant?.name ?? '—'}</td>
                           <td className="px-4 py-3 text-gray-700 font-semibold">ARS {Number(c.amount_ars ?? 0).toLocaleString('es-AR')}</td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
