@@ -25,6 +25,9 @@ const DENY = [
 // Archivos donde sí está permitido el patrón
 const ALLOW = new Set([
   'lib/storage.ts',
+  // Excepción: la página admin de migración legacy necesita pasar por debajo
+  // del pipeline para reprocessar archivos viejos. Es one-shot, manual.
+  'components/StorageMigration.tsx',
 ])
 
 function walk(dir, acc = []) {
@@ -44,16 +47,33 @@ for (const file of files) {
   const rel = file.replace(ROOT + '/', '')
   if (ALLOW.has(rel)) continue
   const content = readFileSync(file, 'utf8')
+
+  // Colapsamos whitespace para detectar uploads multi-línea
+  // (ej: supabase.storage\n.from(x)\n.upload(...))
+  const collapsed = content.replace(/\s+/g, ' ')
+
   for (const pattern of DENY) {
-    const lines = content.split('\n')
-    lines.forEach((line, i) => {
-      if (pattern.test(line)) {
+    if (pattern.test(collapsed)) {
+      // Encontrar la línea aproximada del primer match per-line para reporte
+      const lines = content.split('\n')
+      let reported = false
+      lines.forEach((line, i) => {
+        if (!reported && pattern.test(line)) {
+          reported = true
+          console.error(`\x1b[31m✗\x1b[0m ${rel}:${i + 1}`)
+          console.error(`  ${line.trim()}`)
+          console.error(`  → usá uploadImage() de @/lib/storage en lugar de upload directo.\n`)
+        }
+      })
+      if (!reported) {
+        // Match en patrón multi-línea: reportar sin línea exacta
         violations++
-        console.error(`\x1b[31m✗\x1b[0m ${rel}:${i + 1}`)
-        console.error(`  ${line.trim()}`)
-        console.error(`  → usá uploadImage() de @/lib/storage en lugar de upload directo.\n`)
+        console.error(`\x1b[31m✗\x1b[0m ${rel}`)
+        console.error(`  → usá uploadImage() de @/lib/storage. Detecté un upload directo multi-línea.\n`)
+      } else {
+        violations++
       }
-    })
+    }
   }
 }
 

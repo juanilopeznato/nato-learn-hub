@@ -656,16 +656,19 @@ export default function CourseDetail() {
                 {sortedModules.map(module => (
                   <div key={module.id} className="border border-gray-200 rounded-xl overflow-hidden">
                     <button
-                      className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+                      type="button"
+                      className="w-full min-h-[56px] flex items-center justify-between p-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-colors"
                       onClick={() => toggleModule(module.id)}
+                      aria-expanded={expandedModules.has(module.id)}
+                      aria-label={`${expandedModules.has(module.id) ? 'Cerrar' : 'Abrir'} módulo ${module.title}`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="font-semibold text-gray-900">{module.title}</span>
                         <span className="text-xs text-gray-400 hidden sm:block">{module.lessons?.length ?? 0} lecciones</span>
                       </div>
                       {expandedModules.has(module.id)
-                        ? <ChevronUp className="w-4 h-4 text-gray-400" />
-                        : <ChevronDown className="w-4 h-4 text-gray-400" />
+                        ? <ChevronUp className="w-5 h-5 text-gray-400 shrink-0" aria-hidden />
+                        : <ChevronDown className="w-5 h-5 text-gray-400 shrink-0" aria-hidden />
                       }
                     </button>
                     {expandedModules.has(module.id) && (

@@ -19,6 +19,7 @@ import {
   ToggleLeft, ToggleRight, Search, Receipt,
 } from 'lucide-react'
 import { StorageMetrics } from '@/components/StorageMetrics'
+import { StorageMigration } from '@/components/StorageMigration'
 
 /* ─── helpers ──────────────────────────────────────────────────────── */
 const fmt = (n: number) => `ARS ${Number(n).toLocaleString('es-AR')}`
@@ -654,8 +655,9 @@ export default function NatoOwnerPanel() {
           </TabsContent>
 
           {/* ── Storage ── */}
-          <TabsContent value="storage" className="mt-6">
+          <TabsContent value="storage" className="mt-6 space-y-6">
             <StorageMetrics />
+            <StorageMigration />
           </TabsContent>
         </Tabs>
       </div>

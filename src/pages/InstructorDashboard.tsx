@@ -13,6 +13,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { CourseForm, type CourseFormData } from '@/components/instructor/CourseForm'
+import { SmartImage } from '@/components/SmartImage'
 import { toast } from 'sonner'
 
 const KpiDashboard = React.lazy(() => import('@/components/instructor/KpiDashboard').then(m => ({ default: m.KpiDashboard })))
@@ -364,7 +365,7 @@ export default function InstructorDashboard() {
                     >
                       {/* Thumbnail */}
                       {course.thumbnail_url ? (
-                        <img src={course.thumbnail_url} alt={course.title} className="w-14 h-14 rounded-lg object-cover shrink-0 hidden sm:block" />
+                        <SmartImage src={course.thumbnail_url} alt={course.title ?? ''} size="thumb" className="w-14 h-14 rounded-lg object-cover shrink-0 hidden sm:block" />
                       ) : (
                         <div className="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 hidden sm:block">
                           <BookOpen className="w-5 h-5 text-gray-300" />

@@ -283,13 +283,14 @@ export default function LessonView() {
               {currentIndex + 1} / {allLessons.length}
             </span>
             <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-5 w-auto object-contain" />
-            {/* Mobile: toggle sidebar */}
+            {/* Mobile: toggle sidebar (44px min para WCAG AA) */}
             <button
-              className="lg:hidden ml-1 p-1.5 rounded-md text-gray-500 hover:bg-gray-100 transition-colors"
+              type="button"
+              className="lg:hidden ml-1 w-11 h-11 flex items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 active:bg-gray-200 transition-colors"
               onClick={() => setMobileSidebarOpen(true)}
               aria-label="Ver lecciones"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5" aria-hidden />
             </button>
           </div>
         </div>

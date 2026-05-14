@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { CourseForm, type CourseFormData } from '@/components/instructor/CourseForm'
+import { SmartAvatar } from '@/components/SmartImage'
 import { exportToCsv } from '@/lib/exportCsv'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -480,13 +481,13 @@ export default function InstructorCoursePage() {
                           <tr key={enrollment.id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
-                                {student?.avatar_url ? (
-                                  <img src={student.avatar_url} alt={student.full_name ?? ''} className="w-8 h-8 rounded-full object-cover shrink-0" />
-                                ) : (
-                                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0 text-xs text-gray-500 font-medium">
-                                    {(student?.full_name ?? '?').charAt(0).toUpperCase()}
-                                  </div>
-                                )}
+                                <SmartAvatar
+                                  src={student?.avatar_url ?? null}
+                                  alt={student?.full_name ?? ''}
+                                  size={32}
+                                  fallbackInitials={(student?.full_name ?? '?').charAt(0).toUpperCase()}
+                                  className="shrink-0 bg-gray-200 text-gray-500"
+                                />
                                 <div className="min-w-0">
                                   <p className="font-medium text-gray-900 truncate max-w-[140px]">{student?.full_name ?? '—'}</p>
                                   <p className="text-xs text-gray-400 truncate max-w-[140px]">{student?.email ?? ''}</p>

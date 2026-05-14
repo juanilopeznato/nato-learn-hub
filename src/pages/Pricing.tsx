@@ -76,8 +76,10 @@ export default function Pricing() {
           </div>
 
             {/* Toggle mensual/anual */}
-            <div className="inline-flex items-center gap-3 bg-gray-800 rounded-full p-1">
+            <div role="group" aria-label="Período de facturación" className="inline-flex items-center gap-3 bg-gray-800 rounded-full p-1">
               <button
+                type="button"
+                aria-pressed={!annual}
                 onClick={() => setAnnual(false)}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
                   !annual ? 'bg-white text-gray-900' : 'text-gray-400 hover:text-white'
@@ -86,6 +88,8 @@ export default function Pricing() {
                 Mensual
               </button>
               <button
+                type="button"
+                aria-pressed={annual}
                 onClick={() => setAnnual(true)}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
                   annual ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'
@@ -167,9 +171,18 @@ export default function Pricing() {
                             </span>
                             <span className="text-gray-400 text-sm">/mes</span>
                           </div>
-                          {annual && (
-                            <p className="text-xs text-green-400">
-                              Ahorrás ARS {annualSaving.toLocaleString('es-AR')}/año
+                          {annual ? (
+                            <div className="space-y-0.5">
+                              <p className="text-xs text-gray-400">
+                                Facturado ARS {(monthlyPrice * 10).toLocaleString('es-AR')} al año
+                              </p>
+                              <p className="text-xs text-green-400 font-medium">
+                                Ahorrás ARS {annualSaving.toLocaleString('es-AR')}/año
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-gray-500">
+                              Facturado mensualmente
                             </p>
                           )}
                         </div>

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { LogOut, Save, ArrowLeft, Trophy, Flame, Star, BookOpen, Award, Zap } from 'lucide-react'
 import { ImageUpload } from '@/components/ImageUpload'
+import { SmartAvatar } from '@/components/SmartImage'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -148,15 +149,13 @@ export default function ProfileSettings() {
           <div className="flex items-center gap-4 mb-6">
             {/* Avatar grande */}
             <div className="relative shrink-0">
-              {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt={profile.full_name ?? ''} className="w-16 h-16 rounded-full object-cover" />
-              ) : (
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary">
-                    {(profile?.full_name ?? 'U')[0].toUpperCase()}
-                  </span>
-                </div>
-              )}
+              <SmartAvatar
+                src={profile?.avatar_url ?? null}
+                alt={profile?.full_name ?? ''}
+                size={64}
+                fallbackInitials={(profile?.full_name ?? 'U')[0].toUpperCase()}
+                className="bg-primary/10 text-primary"
+              />
               <div className="absolute -bottom-1 -right-1 bg-primary text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
                 {level}
               </div>

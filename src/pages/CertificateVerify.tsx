@@ -31,7 +31,7 @@ export default function CertificateVerify() {
       {/* Logo */}
       <div className="mb-8">
         {school?.logo_url ? (
-          <img src={school.logo_url} alt={school.name} className="h-10 w-auto object-contain" />
+          <img src={school.logo_url} alt={school.name} className="h-10 w-auto object-contain" loading="lazy" decoding="async" />
         ) : (
           <div className="flex items-center gap-2">
             <Award className="w-7 h-7 text-primary" />
