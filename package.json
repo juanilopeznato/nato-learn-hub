@@ -8,9 +8,11 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
+    "lint:storage": "node scripts/check-storage-pipeline.mjs",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check": "npm run lint && npm run lint:storage && npm run test"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

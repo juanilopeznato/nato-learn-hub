@@ -1,55 +1,63 @@
 import { useRef, useState } from 'react'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { uploadImage, type ImageKind } from '@/lib/storage'
+import { useAuth } from '@/context/AuthContext'
 import { toast } from 'sonner'
 
 interface Props {
   value?: string
   onChange: (url: string) => void
+  /**
+   * Tipo lógico de imagen. El bucket, tamaños y compresión se deciden por kind.
+   * Compat: si pasan `bucket`/`aspectRatio` viejos, se mapean al kind correspondiente.
+   */
+  kind?: ImageKind
   bucket?: 'course-images' | 'avatars'
   label?: string
   hint?: string
   aspectRatio?: 'video' | 'square'
 }
 
+function resolveKind(props: Pick<Props, 'kind' | 'bucket' | 'aspectRatio'>): ImageKind {
+  if (props.kind) return props.kind
+  if (props.bucket === 'avatars') return 'avatar'
+  if (props.aspectRatio === 'square') return 'avatar'
+  return 'course-cover'
+}
+
 export function ImageUpload({
   value,
   onChange,
-  bucket = 'course-images',
+  kind,
+  bucket,
   label = 'Imagen',
-  hint = 'JPG, PNG o WebP · Máx 5MB',
+  hint,
   aspectRatio = 'video',
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const { tenant } = useAuth()
+
+  const resolvedKind = resolveKind({ kind, bucket, aspectRatio })
+  const defaultHint = resolvedKind === 'avatar'
+    ? 'JPG, PNG o WebP · Se comprime automáticamente'
+    : 'JPG, PNG o WebP · Se optimiza automáticamente'
 
   async function uploadFile(file: File) {
-    if (!file.type.startsWith('image/')) {
-      toast.error('Solo se permiten imágenes')
+    if (!tenant?.id) {
+      toast.error('No se pudo identificar la escuela. Recargá la página.')
       return
     }
-    const maxSize = bucket === 'avatars' ? 2 * 1024 * 1024 : 5 * 1024 * 1024
-    if (file.size > maxSize) {
-      toast.error(`La imagen no puede superar ${maxSize / 1024 / 1024}MB`)
-      return
-    }
-
     setUploading(true)
     try {
-      const ext = file.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file, { cacheControl: '3600', upsert: false })
-
-      if (error) throw error
-
-      const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(data.path)
-      onChange(publicUrl)
-      toast.success('Imagen subida')
-    } catch (e: any) {
-      toast.error(e.message ?? 'Error al subir la imagen')
+      const result = await uploadImage(file, { kind: resolvedKind, tenantId: tenant.id })
+      onChange(result.url)
+      const kb = Math.round(result.bytes / 1024)
+      toast.success(`Imagen subida (${kb} KB)`)
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Error al subir la imagen'
+      toast.error(msg)
     } finally {
       setUploading(false)
     }
@@ -84,14 +92,14 @@ export function ImageUpload({
       >
         {value ? (
           <>
-            <img src={value} alt="Preview" className="w-full h-full object-cover" />
-            {/* Hover overlay */}
+            <img src={value} alt="Preview" className="w-full h-full object-cover" loading="lazy" decoding="async" />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={e => { e.stopPropagation(); inputRef.current?.click() }}
                 className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors text-white"
                 title="Cambiar imagen"
+                aria-label="Cambiar imagen"
               >
                 <Upload className="w-4 h-4" />
               </button>
@@ -100,6 +108,7 @@ export function ImageUpload({
                 onClick={e => { e.stopPropagation(); onChange('') }}
                 className="p-2 rounded-full bg-white/20 hover:bg-red-500/70 transition-colors text-white"
                 title="Eliminar imagen"
+                aria-label="Eliminar imagen"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -110,7 +119,7 @@ export function ImageUpload({
             {uploading ? (
               <>
                 <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs">Subiendo...</span>
+                <span className="text-xs">Optimizando...</span>
               </>
             ) : (
               <>
@@ -123,7 +132,7 @@ export function ImageUpload({
                     <p className="text-xs font-medium text-gray-500">
                       {dragOver ? 'Soltá la imagen' : 'Arrastrá o hacé click'}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">{hint}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{hint ?? defaultHint}</p>
                   </div>
                 )}
               </>
@@ -135,7 +144,7 @@ export function ImageUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"
         className="hidden"
         onChange={e => { const f = e.target.files?.[0]; if (f) uploadFile(f) }}
       />
