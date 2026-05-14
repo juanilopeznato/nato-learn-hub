@@ -92,6 +92,8 @@ export default function Signup() {
               <Label htmlFor="fullName" className="text-gray-700 font-medium">Nombre completo</Label>
               <Input
                 id="fullName"
+                autoComplete="name"
+                autoCapitalize="words"
                 placeholder="Juan López"
                 className="h-11 border-gray-200 focus:border-primary"
                 {...register('fullName')}
@@ -104,6 +106,11 @@ export default function Signup() {
               <Input
                 id="email"
                 type="email"
+                inputMode="email"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="tu@email.com"
                 className="h-11 border-gray-200 focus:border-primary"
                 {...register('email')}
@@ -116,6 +123,7 @@ export default function Signup() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="••••••••"
                 className="h-11 border-gray-200 focus:border-primary"
                 {...register('password')}

@@ -19,4 +19,21 @@ export default defineConfig(({ mode }) => ({
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Lección NATO Marketing Studio: NO separar @radix-ui de react.
+        // Rompe con "Cannot read properties of undefined (reading 'forwardRef')"
+        // en producción minificada. Mantener todo el ecosistema React-context
+        // junto en el chunk principal.
+        manualChunks: id => {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('/lucide-react/')) return 'icons';
+          if (id.includes('/@supabase/')) return 'supabase';
+          if (id.includes('/recharts/') || id.includes('/d3-')) return 'charts';
+          return undefined;
+        },
+      },
+    },
+  },
 }));

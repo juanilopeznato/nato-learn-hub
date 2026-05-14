@@ -477,10 +477,19 @@ export default function LessonView() {
                 <ArrowRight className="w-4 h-4" />
               </Button>
             ) : (
-              <span className="flex items-center gap-1.5 text-sm text-green-600 font-semibold shrink-0">
-                <CheckCircle className="w-4 h-4" />
-                Curso completado
-              </span>
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="hidden sm:flex items-center gap-1.5 text-sm text-green-600 font-semibold">
+                  <CheckCircle className="w-4 h-4" />
+                  Curso completado
+                </span>
+                <Button
+                  variant="hero"
+                  size="sm"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Volver al dashboard
+                </Button>
+              </div>
             )
           ) : (
             <Button

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -45,57 +46,59 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <React.Suspense fallback={null}>
-              <Routes>
+  <ErrorBoundary>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <React.Suspense fallback={null}>
+                <Routes>
                 {/* Públicas */}
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/courses" element={<Courses />} />
-                <Route path="/courses/:slug" element={<CourseDetail />} />
-                <Route path="/affiliates" element={<Affiliates />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/certificates/:code" element={<CertificateVerify />} />
-                <Route path="/create-school" element={<CreateSchool />} />
-                <Route path="/mp-oauth-callback" element={<MpOAuthCallback />} />
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/courses" element={<Courses />} />
+                  <Route path="/courses/:slug" element={<CourseDetail />} />
+                  <Route path="/affiliates" element={<Affiliates />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/certificates/:code" element={<CertificateVerify />} />
+                  <Route path="/create-school" element={<CreateSchool />} />
+                  <Route path="/mp-oauth-callback" element={<MpOAuthCallback />} />
 
                 {/* Protegidas: estudiantes */}
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/learn/:courseSlug/:lessonId" element={<ProtectedRoute><LessonView /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/learn/:courseSlug/:lessonId" element={<ProtectedRoute><LessonView /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
 
                 {/* Protegidas: comunidad y perfiles */}
-                <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
-                <Route path="/members/:profileId" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
+                  <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                  <Route path="/members/:profileId" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
 
                 {/* Protegidas: instructores */}
-                <Route path="/instructor" element={<ProtectedRoute requiredRole="instructor"><InstructorDashboard /></ProtectedRoute>} />
-                <Route path="/instructor/courses/:courseId" element={<ProtectedRoute requiredRole="instructor"><InstructorCoursePage /></ProtectedRoute>} />
-                <Route path="/instructor/email" element={<ProtectedRoute requiredRole="instructor"><EmailMarketing /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute requiredRole="instructor"><TenantSettings /></ProtectedRoute>} />
+                  <Route path="/instructor" element={<ProtectedRoute requiredRole="instructor"><InstructorDashboard /></ProtectedRoute>} />
+                  <Route path="/instructor/courses/:courseId" element={<ProtectedRoute requiredRole="instructor"><InstructorCoursePage /></ProtectedRoute>} />
+                  <Route path="/instructor/email" element={<ProtectedRoute requiredRole="instructor"><EmailMarketing /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute requiredRole="instructor"><TenantSettings /></ProtectedRoute>} />
 
                 {/* Protegidas: admin / NATO
                     AdminPanel es un panel cross-tenant (lista tenants, queries globales) — solo NATO. */}
-                <Route path="/admin" element={<ProtectedRoute requiredRole="nato_owner"><AdminPanel /></ProtectedRoute>} />
-                <Route path="/nato" element={<ProtectedRoute requiredRole="nato_owner"><NatoOwnerPanel /></ProtectedRoute>} />
+                  <Route path="/admin" element={<ProtectedRoute requiredRole="nato_owner"><AdminPanel /></ProtectedRoute>} />
+                  <Route path="/nato" element={<ProtectedRoute requiredRole="nato_owner"><NatoOwnerPanel /></ProtectedRoute>} />
 
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </React.Suspense>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </React.Suspense>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  </ErrorBoundary>
 );
 
 export default App;

@@ -83,6 +83,7 @@ export default function ResetPassword() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="••••••••"
                 className="h-11 border-gray-200 focus:border-primary"
                 {...register('password')}
@@ -95,6 +96,7 @@ export default function ResetPassword() {
               <Input
                 id="confirmPassword"
                 type="password"
+                autoComplete="new-password"
                 placeholder="••••••••"
                 className="h-11 border-gray-200 focus:border-primary"
                 {...register('confirmPassword')}

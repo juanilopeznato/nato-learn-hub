@@ -90,6 +90,11 @@ export default function Login() {
               <Input
                 id="email"
                 type="email"
+                inputMode="email"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="tu@email.com"
                 className="h-11 border-gray-200 focus:border-primary"
                 {...register('email')}
@@ -102,6 +107,7 @@ export default function Login() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="current-password"
                 placeholder="••••••••"
                 className="h-11 border-gray-200 focus:border-primary"
                 {...register('password')}
