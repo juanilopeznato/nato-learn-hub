@@ -21,7 +21,14 @@ export default function CertificateVerify() {
     retry: false,
   })
 
-  const enrollment = certificate?.enrollment as any
+  interface CertificateEnrollment {
+    student: { full_name: string | null } | null
+    course: {
+      title: string | null
+      tenant: { name: string | null; logo_url: string | null } | null
+    } | null
+  }
+  const enrollment = certificate?.enrollment as CertificateEnrollment | null
   const student = enrollment?.student
   const course = enrollment?.course
   const school = course?.tenant

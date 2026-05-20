@@ -27,6 +27,23 @@ const profileSchema = z.object({
 
 type ProfileData = z.infer<typeof profileSchema>
 
+interface CertificateRow {
+  id: string
+  issued_at: string
+  verification_code: string
+  enrollments: { courses: { title: string | null } | null } | null
+}
+
+type ProfileUpdate = Partial<{
+  full_name: string
+  bio: string | null
+  avatar_url: string | null
+  social_instagram: string | null
+  social_twitter: string | null
+  social_linkedin: string | null
+  social_website: string | null
+}>
+
 export default function ProfileSettings() {
   const { profile, tenant, signOut } = useAuth()
   const queryClient = useQueryClient()
@@ -37,29 +54,36 @@ export default function ProfileSettings() {
 
   const bioValue = watch('bio') ?? ''
 
+  // Profile tiene campos extras que no están en el tipo generado (ver lib/supabase.ts)
+  const profileExtras = profile as (typeof profile & {
+    bio?: string | null
+    social_instagram?: string | null
+    social_twitter?: string | null
+    social_linkedin?: string | null
+    social_website?: string | null
+    points?: number | null
+    level?: number | null
+    streak_days?: number | null
+  }) | null
+
   useEffect(() => {
-    if (!profile) return
+    if (!profileExtras) return
     reset({
-      full_name: profile.full_name ?? '',
-      bio: (profile as any).bio ?? '',
-      avatar_url: profile.avatar_url ?? '',
-      social_instagram: (profile as any).social_instagram ?? '',
-      social_twitter: (profile as any).social_twitter ?? '',
-      social_linkedin: (profile as any).social_linkedin ?? '',
-      social_website: (profile as any).social_website ?? '',
+      full_name: profileExtras.full_name ?? '',
+      bio: profileExtras.bio ?? '',
+      avatar_url: profileExtras.avatar_url ?? '',
+      social_instagram: profileExtras.social_instagram ?? '',
+      social_twitter: profileExtras.social_twitter ?? '',
+      social_linkedin: profileExtras.social_linkedin ?? '',
+      social_website: profileExtras.social_website ?? '',
     })
-  }, [profile, reset])
+  }, [profileExtras, reset])
 
   // Certificados obtenidos
-  const { data: certificates } = useQuery({
+  const { data: certificates } = useQuery<CertificateRow[]>({
     queryKey: ['my-certificates', profile?.id],
     enabled: !!profile?.id,
     queryFn: async () => {
-      const { data } = await supabase
-        .from('certificates')
-        .select('id, issued_at, verification_code, enrollment_id, enrollments(courses(title))')
-        .eq('enrollment_id', supabase.from('enrollments').select('id').eq('student_id', profile!.id) as any)
-      // Simpler approach: join through enrollments
       const { data: certs } = await supabase
         .from('certificates')
         .select(`
@@ -67,7 +91,7 @@ export default function ProfileSettings() {
           enrollments!inner(student_id, courses(title))
         `)
         .eq('enrollments.student_id', profile!.id)
-      return certs ?? []
+      return (certs ?? []) as unknown as CertificateRow[]
     },
   })
 
@@ -87,17 +111,18 @@ export default function ProfileSettings() {
 
   async function onSubmit(data: ProfileData) {
     if (!profile) return
+    const update: ProfileUpdate = {
+      full_name: data.full_name,
+      bio: data.bio || null,
+      avatar_url: data.avatar_url || null,
+      social_instagram: data.social_instagram || null,
+      social_twitter: data.social_twitter || null,
+      social_linkedin: data.social_linkedin || null,
+      social_website: data.social_website || null,
+    }
     const { error } = await supabase
       .from('profiles')
-      .update({
-        full_name: data.full_name,
-        bio: data.bio || null,
-        avatar_url: data.avatar_url || null,
-        social_instagram: data.social_instagram || null,
-        social_twitter: data.social_twitter || null,
-        social_linkedin: data.social_linkedin || null,
-        social_website: data.social_website || null,
-      } as any)
+      .update(update)
       .eq('id', profile.id)
 
     if (error) {
@@ -109,9 +134,9 @@ export default function ProfileSettings() {
     queryClient.invalidateQueries({ queryKey: ['profile'] })
   }
 
-  const points = (profile as any)?.points ?? 0
-  const level = (profile as any)?.level ?? 1
-  const streak = (profile as any)?.streak_days ?? 0
+  const points = profileExtras?.points ?? 0
+  const level = profileExtras?.level ?? 1
+  const streak = profileExtras?.streak_days ?? 0
 
   // Level progress (100 pts per level)
   const levelProgress = Math.min((points % 100) / 100 * 100, 100)
@@ -130,7 +155,7 @@ export default function ProfileSettings() {
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-7 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-7 w-auto object-contain" loading="lazy" decoding="async" />
           </div>
           <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400">
             <LogOut className="w-4 h-4" />
@@ -212,7 +237,7 @@ export default function ProfileSettings() {
               <h2 className="font-heading font-semibold text-gray-900">Mis certificados</h2>
             </div>
             <div className="space-y-2">
-              {certificates.map((cert: any) => {
+              {certificates.map(cert => {
                 const courseTitle = cert.enrollments?.courses?.title ?? 'Curso'
                 const issuedAt = new Date(cert.issued_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })
                 return (

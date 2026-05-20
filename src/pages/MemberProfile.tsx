@@ -50,7 +50,17 @@ export default function MemberProfile() {
     },
   })
 
-  const { data: enrollments = [] } = useQuery({
+  interface MemberEnrollment {
+    id: string
+    courses: { title: string | null; slug: string | null } | null
+  }
+  interface ActivityRow {
+    action: string
+    delta: number
+    created_at: string
+  }
+
+  const { data: enrollments = [] } = useQuery<MemberEnrollment[]>({
     queryKey: ['member-enrollments', profileId],
     enabled: !!profileId,
     queryFn: async () => {
@@ -59,11 +69,11 @@ export default function MemberProfile() {
         .select('id, courses(title, slug)')
         .eq('student_id', profileId!)
         .in('mp_status', ['free', 'approved'])
-      return data ?? []
+      return (data ?? []) as unknown as MemberEnrollment[]
     },
   })
 
-  const { data: activity = [] } = useQuery({
+  const { data: activity = [] } = useQuery<ActivityRow[]>({
     queryKey: ['member-activity', profileId],
     enabled: !!profileId,
     queryFn: async () => {
@@ -73,7 +83,7 @@ export default function MemberProfile() {
         .eq('profile_id', profileId!)
         .order('created_at', { ascending: false })
         .limit(10)
-      return data ?? []
+      return (data ?? []) as unknown as ActivityRow[]
     },
   })
 
@@ -124,7 +134,7 @@ export default function MemberProfile() {
             <span className="text-sm hidden sm:block">Volver</span>
           </Link>
           <div className="ml-auto">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? ''} className="h-6 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? ''} className="h-6 w-auto object-contain" loading="lazy" decoding="async" />
           </div>
         </div>
       </header>
@@ -202,7 +212,7 @@ export default function MemberProfile() {
               Cursos inscriptos
             </h3>
             <div className="flex flex-wrap gap-2">
-              {enrollments.map((e: any) => e.courses && (
+              {enrollments.map(e => e.courses && (
                 <Link
                   key={e.id}
                   to={`/courses/${e.courses.slug}`}
@@ -223,7 +233,7 @@ export default function MemberProfile() {
               Actividad reciente
             </h3>
             <div className="space-y-2">
-              {activity.map((a: any, i: number) => (
+              {activity.map((a, i) => (
                 <div key={i} className="flex items-center justify-between gap-3">
                   <span className="text-sm text-gray-600">{ACTION_LABELS[a.action] ?? a.action}</span>
                   <div className="flex items-center gap-2 shrink-0">

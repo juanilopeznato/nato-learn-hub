@@ -51,7 +51,26 @@ export default function AdminPanel() {
     },
   })
 
-  const { data: allCourses } = useQuery({
+  interface AdminCourseRow {
+    id: string
+    title: string | null
+    slug: string | null
+    price: number | null
+    is_free: boolean | null
+    is_published: boolean | null
+    tenants: { name: string | null } | null
+    profiles: { full_name: string | null } | null
+  }
+  interface AdminEnrollmentRow {
+    id: string
+    enrolled_at: string
+    mp_status: string | null
+    paid_amount: number | null
+    profiles: { full_name: string | null; email: string | null } | null
+    courses: { title: string | null } | null
+  }
+
+  const { data: allCourses } = useQuery<AdminCourseRow[]>({
     queryKey: ['admin-courses'],
     queryFn: async () => {
       const { data } = await supabase
@@ -59,11 +78,11 @@ export default function AdminPanel() {
         .select('id, title, slug, price, is_free, is_published, created_at, tenants(name), profiles(full_name)')
         .order('created_at', { ascending: false })
         .limit(50)
-      return data ?? []
+      return (data ?? []) as unknown as AdminCourseRow[]
     },
   })
 
-  const { data: recentEnrollments } = useQuery({
+  const { data: recentEnrollments } = useQuery<AdminEnrollmentRow[]>({
     queryKey: ['admin-enrollments'],
     queryFn: async () => {
       const { data } = await supabase
@@ -71,7 +90,7 @@ export default function AdminPanel() {
         .select('id, enrolled_at, mp_status, paid_amount, profiles(full_name, email), courses(title)')
         .order('enrolled_at', { ascending: false })
         .limit(50)
-      return data ?? []
+      return (data ?? []) as unknown as AdminEnrollmentRow[]
     },
   })
 
@@ -111,7 +130,7 @@ export default function AdminPanel() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt="Admin" className="h-8 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt="Admin" className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
             <Badge variant="secondary" className="text-xs">Super Admin</Badge>
           </div>
           <div className="flex items-center gap-3">
@@ -201,7 +220,7 @@ export default function AdminPanel() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {allCourses?.map((c: any) => (
+                  {allCourses?.map(c => (
                     <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3">
                         <Link to={`/courses/${c.slug}`} className="font-medium text-gray-900 hover:text-primary flex items-center gap-1">
@@ -238,7 +257,7 @@ export default function AdminPanel() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {recentEnrollments?.map((e: any) => (
+                  {recentEnrollments?.map(e => (
                     <tr key={e.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3">
                         <p className="font-medium text-gray-900 text-xs">{e.profiles?.full_name ?? '—'}</p>

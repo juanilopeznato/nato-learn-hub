@@ -3,13 +3,33 @@ import { supabase } from '@/lib/supabase'
 import { isThisMonth, subDays, format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { Users, TrendingUp, BookOpen, DollarSign, Activity, Award, Eye, MousePointerClick, ShoppingCart, UserCheck } from 'lucide-react'
+import { Users, TrendingUp, BookOpen, DollarSign, Activity, Award, Eye, MousePointerClick, ShoppingCart, UserCheck, type LucideIcon } from 'lucide-react'
 
 interface Props {
   courseIds: string[]
 }
 
-function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string | number; sub?: string }) {
+interface LessonProgressRow {
+  enrollment_id: string
+  lesson_id: string
+  completed_at: string | null
+  enrollments: { student_id: string | null } | null
+}
+
+interface FunnelRow {
+  course_id: string
+  event_name: string
+  created_at: string
+}
+
+interface KpiRow {
+  course: string
+  enrolled: number
+  active: number
+  completed: number
+}
+
+function StatCard({ icon: Icon, label, value, sub }: { icon: LucideIcon; label: string; value: string | number; sub?: string }) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-1">
       <div className="flex items-center gap-2 text-gray-500">
@@ -41,14 +61,14 @@ export function KpiDashboard({ courseIds }: Props) {
   const { data: recentProgress = [] } = useQuery({
     queryKey: ['kpi-active', courseIds],
     enabled: courseIds.length > 0,
-    queryFn: async () => {
+    queryFn: async (): Promise<LessonProgressRow[]> => {
       const since = subDays(new Date(), 7).toISOString()
       const { data } = await supabase
         .from('lesson_progress')
-        .select('enrollment_id, enrollments!inner(course_id, student_id)')
+        .select('enrollment_id, lesson_id, completed_at, enrollments!inner(course_id, student_id)')
         .in('enrollments.course_id', courseIds)
         .gte('completed_at', since)
-      return data ?? []
+      return (data ?? []) as unknown as LessonProgressRow[]
     },
   })
 
@@ -66,7 +86,11 @@ export function KpiDashboard({ courseIds }: Props) {
   })
 
   // Top completed lessons
-  const { data: lessonProgress = [] } = useQuery({
+  interface LessonProgressItem {
+    lesson_id: string
+    lessons: { title: string | null } | null
+  }
+  const { data: lessonProgress = [] } = useQuery<LessonProgressItem[]>({
     queryKey: ['kpi-lessons', courseIds],
     enabled: courseIds.length > 0,
     queryFn: async () => {
@@ -75,7 +99,7 @@ export function KpiDashboard({ courseIds }: Props) {
         .select('lesson_id, lessons!inner(title, modules!inner(course_id))')
         .in('lessons.modules.course_id', courseIds)
         .eq('completed', true)
-      return data ?? []
+      return (data ?? []) as unknown as LessonProgressItem[]
     },
   })
 
@@ -99,7 +123,8 @@ export function KpiDashboard({ courseIds }: Props) {
         p_course_id: singleCourseId!,
         p_days: 30,
       })
-      return (data ?? []).map((row: any) => ({
+      const rows = (data ?? []) as { day: string; page_views: number; cta_clicks: number; checkout_starts: number; enrollments: number }[]
+      return rows.map(row => ({
         day: format(new Date(row.day), 'd MMM', { locale: es }),
         Vistas: Number(row.page_views ?? 0),
         Clics: Number(row.cta_clicks ?? 0),
@@ -115,7 +140,8 @@ export function KpiDashboard({ courseIds }: Props) {
     enabled: courseIds.length > 0,
     queryFn: async () => {
       const { data } = await supabase.rpc('get_enrollment_trend', { p_course_ids: courseIds })
-      return (data ?? []).map((row: any) => ({
+      const rows = (data ?? []) as { day: string; count: number }[]
+      return rows.map(row => ({
         day: format(new Date(row.day), 'd MMM', { locale: es }),
         inscriptos: Number(row.count),
       }))
@@ -127,14 +153,14 @@ export function KpiDashboard({ courseIds }: Props) {
   const newThisMonth = enrollments.filter(e => isThisMonth(new Date(e.enrolled_at))).length
   const revenueTotal = enrollments.reduce((sum, e) => sum + (e.amount_paid ?? 0), 0)
   const revenueThisMonth = enrollments.filter(e => isThisMonth(new Date(e.enrolled_at))).reduce((sum, e) => sum + (e.amount_paid ?? 0), 0)
-  const activeStudents = new Set(recentProgress.map((lp: any) => lp.enrollments?.student_id).filter(Boolean)).size
+  const activeStudents = new Set(recentProgress.map(lp => lp.enrollments?.student_id).filter(Boolean)).size
   const avgCompletion = progressRows.length
     ? Math.round(progressRows.reduce((sum, p) => sum + (p.progress_percent ?? 0), 0) / progressRows.length)
     : 0
 
   // Top 5 lessons
   const lessonCounts: Record<string, { title: string; count: number }> = {}
-  lessonProgress.forEach((lp: any) => {
+  lessonProgress.forEach(lp => {
     const id = lp.lesson_id
     const title = lp.lessons?.title ?? 'Sin título'
     if (!lessonCounts[id]) lessonCounts[id] = { title, count: 0 }
@@ -304,12 +330,19 @@ export function KpiDashboard({ courseIds }: Props) {
   )
 }
 
+interface AbandonedLessonRow {
+  lesson_title: string
+  module_title: string
+  abandoned_count: number
+  abandon_rate: number
+}
+
 function AbandonedLessons({ courseId }: { courseId: string }) {
-  const { data: rows = [] } = useQuery({
+  const { data: rows = [] } = useQuery<AbandonedLessonRow[]>({
     queryKey: ['kpi-abandoned-lessons', courseId],
     queryFn: async () => {
       const { data } = await supabase.rpc('get_abandoned_lessons', { p_course_id: courseId })
-      return data ?? []
+      return (data ?? []) as unknown as AbandonedLessonRow[]
     },
   })
 
@@ -322,7 +355,7 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
         Lecciones con más abandono
       </h4>
       <div className="space-y-2">
-        {rows.map((row: any, i: number) => (
+        {rows.map((row, i) => (
           <div key={i} className="flex items-center gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">

@@ -48,7 +48,14 @@ function CommentSection({ postId, tenantId, profileId }: { postId: string; tenan
   const [body, setBody] = useState('')
   const queryClient = useQueryClient()
 
-  const { data: comments = [] } = useQuery({
+  interface CommentRow {
+    id: string
+    body: string
+    created_at: string
+    author: { id: string; full_name: string | null; avatar_url: string | null } | null
+  }
+
+  const { data: comments = [] } = useQuery<CommentRow[]>({
     queryKey: ['community-comments', postId],
     queryFn: async () => {
       const { data } = await supabase
@@ -57,7 +64,7 @@ function CommentSection({ postId, tenantId, profileId }: { postId: string; tenan
         .eq('post_id', postId)
         .is('parent_id', null)
         .order('created_at', { ascending: true })
-      return data ?? []
+      return (data ?? []) as unknown as CommentRow[]
     },
   })
 
@@ -80,7 +87,7 @@ function CommentSection({ postId, tenantId, profileId }: { postId: string; tenan
 
   return (
     <div className="border-t border-gray-100 pt-4 space-y-3">
-      {comments.map((c: any) => (
+      {comments.map(c => (
         <div key={c.id} className="flex gap-2.5">
           <Avatar name={c.author?.full_name ?? 'Usuario'} url={c.author?.avatar_url ?? null} />
           <div className="flex-1 bg-gray-50 rounded-xl px-3 py-2">
@@ -123,7 +130,7 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
 
   const hasLiked = post.reactions.some(r => r.profile_id === currentProfileId)
   const likeCount = post.reactions.length
-  const commentCount = (post.comments[0] as any)?.count ?? 0
+  const commentCount = (post.comments[0] as { count: number } | undefined)?.count ?? 0
   const cat = CATEGORY_STYLES[post.category]
 
   const toggleLike = useMutation({

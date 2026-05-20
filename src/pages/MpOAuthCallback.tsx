@@ -39,9 +39,10 @@ export default function MpOAuthCallback() {
         setStatus('success')
         toast.success('Mercado Pago conectado correctamente')
         setTimeout(() => navigate('/settings'), 1500)
-      } catch (e: any) {
+      } catch (e: unknown) {
         setStatus('error')
-        toast.error('No pudimos conectar tu cuenta: ' + e.message)
+        const msg = e instanceof Error ? e.message : 'Error desconocido'
+        toast.error('No pudimos conectar tu cuenta: ' + msg)
       }
     }
 

@@ -80,8 +80,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data && data.length > 0) {
       const profiles = data as (Profile & { tenant: Tenant })[]
       setAllProfiles(profiles)
-      const { tenant: profileTenant, ...activeProfile } = profiles[0] as any
-      setProfile(activeProfile)
+      const { tenant: profileTenant, ...activeProfile } = profiles[0]
+      setProfile(activeProfile as Profile)
       if (profileTenant) setTenant(profileTenant as Tenant)
     } else {
       setProfile(null)

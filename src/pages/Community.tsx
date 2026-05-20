@@ -20,8 +20,14 @@ const FILTERS: { value: CategoryFilter; label: string }[] = [
   { value: 'general',  label: '💬 General' },
 ]
 
+interface PostCardProfile {
+  points?: number | null
+  level?: number | null
+}
+
 export default function Community() {
   const { profile, tenant, signOut } = useAuth()
+  const profileExtras = profile as (typeof profile & PostCardProfile) | null
   const queryClient = useQueryClient()
   const location = useLocation()
 
@@ -106,7 +112,7 @@ export default function Community() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/">
-              <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-8 w-auto object-contain" />
+              <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
             </Link>
             <div className="hidden sm:flex items-center gap-1 text-sm">
               <Users className="w-4 h-4 text-primary" />
@@ -128,8 +134,8 @@ export default function Community() {
               <Link to="/dashboard">Mi aprendizaje</Link>
             </Button>
             <div className="hidden sm:flex items-center gap-1 text-sm text-gray-500 mr-1">
-              <span className="text-xs font-semibold text-primary">{(profile as any)?.points ?? 0} pts</span>
-              <span className="text-xs text-gray-400">· Nv.{(profile as any)?.level ?? 1}</span>
+              <span className="text-xs font-semibold text-primary">{profileExtras?.points ?? 0} pts</span>
+              <span className="text-xs text-gray-400">· Nv.{profileExtras?.level ?? 1}</span>
             </div>
             <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400">
               <LogOut className="w-4 h-4" />
@@ -218,7 +224,7 @@ export default function Community() {
             </div>
           ) : (
             <div className="space-y-3">
-              {posts.map((post: any) => (
+              {posts.map(post => (
                 <PostCard
                   key={post.id}
                   post={post}

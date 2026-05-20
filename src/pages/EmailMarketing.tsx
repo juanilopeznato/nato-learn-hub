@@ -92,7 +92,8 @@ const STATUS_LABELS: Record<CampaignStatus, string> = {
   sent: 'Enviado',
 }
 
-const STATUS_COLORS: Record<CampaignStatus, string> = {
+type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
+const STATUS_COLORS: Record<CampaignStatus, BadgeVariant> = {
   draft: 'secondary',
   sending: 'default',
   sent: 'default',
@@ -160,31 +161,28 @@ export default function EmailMarketing() {
   const saveCampaign = useMutation({
     mutationFn: async (data: CampaignFormData) => {
       if (!profile || !tenant) throw new Error('Sin sesión')
+      const shared = {
+        subject: data.subject,
+        preview_text: data.preview_text || null,
+        body_html: data.body_html || null,
+        target_type: data.target_type,
+        target_course_id: data.target_type === 'course' ? data.target_course_id || null : null,
+      }
       if (editingCampaign) {
         const { error } = await supabase
           .from('email_campaigns')
-          .update({
-            subject: data.subject,
-            preview_text: data.preview_text || null,
-            body_html: data.body_html || null,
-            target_type: data.target_type,
-            target_course_id: data.target_type === 'course' ? data.target_course_id || null : null,
-          } as any)
+          .update(shared)
           .eq('id', editingCampaign.id)
         if (error) throw error
       } else {
         const { error } = await supabase
           .from('email_campaigns')
           .insert({
+            ...shared,
             tenant_id: tenant.id,
             created_by: profile.id,
-            subject: data.subject,
-            preview_text: data.preview_text || null,
-            body_html: data.body_html || null,
             status: 'draft',
-            target_type: data.target_type,
-            target_course_id: data.target_type === 'course' ? data.target_course_id || null : null,
-          } as any)
+          })
         if (error) throw error
       }
     },
@@ -204,7 +202,7 @@ export default function EmailMarketing() {
       // Mark as sending
       await supabase
         .from('email_campaigns')
-        .update({ status: 'sending' } as any)
+        .update({ status: 'sending' })
         .eq('id', campaignId)
 
       const res = await fetch(
@@ -256,7 +254,7 @@ export default function EmailMarketing() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-8 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
             <Badge variant="secondary" className="text-xs">Email Marketing</Badge>
           </div>
           <div className="flex items-center gap-3">
@@ -302,7 +300,7 @@ export default function EmailMarketing() {
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-semibold text-gray-900 truncate">{campaign.subject}</span>
-                      <Badge variant={STATUS_COLORS[campaign.status] as any} className="text-xs shrink-0">
+                      <Badge variant={STATUS_COLORS[campaign.status]} className="text-xs shrink-0">
                         {STATUS_LABELS[campaign.status]}
                       </Badge>
                       <span className="text-xs text-gray-400 shrink-0">

@@ -53,7 +53,7 @@ export default function Signup() {
         <div className="absolute top-1/4 -left-12 w-64 h-64 bg-white/5 rounded-full" />
 
         <div className="relative z-10 flex items-center gap-3">
-          <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-10 w-auto object-contain brightness-0 invert" />
+          <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-10 w-auto object-contain brightness-0 invert" loading="lazy" decoding="async" />
           <span className="font-heading text-xl font-bold text-white">{tenantName}</span>
         </div>
 
@@ -78,7 +78,7 @@ export default function Signup() {
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
         <div className="w-full max-w-sm space-y-8">
           <div className="flex items-center gap-2 lg:hidden">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-8 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
             <span className="font-heading text-lg font-bold text-gray-900">{tenantName}</span>
           </div>
 

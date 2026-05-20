@@ -17,6 +17,39 @@ import { useState, useEffect, useRef } from 'react'
 import { MetaPixel, fbTrack } from '@/components/MetaPixel'
 import { events } from '@/lib/analytics'
 
+/** Forma usada del curso. Los tipos generados de Supabase no se consumen. */
+interface CourseDetailRow {
+  id: string
+  tenant_id: string
+  slug: string | null
+  title: string | null
+  description: string | null
+  thumbnail_url: string | null
+  intro_video_url: string | null
+  price: number | null
+  original_price: number | null
+  is_free: boolean | null
+  is_published: boolean | null
+  billing_type: 'free' | 'one_time' | 'monthly' | 'annual' | null
+  learning_outcomes: string[] | null
+  faq: { q: string; a: string }[] | null
+  instructor_bio: string | null
+  instructor_avatar_url: string | null
+  for_who: string | null
+  meta_pixel_id: string | null
+  category: string | null
+  modules: { id: string; title: string; order_index: number; lessons: { id: string; title: string; order_index: number; duration_seconds: number | null; is_free_preview: boolean | null }[] }[] | null
+}
+
+interface ReviewRow {
+  id: string
+  user_id: string
+  rating: number
+  body: string | null
+  created_at: string
+  reviewer: { full_name: string | null; avatar_url: string | null } | null
+}
+
 export default function CourseDetail() {
   const { slug } = useParams<{ slug: string }>()
   const { user, profile, tenant } = useAuth()
@@ -46,7 +79,7 @@ export default function CourseDetail() {
     return () => observer.disconnect()
   }, [])
 
-  const { data: course, isLoading } = useQuery({
+  const { data: course, isLoading } = useQuery<CourseDetailRow | null>({
     queryKey: ['course', slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -56,7 +89,7 @@ export default function CourseDetail() {
         .eq('is_published', true)
         .single()
       if (error) throw error
-      return data
+      return (data ?? null) as unknown as CourseDetailRow | null
     },
   })
 
@@ -92,7 +125,7 @@ export default function CourseDetail() {
     },
   })
 
-  const { data: reviews, refetch: refetchReviews } = useQuery({
+  const { data: reviews, refetch: refetchReviews } = useQuery<ReviewRow[]>({
     queryKey: ['course-reviews', course?.id],
     enabled: !!course?.id,
     queryFn: async () => {
@@ -101,7 +134,7 @@ export default function CourseDetail() {
         .select('*, reviewer:profiles(full_name, avatar_url)')
         .eq('course_id', course!.id)
         .order('created_at', { ascending: false })
-      return data ?? []
+      return (data ?? []) as unknown as ReviewRow[]
     },
   })
 
@@ -120,9 +153,9 @@ export default function CourseDetail() {
     },
   })
 
-  const myReview = reviews?.find((r: any) => r.user_id === profile?.id)
+  const myReview = reviews?.find(r => r.user_id === profile?.id)
   const avgRating = reviews && reviews.length > 0
-    ? reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length
+    ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length
     : null
 
   async function submitReview() {
@@ -207,7 +240,7 @@ export default function CourseDetail() {
     const { data } = await supabase
       .from('coupons')
       .select('id, code, discount_type, discount_value, max_uses, uses_count, expires_at, course_id, is_active')
-      .eq('tenant_id', (course as any).tenant_id)
+      .eq('tenant_id', course.tenant_id)
       .eq('code', code)
       .eq('is_active', true)
       .maybeSingle()
@@ -236,22 +269,23 @@ export default function CourseDetail() {
 
   const sortedModules = [...(course?.modules ?? [])].sort((a, b) => a.order_index - b.order_index)
   const totalLessons = sortedModules.reduce((acc, m) => acc + (m.lessons?.length ?? 0), 0)
-  const outcomes: string[] = (course as any)?.learning_outcomes ?? []
-  const faqItems: { q: string; a: string }[] = (course as any)?.faq ?? []
-  const instructorBio: string = (course as any)?.instructor_bio ?? ''
-  const instructorAvatar: string = (course as any)?.instructor_avatar_url ?? ''
-  const forWho: string = (course as any)?.for_who ?? ''
+  const outcomes: string[] = course?.learning_outcomes ?? []
+  const faqItems: { q: string; a: string }[] = course?.faq ?? []
+  const instructorBio: string = course?.instructor_bio ?? ''
+  const instructorAvatar: string = course?.instructor_avatar_url ?? ''
+  const forWho: string = course?.for_who ?? ''
   const thumbnailUrl: string = course?.thumbnail_url ?? ''
-  const introVideo: string = (course as any)?.intro_video_url ?? ''
-  const originalPrice: number = Number((course as any)?.original_price ?? 0)
-  const pixelId: string = (course as any)?.meta_pixel_id || (tenant as any)?.meta_pixel_id || ''
+  const introVideo: string = course?.intro_video_url ?? ''
+  const originalPrice: number = Number(course?.original_price ?? 0)
+  const tenantPixel = (tenant as (typeof tenant & { meta_pixel_id?: string | null }) | null)?.meta_pixel_id
+  const pixelId: string = course?.meta_pixel_id || tenantPixel || ''
   const discountedPrice = appliedCoupon && course && !course.is_free
     ? appliedCoupon.discount_type === 'percent'
       ? Math.max(0, Number(course.price) * (1 - appliedCoupon.discount_value / 100))
       : Math.max(0, Number(course.price) - appliedCoupon.discount_value)
     : Number(course?.price ?? 0)
 
-  const billingType: 'free' | 'one_time' | 'monthly' | 'annual' = (course as any)?.billing_type ?? (course?.is_free ? 'free' : 'one_time')
+  const billingType: 'free' | 'one_time' | 'monthly' | 'annual' = course?.billing_type ?? (course?.is_free ? 'free' : 'one_time')
   const billingLabel = billingType === 'monthly' ? '/mes' : billingType === 'annual' ? '/año' : ''
 
   function handleCTA() {
@@ -370,7 +404,7 @@ export default function CourseDetail() {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs text-gray-400 mb-6">
             <Link to="/" className="hover:text-white transition-colors">
-              <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-6 w-auto object-contain brightness-0 invert opacity-70" />
+              <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-6 w-auto object-contain brightness-0 invert opacity-70" loading="lazy" decoding="async" />
             </Link>
             <span>/</span>
             <Link to="/courses" className="hover:text-white transition-colors">Cursos</Link>
@@ -800,7 +834,7 @@ export default function CourseDetail() {
 
                 {/* Lista de reviews */}
                 <div className="space-y-4">
-                  {(reviews ?? []).map((r: any) => (
+                  {(reviews ?? []).map(r => (
                     <div key={r.id} className="flex gap-4">
                       <SmartAvatar
                         src={r.reviewer?.avatar_url ?? null}

@@ -73,7 +73,8 @@ export default function CreateSchool() {
           p_school_slug: schoolData.schoolSlug,
         })
         if (rpcError) throw rpcError
-        setCreatedProfileId((rpcData as any)?.profile_id ?? null)
+        const result = rpcData as { profile_id?: string } | null
+        setCreatedProfileId(result?.profile_id ?? null)
       } else {
         // Usuario nuevo → registrar + crear escuela
         if (!accountData) return
@@ -92,11 +93,13 @@ export default function CreateSchool() {
           p_school_slug: schoolData.schoolSlug,
         })
         if (rpcError) throw rpcError
-        setCreatedProfileId((rpcData as any)?.profile_id ?? null)
+        const result = rpcData as { profile_id?: string } | null
+        setCreatedProfileId(result?.profile_id ?? null)
       }
       setStep(3)
-    } catch (e: any) {
-      toast.error(e.message ?? 'Error al crear la escuela')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Error al crear la escuela'
+      toast.error(msg)
     } finally {
       setSubmitting(false)
     }

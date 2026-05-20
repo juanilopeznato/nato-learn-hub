@@ -12,11 +12,27 @@ import { NotificationBell } from '@/components/NotificationBell'
 import OnboardingModal from '@/components/OnboardingModal'
 import { SmartImage, SmartAvatar } from '@/components/SmartImage'
 
+interface ProfileExtras {
+  onboarding_completed?: boolean | null
+  points?: number | null
+  level?: number | null
+  streak_days?: number | null
+}
+interface CommunityPostRow {
+  id: string
+  title: string
+  body: string | null
+  category: string
+  created_at: string
+  author: { full_name: string | null; avatar_url: string | null } | null
+}
+
 export default function Dashboard() {
   const { profile, tenant, signOut } = useAuth()
+  const profileExtras = profile as (typeof profile & ProfileExtras) | null
   const queryClient = useQueryClient()
   const [onboardingDone, setOnboardingDone] = useState(false)
-  const showOnboarding = profile && !(profile as any).onboarding_completed && !onboardingDone
+  const showOnboarding = profile && !profileExtras?.onboarding_completed && !onboardingDone
 
   const { data: enrollments, isLoading } = useQuery({
     queryKey: ['enrollments', profile?.id],
@@ -64,7 +80,7 @@ export default function Dashboard() {
   const continueCourse = continueEnrollment?.courses as unknown as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
   const continueProgress = continueEnrollment ? progressMap?.[continueEnrollment.id] : null
 
-  const { data: communityPosts } = useQuery({
+  const { data: communityPosts } = useQuery<CommunityPostRow[]>({
     queryKey: ['community-preview', tenant?.id],
     enabled: !!tenant?.id,
     queryFn: async () => {
@@ -74,7 +90,7 @@ export default function Dashboard() {
         .eq('tenant_id', tenant!.id)
         .order('created_at', { ascending: false })
         .limit(3)
-      return data ?? []
+      return (data ?? []) as unknown as CommunityPostRow[]
     },
   })
 
@@ -86,7 +102,7 @@ export default function Dashboard() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-8 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
           </Link>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
@@ -107,9 +123,9 @@ export default function Dashboard() {
               <Link to={`/members/${profile?.id}`} className="hover:text-primary transition-colors">
                 {profile?.full_name}
               </Link>
-              <span className="text-xs font-semibold text-primary">{(profile as any)?.points ?? 0} pts</span>
-              <span className="text-xs text-gray-400">Nv.{(profile as any)?.level ?? 1}</span>
-              <StreakBadge streak={(profile as any)?.streak_days ?? 0} size="sm" />
+              <span className="text-xs font-semibold text-primary">{profileExtras?.points ?? 0} pts</span>
+              <span className="text-xs text-gray-400">Nv.{profileExtras?.level ?? 1}</span>
+              <StreakBadge streak={profileExtras?.streak_days ?? 0} size="sm" />
             </div>
             <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400 hover:text-gray-700">
               <LogOut className="w-4 h-4" />
@@ -185,9 +201,9 @@ export default function Dashboard() {
               </Link>
             </div>
             <div className="space-y-2">
-              {communityPosts.map((post: any) => {
-                const author = post.author as { full_name: string; avatar_url: string | null } | null
-                const initials = (author?.full_name ?? 'U').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+              {communityPosts.map(post => {
+                const author = post.author
+                const initials = (author?.full_name ?? 'U').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
                 return (
                   <Link
                     key={post.id}
@@ -229,7 +245,7 @@ export default function Dashboard() {
             <h2 className="font-heading text-lg font-semibold text-gray-900">Mis cursos</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {enrollments.map(enrollment => {
-                const course = enrollment.courses as unknown as { id: string; title: string; slug: string } | null
+                const course = enrollment.courses as unknown as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
                 if (!course) return null
                 const progress = progressMap?.[enrollment.id] ?? { percent: 0, completed: 0, total: 0 }
                 return (
@@ -239,7 +255,7 @@ export default function Dashboard() {
                     courseId={course.id}
                     courseTitle={course.title}
                     courseSlug={course.slug}
-                    thumbnailUrl={(course as any).thumbnail_url ?? null}
+                    thumbnailUrl={course.thumbnail_url ?? null}
                     progressPercent={Number(progress.percent)}
                     completedLessons={progress.completed}
                     totalLessons={progress.total}

@@ -17,10 +17,20 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error('[ErrorBoundary] Uncaught error:', error, info)
-    // Si hay analytics global, mandamos un evento — silencioso si no existe
+
+    // Plausible (analítica de uso)
     try {
       const w = window as unknown as { plausible?: (e: string, opts?: { props?: Record<string, string> }) => void }
       w.plausible?.('error_boundary_triggered', { props: { message: error.message } })
+    } catch {
+      /* no-op */
+    }
+
+    // Sentry (si está cargado vía script en index.html o como dep futura).
+    // No agregamos @sentry/react como dep — solo enganchamos si existe.
+    try {
+      const w = window as unknown as { Sentry?: { captureException?: (e: Error, ctx?: unknown) => void } }
+      w.Sentry?.captureException?.(error, { extra: { componentStack: info.componentStack } })
     } catch {
       /* no-op */
     }

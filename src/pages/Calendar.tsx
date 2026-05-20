@@ -123,7 +123,7 @@ export default function Calendar() {
         meeting_url: data.meeting_url || null,
         course_id: data.course_id || null,
         is_public: true,
-      } as any)
+      })
       if (error) throw error
     },
     onSuccess: () => {
@@ -169,7 +169,7 @@ export default function Calendar() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-8 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
             <Badge variant="secondary" className="text-xs">Calendario</Badge>
           </div>
           <div className="flex items-center gap-3">

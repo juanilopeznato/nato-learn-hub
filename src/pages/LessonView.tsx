@@ -282,7 +282,7 @@ export default function LessonView() {
             <span className="text-xs text-gray-400 hidden sm:block">
               {currentIndex + 1} / {allLessons.length}
             </span>
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-5 w-auto object-contain" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-5 w-auto object-contain" loading="lazy" decoding="async" />
             {/* Mobile: toggle sidebar (44px min para WCAG AA) */}
             <button
               type="button"

@@ -23,8 +23,9 @@ export function MetaPixel({ pixelId }: Props) {
 }
 
 // Helper to fire pixel events (safe to call even if pixel not loaded)
+type Fbq = (event: 'track' | 'init', ...args: unknown[]) => void
 export function fbTrack(event: string, params?: Record<string, unknown>) {
-  if (typeof window !== 'undefined' && (window as any).fbq) {
-    (window as any).fbq('track', event, params)
-  }
+  if (typeof window === 'undefined') return
+  const fbq = (window as unknown as { fbq?: Fbq }).fbq
+  if (fbq) fbq('track', event, params)
 }
