@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/lib/supabase'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import {
   DndContext,
   closestCenter,
@@ -194,6 +195,8 @@ export function ModuleList({ courseId }: Props) {
   const [newLessons, setNewLessons] = useState<Record<string, { title: string; videoUrl: string; provider: string }>>({})
   const [editingLesson, setEditingLesson] = useState<string | null>(null)
   const [editValues, setEditValues] = useState<LessonEditState>({ title: '', videoUrl: '', provider: 'youtube', isFreePreview: false })
+  // ConfirmDialog state — un único dialog reusado para módulos y lecciones
+  const [confirmState, setConfirmState] = useState<{ open: boolean; title: string; description?: string; onConfirm: () => void } | null>(null)
 
   const { data: modules } = useQuery({
     queryKey: ['instructor-modules', courseId],
@@ -389,10 +392,14 @@ export function ModuleList({ courseId }: Props) {
                     aria-label={`Eliminar módulo ${module.title}`}
                     onClick={() => {
                       const lessonCount = module.lessons?.length ?? 0
-                      const msg = lessonCount > 0
-                        ? `¿Eliminar el módulo "${module.title}"? Esto borrará también sus ${lessonCount} lección${lessonCount === 1 ? '' : 'es'}. Esta acción no se puede deshacer.`
-                        : `¿Eliminar el módulo "${module.title}"?`
-                      if (window.confirm(msg)) deleteModule.mutate(module.id)
+                      setConfirmState({
+                        open: true,
+                        title: `¿Eliminar el módulo "${module.title}"?`,
+                        description: lessonCount > 0
+                          ? `Se van a borrar también sus ${lessonCount} lección${lessonCount === 1 ? '' : 'es'}. Esta acción no se puede deshacer.`
+                          : 'Esta acción no se puede deshacer.',
+                        onConfirm: () => deleteModule.mutate(module.id),
+                      })
                     }}
                   >
                     <Trash2 className="w-4 h-4" aria-hidden />
@@ -501,11 +508,12 @@ export function ModuleList({ courseId }: Props) {
                                       size="icon"
                                       className="w-7 h-7 text-gray-400 hover:text-destructive"
                                       aria-label={`Eliminar lección ${lesson.title}`}
-                                      onClick={() => {
-                                        if (window.confirm(`¿Eliminar la lección "${lesson.title}"? El progreso de los alumnos en esta lección se perderá. Esta acción no se puede deshacer.`)) {
-                                          deleteLesson.mutate(lesson.id)
-                                        }
-                                      }}
+                                      onClick={() => setConfirmState({
+                                        open: true,
+                                        title: `¿Eliminar la lección "${lesson.title}"?`,
+                                        description: 'El progreso de los alumnos en esta lección se perderá. Esta acción no se puede deshacer.',
+                                        onConfirm: () => deleteLesson.mutate(lesson.id),
+                                      })}
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
                                     </Button>
@@ -580,6 +588,17 @@ export function ModuleList({ courseId }: Props) {
           Módulo
         </Button>
       </div>
+
+      {/* Confirm dialog reusado para deletes destructivos */}
+      <ConfirmDialog
+        open={confirmState?.open ?? false}
+        onOpenChange={(open) => !open && setConfirmState(null)}
+        title={confirmState?.title ?? ''}
+        description={confirmState?.description}
+        confirmLabel="Sí, eliminar"
+        destructive
+        onConfirm={() => confirmState?.onConfirm()}
+      />
     </div>
   )
 }

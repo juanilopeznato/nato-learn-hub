@@ -15,6 +15,7 @@ import { UpsellModal } from '@/components/lesson/UpsellModal'
 import { events } from '@/lib/analytics'
 import { toast } from 'sonner'
 import { toastError } from '@/lib/toast-helpers'
+import { LessonViewSkeleton } from '@/components/skeletons'
 
 export default function LessonView() {
   const { courseSlug, lessonId } = useParams<{ courseSlug: string; lessonId: string }>()
@@ -277,14 +278,7 @@ export default function LessonView() {
   }
 
   if (courseLoading || !course || !currentLesson) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-gray-500">
-          <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm">Cargando lección...</span>
-        </div>
-      </div>
-    )
+    return <LessonViewSkeleton />
   }
 
   // Wait for enrollment check when logged in before deciding access

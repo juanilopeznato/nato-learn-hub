@@ -61,6 +61,22 @@ export default function Signup() {
       setServerError('Esperá un momento antes de enviar.')
       return
     }
+    // Rate limit server-side: 3 signups / 1h por email (anti spam)
+    try {
+      const { supabase } = await import('@/lib/supabase')
+      const { data: allowed } = await supabase.rpc('check_rate_limit', {
+        p_action: 'signup',
+        p_identifier: data.email,
+        p_max: 3,
+        p_window_seconds: 60 * 60,
+      })
+      if (allowed === false) {
+        logger.warn('signup blocked by server rate limit', { email: data.email })
+        setServerError('Ya hubo varios intentos con este email. Probá en 1h.')
+        return
+      }
+    } catch { /* RPC unavailable → no bloquear */ }
+
     events.signupStarted({ tenant: tenant?.slug })
     const { error } = await signUp(data.email, data.password, data.fullName)
     if (error) { setServerError(error); return }

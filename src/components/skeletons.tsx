@@ -59,6 +59,52 @@ export function DashboardSkeleton() {
   )
 }
 
+export function LessonViewSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 h-14 flex items-center px-4 gap-3">
+        <Bar className="h-6 w-6 rounded" />
+        <Bar className="h-4 w-64 max-w-[50%]" />
+      </header>
+      <main className="container mx-auto px-4 py-6 max-w-5xl space-y-4">
+        <Card className="aspect-video rounded-2xl" />
+        <div className="space-y-2">
+          <Bar className="h-6 w-1/3" />
+          <Bar className="h-4 w-2/3" />
+        </div>
+        <Card className="p-5 space-y-2">
+          <Bar className="h-4 w-1/2" />
+          <Bar className="h-4 w-3/4" />
+          <Bar className="h-4 w-2/3" />
+        </Card>
+      </main>
+    </div>
+  )
+}
+
+export function InstructorPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4">
+        <Bar className="h-7 w-40" />
+        <div className="flex gap-2">
+          <Bar className="h-9 w-24 rounded-md" />
+          <Bar className="h-9 w-9 rounded-md" />
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-8 max-w-6xl space-y-6">
+        <div className="grid sm:grid-cols-4 gap-4">
+          {[0, 1, 2, 3].map(i => <Card key={i} className="p-5 h-24" />)}
+        </div>
+        <Card className="p-6 space-y-3">
+          <Bar className="h-5 w-1/3" />
+          <Bar className="h-32 w-full rounded-lg" />
+        </Card>
+      </main>
+    </div>
+  )
+}
+
 export function CourseDetailSkeleton() {
   return (
     <div className="min-h-screen bg-white">

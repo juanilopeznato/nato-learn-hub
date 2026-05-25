@@ -71,13 +71,29 @@ export default function Login() {
       return
     }
 
-    // Cooldown post-intentos fallidos
+    // Cooldown post-intentos fallidos (client-side, sessionStorage)
     const att = getAttempts()
     if (att.until > Date.now()) {
       const secs = Math.ceil((att.until - Date.now()) / 1000)
       setServerError(`Demasiados intentos. Probá de nuevo en ${secs}s.`)
       return
     }
+
+    // Rate limit server-side: 10 intentos / 15 min por email (defense in depth)
+    try {
+      const { supabase } = await import('@/lib/supabase')
+      const { data: allowed } = await supabase.rpc('check_rate_limit', {
+        p_action: 'login_attempt',
+        p_identifier: data.email,
+        p_max: 10,
+        p_window_seconds: 15 * 60,
+      })
+      if (allowed === false) {
+        logger.warn('login blocked by server rate limit', { email: data.email })
+        setServerError('Demasiados intentos desde este email. Esperá 15 min.')
+        return
+      }
+    } catch { /* RPC unavailable → no bloquear */ }
 
     const { error } = await signIn(data.email, data.password)
     if (error) {

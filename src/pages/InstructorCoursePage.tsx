@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { CourseForm, type CourseFormData } from '@/components/instructor/CourseForm'
 import { SmartAvatar } from '@/components/SmartImage'
+import { InstructorPageSkeleton } from '@/components/skeletons'
 import { exportToCsv } from '@/lib/exportCsv'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -262,11 +263,7 @@ export default function InstructorCoursePage() {
   const displayedEnrollments: (EnrollmentRow | InactiveEnrollment)[] = showInactive ? inactiveEnrollments : (enrollments ?? [])
 
   if (isLoading || !course) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
+    return <InstructorPageSkeleton />
   }
 
   return (

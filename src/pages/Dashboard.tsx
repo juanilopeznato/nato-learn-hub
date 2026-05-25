@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, LogOut, BookOpen, User, Users, Play, MessageSquare } from 'lucide-react'
 import { StreakBadge } from '@/components/StreakBadge'
@@ -8,7 +8,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { EnrolledCourseCard } from '@/components/dashboard/EnrolledCourseCard'
 import { Leaderboard } from '@/components/dashboard/Leaderboard'
-import { NotificationBell } from '@/components/NotificationBell'
+// NotificationBell lazy: solo se carga cuando el shell del dashboard está montado;
+// fuera del critical path inicial.
+const NotificationBell = lazy(() => import('@/components/NotificationBell').then(m => ({ default: m.NotificationBell })))
 import OnboardingModal from '@/components/OnboardingModal'
 import { SmartImage, SmartAvatar } from '@/components/SmartImage'
 
@@ -111,7 +113,11 @@ export default function Dashboard() {
                 Comunidad
               </Link>
             </Button>
-            {profile?.id && <NotificationBell profileId={profile.id} />}
+            {profile?.id && (
+              <Suspense fallback={<div className="w-8 h-8" aria-hidden />}>
+                <NotificationBell profileId={profile.id} />
+              </Suspense>
+            )}
             <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 mr-1">
               <Link to="/profile" className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors shrink-0" title="Editar perfil" aria-label="Editar perfil">
                 {profile?.avatar_url ? (

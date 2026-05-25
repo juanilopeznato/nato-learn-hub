@@ -78,13 +78,35 @@ function CommentSection({ postId, tenantId, profileId }: { postId: string; tenan
       if (error) throw error
       await supabase.rpc('award_points', { p_action: 'comment_community' })
     },
-    onSuccess: () => {
-      setBody('')
+    // Optimistic: agregamos el comment temporal con id sintético
+    onMutate: async () => {
+      const queryKey = ['community-comments', postId]
+      await queryClient.cancelQueries({ queryKey })
+      const snapshot = queryClient.getQueryData<CommentRow[]>(queryKey)
+      const tempId = `temp-${Date.now()}`
+      const optimistic: CommentRow = {
+        id: tempId,
+        body: body.trim(),
+        created_at: new Date().toISOString(),
+        author: { id: profileId, full_name: 'Vos', avatar_url: null },
+      }
+      queryClient.setQueryData<CommentRow[]>(queryKey, (old) => [...(old ?? []), optimistic])
+      const oldBody = body
+      setBody('') // clear input immediately
+      return { snapshot, oldBody, queryKey }
+    },
+    onError: (e: Error, _vars, ctx) => {
+      if (ctx?.snapshot && ctx?.queryKey) {
+        queryClient.setQueryData(ctx.queryKey, ctx.snapshot)
+      }
+      if (ctx?.oldBody) setBody(ctx.oldBody) // restore typed text para que pueda reintentar
+      toast.error(e.message)
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['community-comments', postId] })
       queryClient.invalidateQueries({ queryKey: ['community-posts'] })
       queryClient.invalidateQueries({ queryKey: ['profile'] })
     },
-    onError: (e: Error) => toast.error(e.message),
   })
 
   return (
