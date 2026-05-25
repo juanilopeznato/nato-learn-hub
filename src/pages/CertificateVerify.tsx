@@ -42,7 +42,7 @@ export default function CertificateVerify() {
         ) : (
           <div className="flex items-center gap-2">
             <Award className="w-7 h-7 text-primary" />
-            <span className="font-heading text-xl font-bold text-gray-800">
+            <span className="font-heading text-xl font-bold text-foreground">
               {school?.name ?? 'NATO University'}
             </span>
           </div>
@@ -57,8 +57,8 @@ export default function CertificateVerify() {
           </div>
         ) : (isError || !certificate) ? (
           <div className="space-y-4 py-4">
-            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
-              <XCircle className="w-9 h-9 text-red-500" />
+            <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+              <XCircle className="w-9 h-9 text-destructive" />
             </div>
             <h1 className="font-heading text-xl font-bold text-foreground">Certificado inválido</h1>
             <p className="text-muted-foreground text-sm">
@@ -67,11 +67,11 @@ export default function CertificateVerify() {
           </div>
         ) : (
           <div className="space-y-5">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-              <CheckCircle className="w-9 h-9 text-green-600" />
+            <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
+              <CheckCircle className="w-9 h-9 text-accent" />
             </div>
             <div>
-              <span className="inline-block bg-green-50 text-green-700 border border-green-200 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+              <span className="inline-block bg-accent/10 text-accent border border-accent/30 text-xs font-semibold px-3 py-1 rounded-full mb-3">
                 Certificado verificado
               </span>
               <h1 className="font-heading text-2xl font-bold text-foreground">

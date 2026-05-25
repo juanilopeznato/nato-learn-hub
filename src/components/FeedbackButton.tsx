@@ -80,7 +80,7 @@ export function FeedbackButton({
       <button
         type="button"
         onClick={handleClick}
-        className={`fixed ${posClass} z-40 flex items-center gap-2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-full shadow-lg hover:bg-gray-800 transition-all opacity-70 hover:opacity-100 no-print ${className ?? ''}`}
+        className={`fixed ${posClass} z-40 flex items-center gap-2 px-3 py-2 bg-foreground text-white text-xs font-medium rounded-full shadow-lg hover:bg-foreground/85 transition-all opacity-70 hover:opacity-100 no-print ${className ?? ''}`}
         aria-label={label}
       >
         <MessageSquare className="w-3.5 h-3.5" aria-hidden />
@@ -104,7 +104,7 @@ export function FeedbackButton({
             </div>
 
             {sent ? (
-              <div className="text-center py-6 text-sm text-green-600">¡Gracias! Lo vamos a revisar.</div>
+              <div className="text-center py-6 text-sm text-accent">¡Gracias! Lo vamos a revisar.</div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3">
                 <textarea

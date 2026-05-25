@@ -44,7 +44,7 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
           Completá lecciones o comentá para aparecer acá.
         </div>
       ) : (
-        <div className="divide-y divide-gray-50">
+        <div className="divide-y divide-border/50">
           {rows.map((row, i) => {
             const initials = (row.full_name ?? 'U').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
             const isMe = row.profile_id === currentProfileId

@@ -74,9 +74,9 @@ export default function Status() {
       <div className="max-w-md w-full bg-white rounded-2xl border border-border/60 p-8 space-y-5">
         <div className="flex items-center gap-3">
           {anyFail ? (
-            <AlertTriangle className="w-7 h-7 text-red-500" aria-hidden />
+            <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden />
           ) : allOk ? (
-            <CheckCircle2 className="w-7 h-7 text-green-500" aria-hidden />
+            <CheckCircle2 className="w-7 h-7 text-accent" aria-hidden />
           ) : (
             <Loader2 className="w-7 h-7 text-muted-foreground/80 animate-spin" aria-hidden />
           )}
@@ -94,8 +94,8 @@ export default function Status() {
           {checks.map(c => (
             <li key={c.name} className="py-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 min-w-0">
-                {c.status === 'ok' && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" aria-hidden />}
-                {c.status === 'fail' && <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" aria-hidden />}
+                {c.status === 'ok' && <CheckCircle2 className="w-4 h-4 text-accent shrink-0" aria-hidden />}
+                {c.status === 'fail' && <AlertTriangle className="w-4 h-4 text-destructive shrink-0" aria-hidden />}
                 {c.status === 'pending' && <Loader2 className="w-4 h-4 text-muted-foreground/80 animate-spin shrink-0" aria-hidden />}
                 <span className="text-sm font-medium text-foreground truncate">{c.name}</span>
               </div>
@@ -106,7 +106,7 @@ export default function Status() {
                   </span>
                 )}
                 <span className={`text-xs font-medium uppercase ${
-                  c.status === 'ok' ? 'text-green-600' : c.status === 'fail' ? 'text-red-600' : 'text-muted-foreground/80'
+                  c.status === 'ok' ? 'text-accent' : c.status === 'fail' ? 'text-destructive' : 'text-muted-foreground/80'
                 }`}>
                   {c.status === 'pending' ? '…' : c.status}
                 </span>
@@ -116,7 +116,7 @@ export default function Status() {
         </ul>
 
         {checks.find(c => c.status === 'fail')?.message && (
-          <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg p-3">
+          <div className="text-xs text-destructive bg-destructive/10 border border-red-100 rounded-lg p-3">
             {checks.find(c => c.status === 'fail')!.message}
           </div>
         )}

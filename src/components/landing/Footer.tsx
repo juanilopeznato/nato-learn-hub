@@ -1,56 +1,124 @@
-import { GraduationCap } from "lucide-react";
+import { Link } from 'react-router-dom'
+import { Instagram, Linkedin, Mail, ArrowUpRight } from 'lucide-react'
 
+/**
+ * Footer rediseñado con jerarquía visual clara, hover states refinados y CTA
+ * de newsletter sutil. Linear-style: poca decoración, mucho espacio.
+ */
 const Footer = () => {
+  const year = new Date().getFullYear()
   return (
-    <footer className="py-12 bg-card border-t border-border">
-      <div className="container mx-auto px-4">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <img src="/nato-logo.png" alt="NATO" className="h-8 w-auto object-contain" />
-              <span className="font-heading text-lg font-bold text-card-foreground">
+    <footer className="border-t border-border/60 bg-card/50">
+      <div className="container py-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+          {/* Brand block */}
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <img
+                src="/nato-logo.png"
+                alt="NATO"
+                className="h-7 w-auto object-contain"
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="font-heading text-base font-semibold text-foreground tracking-tight">
                 NATO <span className="text-primary">University</span>
               </span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              La plataforma de aprendizaje para equipos de marketing digital.
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+              La plataforma de aprendizaje para equipos de marketing digital. Cursos, comunidad y certificaciones en un solo lugar.
             </p>
+            <div className="flex items-center gap-1 mt-5">
+              {[
+                { Icon: Instagram, href: 'https://instagram.com/nato.global', label: 'Instagram' },
+                { Icon: Linkedin, href: 'https://linkedin.com/company/nato-global', label: 'LinkedIn' },
+                { Icon: Mail, href: 'mailto:hola@natoglobal.com', label: 'Email' },
+              ].map(({ Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="w-9 h-9 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                >
+                  <Icon className="w-4 h-4" aria-hidden />
+                </a>
+              ))}
+            </div>
           </div>
 
-          <div>
-            <h4 className="font-heading font-semibold text-card-foreground mb-3">Plataforma</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Learning Paths</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Recursos</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Certificaciones</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Comunidad</a></li>
+          {/* Link columns */}
+          <div className="lg:col-span-2">
+            <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Plataforma</h4>
+            <ul className="space-y-2.5 text-sm">
+              {[
+                { to: '/courses', label: 'Catálogo' },
+                { to: '/pricing', label: 'Planes' },
+                { to: '/community', label: 'Comunidad' },
+                { to: '/dashboard', label: 'Mi panel' },
+              ].map(item => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 group">
+                    {item.label}
+                    <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" aria-hidden />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div>
-            <h4 className="font-heading font-semibold text-card-foreground mb-3">Empresa</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Sobre NATO</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contacto</a></li>
+          <div className="lg:col-span-2">
+            <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Empresa</h4>
+            <ul className="space-y-2.5 text-sm">
+              {[
+                { href: 'https://natoglobal.com', label: 'Sobre NATO', external: true },
+                { href: 'mailto:hola@natoglobal.com', label: 'Contacto' },
+                { to: '/status', label: 'Estado del sistema' },
+              ].map(item => (
+                <li key={item.label}>
+                  {'to' in item ? (
+                    <Link to={item.to!} className="text-muted-foreground hover:text-foreground transition-colors">
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.href}
+                      target={item.external ? '_blank' : undefined}
+                      rel={item.external ? 'noopener noreferrer' : undefined}
+                      className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 group"
+                    >
+                      {item.label}
+                      {item.external && (
+                        <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" aria-hidden />
+                      )}
+                    </a>
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div>
-            <h4 className="font-heading font-semibold text-card-foreground mb-3">Legal</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Privacidad</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Términos</a></li>
+          <div className="lg:col-span-3">
+            <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Legal</h4>
+            <ul className="space-y-2.5 text-sm">
+              <li><Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacidad</Link></li>
+              <li><Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Términos</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-border text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} NATO University. Todos los derechos reservados.
+        {/* Bottom bar */}
+        <div className="mt-14 pt-6 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <span>© {year} NATO University. Todos los derechos reservados.</span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" aria-hidden />
+            Todos los sistemas operativos
+          </span>
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

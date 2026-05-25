@@ -33,8 +33,8 @@ interface Props {
 }
 
 const CATEGORY_STYLES: Record<Category, { label: string; class: string }> = {
-  question: { label: '❓ Pregunta',  class: 'bg-blue-50 text-blue-600' },
-  win:      { label: '🏆 Logro',     class: 'bg-green-50 text-green-600' },
+  question: { label: '❓ Pregunta',  class: 'bg-primary/10 text-primary' },
+  win:      { label: '🏆 Logro',     class: 'bg-accent/10 text-accent' },
   resource: { label: '📎 Recurso',   class: 'bg-orange-50 text-orange-600' },
   general:  { label: '💬 General',   class: 'bg-secondary text-foreground/70' },
 }
@@ -240,7 +240,7 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
       {/* Actions */}
       <div className="flex items-center gap-4 pt-1">
         <button
-          className={`flex items-center gap-1.5 text-sm transition-colors ${hasLiked ? 'text-red-500' : 'text-muted-foreground/80 hover:text-red-500'}`}
+          className={`flex items-center gap-1.5 text-sm transition-colors ${hasLiked ? 'text-destructive' : 'text-muted-foreground/80 hover:text-destructive'}`}
           onClick={() => toggleLike.mutate()}
         >
           <Heart className={`w-4 h-4 ${hasLiked ? 'fill-current' : ''}`} />

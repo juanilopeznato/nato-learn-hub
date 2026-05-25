@@ -58,7 +58,7 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode {
     const k = `${keyPrefix}-${i}`
     if (tok.type === 'bold') return <strong key={k}>{tok.value}</strong>
     if (tok.type === 'italic') return <em key={k}>{tok.value}</em>
-    if (tok.type === 'code') return <code key={k} className="px-1.5 py-0.5 bg-secondary text-gray-800 rounded text-[0.9em] font-mono">{tok.value}</code>
+    if (tok.type === 'code') return <code key={k} className="px-1.5 py-0.5 bg-secondary text-foreground rounded text-[0.9em] font-mono">{tok.value}</code>
     if (tok.type === 'link') {
       const safe = /^https?:\/\//.test(tok.href) ? tok.href : `https://${tok.href}`
       return <a key={k} href={safe} target="_blank" rel="noopener noreferrer nofollow" className="text-primary underline underline-offset-2 hover:opacity-80">{tok.value}</a>

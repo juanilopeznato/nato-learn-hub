@@ -79,23 +79,23 @@ export function StorageMetrics() {
     <div className="space-y-6">
       {/* Totales */}
       <div className="grid sm:grid-cols-3 gap-4">
-        <div className={`rounded-2xl border p-5 ${alarm ? 'bg-red-950/40 border-red-900/60' : 'bg-gray-900 border-gray-800'}`}>
+        <div className={`rounded-2xl border p-5 ${alarm ? 'bg-destructive/10 border-destructive/30' : 'bg-foreground border-foreground/40'}`}>
           <div className="flex items-center gap-2 text-muted-foreground/80 text-sm">
             <HardDrive className="w-4 h-4" />
             Total storage
           </div>
-          <div className={`mt-2 text-2xl font-semibold ${alarm ? 'text-red-200' : 'text-white'}`}>{fmtBytes(totalBytes)}</div>
+          <div className={`mt-2 text-2xl font-semibold ${alarm ? 'text-destructive' : 'text-white'}`}>{fmtBytes(totalBytes)}</div>
           <div className="text-xs text-muted-foreground mt-1">
             {pctFree.toFixed(1)}% del Free tier · {pctPro.toFixed(2)}% del Pro
           </div>
-          <div className="mt-3 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+          <div className="mt-3 h-1.5 bg-foreground/40 rounded-full overflow-hidden">
             <div
-              className={`h-full ${pctFree > 90 ? 'bg-red-500' : pctFree > 70 ? 'bg-yellow-500' : 'bg-emerald-500'}`}
+              className={`h-full ${pctFree > 90 ? 'bg-destructive' : pctFree > 70 ? 'bg-yellow-500' : 'bg-accent'}`}
               style={{ width: `${Math.min(pctFree, 100)}%` }}
             />
           </div>
         </div>
-        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+        <div className="rounded-2xl border border-foreground/40 bg-foreground p-5">
           <div className="flex items-center gap-2 text-muted-foreground/80 text-sm">
             <ImageIcon className="w-4 h-4" />
             Archivos
@@ -103,7 +103,7 @@ export function StorageMetrics() {
           <div className="mt-2 text-2xl font-semibold text-white">{totalFiles.toLocaleString('es-AR')}</div>
           <div className="text-xs text-muted-foreground mt-1">en {buckets.length} bucket{buckets.length === 1 ? '' : 's'}</div>
         </div>
-        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+        <div className="rounded-2xl border border-foreground/40 bg-foreground p-5">
           <div className="flex items-center gap-2 text-muted-foreground/80 text-sm">
             <FileText className="w-4 h-4" />
             Promedio / archivo
@@ -118,11 +118,11 @@ export function StorageMetrics() {
       </div>
 
       {alarm && (
-        <div className="rounded-2xl border border-red-900/60 bg-red-950/40 p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
           <div className="text-sm">
-            <p className="text-red-200 font-medium">Storage al {pctFree.toFixed(0)}% del Free tier</p>
-            <p className="text-red-100/80 mt-1">
+            <p className="text-destructive font-medium">Storage al {pctFree.toFixed(0)}% del Free tier</p>
+            <p className="text-destructive/80 mt-1">
               Considerá migrar imágenes legacy con el script de optimización o subir el plan a Pro.
             </p>
           </div>
@@ -130,12 +130,12 @@ export function StorageMetrics() {
       )}
 
       {/* Por bucket */}
-      <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-800">
+      <div className="bg-foreground rounded-2xl border border-foreground/40 overflow-hidden">
+        <div className="px-5 py-3 border-b border-foreground/40">
           <h3 className="text-white font-medium">Por bucket</h3>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-gray-950 text-muted-foreground/80">
+          <thead className="bg-foreground/95 text-muted-foreground/80">
             <tr>
               <th className="text-left px-5 py-2 font-medium">Bucket</th>
               <th className="text-right px-5 py-2 font-medium">Archivos</th>
@@ -150,7 +150,7 @@ export function StorageMetrics() {
             ) : buckets.map(b => {
               const avg = b.files > 0 ? Number(b.total_bytes) / Number(b.files) : 0
               return (
-                <tr key={b.bucket_id} className="border-t border-gray-800/60">
+                <tr key={b.bucket_id} className="border-t border-foreground/30">
                   <td className="px-5 py-3 text-white">{b.bucket_id}</td>
                   <td className="px-5 py-3 text-right text-foreground/85">{Number(b.files).toLocaleString('es-AR')}</td>
                   <td className="px-5 py-3 text-right text-foreground/85">{fmtBytes(Number(b.total_bytes))}</td>
@@ -192,14 +192,14 @@ function TopFilesTable({ bucket }: { bucket: string }) {
   })
 
   return (
-    <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-      <div className="px-5 py-2 border-b border-gray-800 text-xs uppercase tracking-wider text-muted-foreground">
+    <div className="bg-foreground rounded-2xl border border-foreground/40 overflow-hidden">
+      <div className="px-5 py-2 border-b border-foreground/40 text-xs uppercase tracking-wider text-muted-foreground">
         {bucket}
       </div>
       <table className="w-full text-sm">
         <tbody>
           {(data ?? []).map((f, i) => (
-            <tr key={f.name} className={i % 2 ? 'bg-gray-950/50' : ''}>
+            <tr key={f.name} className={i % 2 ? 'bg-foreground/95' : ''}>
               <td className="px-5 py-2 text-foreground/85 truncate max-w-[400px]">{f.name}</td>
               <td className={`px-5 py-2 text-right ${f.size_kb > 500 ? 'text-yellow-300' : 'text-muted-foreground/80'}`}>
                 {f.size_kb > 1024 ? `${(f.size_kb / 1024).toFixed(1)} MB` : `${Math.round(f.size_kb)} KB`}

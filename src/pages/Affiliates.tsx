@@ -32,7 +32,7 @@ const BENEFITS = [
 
 export default function Affiliates() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-foreground text-white">
       <Helmet>
         <title>Programa de afiliados — NATO University</title>
         <meta name="description" content="Ganá comisiones recurrentes recomendando NATO University. Sin límite de referidos. Pagos automáticos." />
@@ -70,7 +70,7 @@ export default function Affiliates() {
             <h2 className="font-heading text-2xl font-bold text-center">Cómo funciona</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {STEPS.map((step, i) => (
-                <div key={i} className="bg-gray-800 rounded-2xl p-6 space-y-3 border border-gray-700">
+                <div key={i} className="bg-foreground/90 rounded-2xl p-6 space-y-3 border border-foreground/40">
                   <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
                     <step.icon className="w-5 h-5 text-primary" />
                   </div>
@@ -85,12 +85,12 @@ export default function Affiliates() {
           </div>
 
           {/* Beneficios */}
-          <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700 space-y-6">
+          <div className="bg-foreground/90 rounded-2xl p-8 border border-foreground/40 space-y-6">
             <h2 className="font-heading text-2xl font-bold">Por qué unirte</h2>
             <ul className="space-y-3">
               {BENEFITS.map((b, i) => (
                 <li key={i} className="flex items-center gap-3 text-foreground/85">
-                  <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-accent shrink-0" />
                   {b}
                 </li>
               ))}

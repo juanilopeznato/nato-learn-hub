@@ -31,9 +31,9 @@ const BILLING_OPTIONS = [
     label: 'Gratis',
     description: 'Acceso sin costo',
     icon: Gift,
-    color: 'text-green-600',
-    bg: 'bg-green-50 border-green-200',
-    activeBg: 'bg-green-500',
+    color: 'text-accent',
+    bg: 'bg-accent/10 border-accent/30',
+    activeBg: 'bg-accent',
   },
   {
     value: 'one_time',
@@ -49,9 +49,9 @@ const BILLING_OPTIONS = [
     label: 'Mensual',
     description: 'Cobro automático por mes',
     icon: RefreshCw,
-    color: 'text-blue-600',
-    bg: 'bg-blue-50 border-blue-200',
-    activeBg: 'bg-blue-500',
+    color: 'text-primary',
+    bg: 'bg-primary/10 border-primary/30',
+    activeBg: 'bg-primary',
   },
   {
     value: 'annual',
@@ -211,7 +211,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     className={`flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all ${
                       isSelected
                         ? 'border-primary bg-primary/5'
-                        : 'border-border/60 bg-secondary/30 hover:border-gray-300'
+                        : 'border-border/60 bg-secondary/30 hover:border-border'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
@@ -247,7 +247,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                 </div>
               </div>
               {billingType === 'monthly' && (
-                <p className="text-xs text-blue-600 bg-blue-50 rounded-lg px-3 py-2">
+                <p className="text-xs text-primary bg-primary/10 rounded-lg px-3 py-2">
                   El alumno será cobrado automáticamente cada mes via Mercado Pago. El acceso se revoca si el pago falla.
                 </p>
               )}

@@ -502,8 +502,8 @@ export default function EmailMarketing() {
                   </div>
                 )}
 
-                <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                  <p className="text-sm text-blue-700">
+                <div className="bg-primary/10 border border-blue-100 rounded-lg p-3">
+                  <p className="text-sm text-primary">
                     <span className="font-semibold">Destinatarios estimados:</span>{' '}
                     {recipientCount != null ? `${recipientCount} estudiante${recipientCount !== 1 ? 's' : ''}` : 'Calculando...'}
                   </p>

@@ -27,15 +27,15 @@ interface CalendarEvent {
 
 const TYPE_COLORS: Record<EventType, string> = {
   live_session: 'border-l-purple-500',
-  webinar: 'border-l-blue-500',
-  deadline: 'border-l-red-500',
-  other: 'border-l-gray-400',
+  webinar: 'border-l-primary',
+  deadline: 'border-l-destructive',
+  other: 'border-l-muted-foreground',
 }
 
 const TYPE_BADGES: Record<EventType, string> = {
   live_session: 'bg-purple-100 text-purple-700',
-  webinar: 'bg-blue-100 text-blue-700',
-  deadline: 'bg-red-100 text-red-700',
+  webinar: 'bg-primary/10 text-primary',
+  deadline: 'bg-destructive/10 text-destructive',
   other: 'bg-secondary text-foreground/70',
 }
 
@@ -135,7 +135,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
         <div className="space-y-1.5">
           {upcoming.slice(0, 3).map(event => (
             <div key={event.id} className={`border-l-2 pl-2 py-1 ${TYPE_COLORS[event.event_type]}`}>
-              <p className="text-xs font-medium text-gray-800 leading-snug line-clamp-1">{event.title}</p>
+              <p className="text-xs font-medium text-foreground leading-snug line-clamp-1">{event.title}</p>
               <p className="text-xs text-muted-foreground/80">
                 {format(new Date(event.starts_at), "d MMM 'a las' HH:mm", { locale: es })}
               </p>

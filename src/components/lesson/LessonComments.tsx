@@ -109,7 +109,7 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
             </button>
             {canDelete(comment.author?.id ?? '') && (
               <button
-                className="text-xs text-muted-foreground/80 hover:text-red-500 transition-colors flex items-center gap-1"
+                className="text-xs text-muted-foreground/80 hover:text-destructive transition-colors flex items-center gap-1"
                 onClick={() => onDelete(comment.id)}
               >
                 <Trash2 className="w-3 h-3" />
@@ -151,7 +151,7 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
                 </div>
                 {canDelete(reply.author?.id ?? '') && (
                   <button
-                    className="text-xs text-muted-foreground/80 hover:text-red-500 transition-colors flex items-center gap-1 mt-1 ml-1"
+                    className="text-xs text-muted-foreground/80 hover:text-destructive transition-colors flex items-center gap-1 mt-1 ml-1"
                     onClick={() => onDelete(reply.id)}
                   >
                     <Trash2 className="w-3 h-3" />

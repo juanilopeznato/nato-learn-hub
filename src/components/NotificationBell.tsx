@@ -135,7 +135,7 @@ export function NotificationBell({ profileId }: Props) {
           )}
         </div>
 
-        <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
+        <div className="max-h-80 overflow-y-auto divide-y divide-border/50">
           {allNotifications.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground/80">
               No tenés notificaciones

@@ -285,8 +285,8 @@ export default function InstructorCoursePage() {
               disabled={togglePublish.isPending}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                 course.is_published
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                  : 'bg-secondary text-muted-foreground hover:bg-gray-200'
+                  ? 'bg-accent/15 text-accent hover:bg-green-200'
+                  : 'bg-secondary text-muted-foreground hover:bg-border'
               }`}
             >
               {course.is_published ? <Globe className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
@@ -311,7 +311,7 @@ export default function InstructorCoursePage() {
         <Tabs defaultValue="content" className="space-y-6">
 
           {/* 4 tabs en vez de 7 */}
-          <TabsList className="bg-gray-100">
+          <TabsList className="bg-secondary">
             <TabsTrigger value="content">Contenido</TabsTrigger>
             <TabsTrigger value="details">Página del curso</TabsTrigger>
             <TabsTrigger value="students">
@@ -449,7 +449,7 @@ export default function InstructorCoursePage() {
               {displayedEnrollments.length === 0 ? (
                 <div className="bg-white border border-border/60 rounded-2xl p-12 text-center">
                   {showInactive ? (
-                    <p className="text-green-600 font-medium">Todos los estudiantes están activos</p>
+                    <p className="text-accent font-medium">Todos los estudiantes están activos</p>
                   ) : (
                     <p className="text-muted-foreground/80 text-sm">Aún no hay estudiantes inscriptos</p>
                   )}
@@ -483,7 +483,7 @@ export default function InstructorCoursePage() {
                                   alt={student?.full_name ?? ''}
                                   size={32}
                                   fallbackInitials={(student?.full_name ?? '?').charAt(0).toUpperCase()}
-                                  className="shrink-0 bg-gray-200 text-muted-foreground"
+                                  className="shrink-0 bg-border text-muted-foreground"
                                 />
                                 <div className="min-w-0">
                                   <p className="font-medium text-foreground truncate max-w-[140px]">{student?.full_name ?? '—'}</p>
@@ -496,7 +496,7 @@ export default function InstructorCoursePage() {
                               <>
                                 <td className="px-4 py-3">
                                   <div className="flex items-center gap-2 min-w-[100px]">
-                                    <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+                                    <div className="flex-1 bg-border rounded-full h-1.5">
                                       <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.min(100, progress)}%` }} />
                                     </div>
                                     <span className="text-xs text-muted-foreground shrink-0">{Math.round(progress)}%</span>
@@ -510,7 +510,7 @@ export default function InstructorCoursePage() {
                                 <td className="px-4 py-3">
                                   {(() => {
                                     const color = days === null ? 'bg-secondary text-muted-foreground'
-                                      : days >= 7 ? 'bg-red-100 text-red-700'
+                                      : days >= 7 ? 'bg-destructive/15 text-destructive'
                                       : 'bg-orange-100 text-orange-700'
                                     return (
                                       <span className={`text-xs font-semibold px-2 py-1 rounded-full ${color}`}>
@@ -529,7 +529,7 @@ export default function InstructorCoursePage() {
                                 </td>
                                 <td className="px-4 py-3">
                                   <div className="flex items-center gap-2 min-w-[100px]">
-                                    <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+                                    <div className="flex-1 bg-border rounded-full h-1.5">
                                       <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.min(100, progress)}%` }} />
                                     </div>
                                     <span className="text-xs text-muted-foreground shrink-0">{Math.round(progress)}%</span>
@@ -706,8 +706,8 @@ export default function InstructorCoursePage() {
                   onClick={() => setOpenSection(openSection === 'calendar' ? null : 'calendar')}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-                      <Calendar className="w-4 h-4 text-blue-500" />
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Calendar className="w-4 h-4 text-primary" />
                     </div>
                     <div className="text-left">
                       <p className="font-semibold text-foreground text-sm">Clases en vivo</p>

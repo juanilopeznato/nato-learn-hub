@@ -82,8 +82,8 @@ export function EnrolledCourseCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {isCompleted && (
-            <div className="absolute inset-0 bg-green-900/40 flex items-center justify-center">
-              <div className="flex items-center gap-1.5 bg-green-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+            <div className="absolute inset-0 bg-accent/40 flex items-center justify-center">
+              <div className="flex items-center gap-1.5 bg-accent text-white text-xs font-semibold px-3 py-1.5 rounded-full">
                 <CheckCircle className="w-3.5 h-3.5" />
                 Completado
               </div>
@@ -91,9 +91,9 @@ export function EnrolledCourseCard({
           )}
         </div>
       ) : (
-        <div className={`h-36 flex items-center justify-center shrink-0 ${isCompleted ? 'bg-green-50' : 'bg-primary/5'}`}>
+        <div className={`h-36 flex items-center justify-center shrink-0 ${isCompleted ? 'bg-accent/10' : 'bg-primary/5'}`}>
           {isCompleted
-            ? <CheckCircle className="w-10 h-10 text-green-400" />
+            ? <CheckCircle className="w-10 h-10 text-accent" />
             : <BookOpen className="w-10 h-10 text-primary/30" />
           }
         </div>
@@ -116,7 +116,7 @@ export function EnrolledCourseCard({
           </div>
           <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-primary'}`}
+              className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-accent' : 'bg-primary'}`}
               style={{ width: `${progressPercent}%` }}
             />
           </div>

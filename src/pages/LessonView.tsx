@@ -402,7 +402,7 @@ export default function LessonView() {
                     <span className="text-xs text-muted-foreground/80">Guardando...</span>
                   )}
                   {noteSaveStatus === 'saved' && (
-                    <span className="text-xs text-green-600">Guardado ✓</span>
+                    <span className="text-xs text-accent">Guardado ✓</span>
                   )}
                 </div>
                 <textarea
@@ -513,7 +513,7 @@ export default function LessonView() {
               </Button>
             ) : (
               <div className="flex items-center gap-3 shrink-0">
-                <span className="hidden sm:flex items-center gap-1.5 text-sm text-green-600 font-semibold">
+                <span className="hidden sm:flex items-center gap-1.5 text-sm text-accent font-semibold">
                   <CheckCircle className="w-4 h-4" />
                   Curso completado
                 </span>
@@ -532,7 +532,7 @@ export default function LessonView() {
               size="sm"
               onClick={() => completeMutation.mutate()}
               disabled={completeMutation.isPending}
-              className="shrink-0 bg-green-600 hover:bg-green-700"
+              className="shrink-0 bg-accent hover:bg-green-700"
             >
               <CheckCircle className="w-4 h-4" />
               {completeMutation.isPending ? 'Guardando...' : 'Completar'}

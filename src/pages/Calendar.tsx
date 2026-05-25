@@ -41,8 +41,8 @@ const EVENT_COLORS: Record<EventType, string> = {
 
 const EVENT_BADGE_COLORS: Record<EventType, string> = {
   live_session: 'bg-purple-100 text-purple-700',
-  webinar: 'bg-blue-100 text-blue-700',
-  deadline: 'bg-red-100 text-red-700',
+  webinar: 'bg-primary/10 text-primary',
+  deadline: 'bg-destructive/10 text-destructive',
   other: 'bg-secondary text-foreground/70',
 }
 
@@ -250,7 +250,7 @@ export default function Calendar() {
                       {isInstructor && (
                         <button
                           onClick={() => deleteEvent.mutate(event.id)}
-                          className="text-foreground/85 hover:text-red-400 transition-colors shrink-0"
+                          className="text-foreground/85 hover:text-destructive transition-colors shrink-0"
                           title="Eliminar evento"
                         >
                           <X className="w-4 h-4" />

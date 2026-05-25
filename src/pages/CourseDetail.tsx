@@ -582,17 +582,17 @@ export default function CourseDetail() {
                   {!enrollment && !course.is_free && (
                     <div className="space-y-2">
                       {appliedCoupon ? (
-                        <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                          <div className="flex items-center gap-2 text-green-700 text-sm">
+                        <div className="flex items-center justify-between bg-accent/10 border border-accent/30 rounded-lg px-3 py-2">
+                          <div className="flex items-center gap-2 text-accent text-sm">
                             <Tag className="w-4 h-4" />
                             <span className="font-medium">{appliedCoupon.code}</span>
-                            <span className="text-green-600">
+                            <span className="text-accent">
                               {appliedCoupon.discount_type === 'percent'
                                 ? `−${appliedCoupon.discount_value}%`
                                 : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
                             </span>
                           </div>
-                          <button onClick={removeCoupon} className="text-green-500 hover:text-green-700">
+                          <button onClick={removeCoupon} className="text-accent hover:text-accent">
                             <X className="w-4 h-4" />
                           </button>
                         </div>
@@ -616,7 +616,7 @@ export default function CourseDetail() {
                           </Button>
                         </div>
                       )}
-                      {couponError && <p className="text-xs text-red-500">{couponError}</p>}
+                      {couponError && <p className="text-xs text-destructive">{couponError}</p>}
                     </div>
                   )}
 
@@ -634,7 +634,7 @@ export default function CourseDetail() {
                       'Recursos descargables',
                     ].map(item => (
                       <div key={item} className="flex items-center gap-2 text-xs text-foreground/70">
-                        <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                        <CheckCircle className="w-3.5 h-3.5 text-accent shrink-0" />
                         {item}
                       </div>
                     ))}
@@ -671,8 +671,8 @@ export default function CourseDetail() {
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">¿Qué vas a aprender?</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {outcomes.filter(Boolean).map((outcome, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50 border border-green-100">
-                      <CheckCircle className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-accent/10 border border-green-100">
+                      <CheckCircle className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                       <span className="text-sm text-foreground/85">{outcome}</span>
                     </div>
                   ))}
@@ -684,7 +684,7 @@ export default function CourseDetail() {
             {forWho && (
               <section>
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-4">¿Para quién es este curso?</h2>
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
+                <div className="bg-primary/10 border border-blue-100 rounded-xl p-6">
                   <MarkdownLight className="text-foreground/85 leading-relaxed">{forWho}</MarkdownLight>
                 </div>
               </section>
@@ -718,7 +718,7 @@ export default function CourseDetail() {
                     {expandedModules.has(module.id) && (
                       <div className="border-t border-border/40 divide-y divide-gray-50">
                         {[...(module.lessons ?? [])].sort((a, b) => a.order_index - b.order_index).map(lesson => (
-                          <div key={lesson.id} className="flex items-center justify-between px-4 py-3 bg-gray-50/50">
+                          <div key={lesson.id} className="flex items-center justify-between px-4 py-3 bg-secondary/50/50">
                             <div className="flex items-center gap-3">
                               {lesson.is_free_preview
                                 ? <Play className="w-3.5 h-3.5 text-primary shrink-0" />
@@ -781,7 +781,7 @@ export default function CourseDetail() {
                         {expandedFaq.has(i) ? <ChevronUp className="w-4 h-4 text-muted-foreground/80 shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground/80 shrink-0" />}
                       </button>
                       {expandedFaq.has(i) && (
-                        <div className="border-t border-border/40 px-4 py-4 bg-gray-50/50">
+                        <div className="border-t border-border/40 px-4 py-4 bg-secondary/50/50">
                           <p className="text-sm text-foreground/70 leading-relaxed">{item.a}</p>
                         </div>
                       )}
@@ -891,7 +891,7 @@ export default function CourseDetail() {
                           </span>
                         )}
                         {appliedCoupon && (
-                          <Badge className="bg-green-50 text-green-700 border-green-100 text-xs">
+                          <Badge className="bg-accent/10 text-accent border-green-100 text-xs">
                             {appliedCoupon.discount_type === 'percent' ? `${appliedCoupon.discount_value}% OFF` : 'DESCUENTO'}
                           </Badge>
                         )}
@@ -920,17 +920,17 @@ export default function CourseDetail() {
                 {!enrollment && !course.is_free && (
                   <div className="space-y-2">
                     {appliedCoupon ? (
-                      <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                        <div className="flex items-center gap-2 text-green-700 text-sm">
+                      <div className="flex items-center justify-between bg-accent/10 border border-accent/30 rounded-lg px-3 py-2">
+                        <div className="flex items-center gap-2 text-accent text-sm">
                           <Tag className="w-4 h-4" />
                           <span className="font-medium">{appliedCoupon.code}</span>
-                          <span className="text-green-600">
+                          <span className="text-accent">
                             {appliedCoupon.discount_type === 'percent'
                               ? `−${appliedCoupon.discount_value}%`
                               : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
                           </span>
                         </div>
-                        <button onClick={removeCoupon} className="text-green-500 hover:text-green-700">
+                        <button onClick={removeCoupon} className="text-accent hover:text-accent">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -954,14 +954,14 @@ export default function CourseDetail() {
                         </Button>
                       </div>
                     )}
-                    {couponError && <p className="text-xs text-red-500">{couponError}</p>}
+                    {couponError && <p className="text-xs text-destructive">{couponError}</p>}
                   </div>
                 )}
 
                 <div className="space-y-2 border-t pt-4">
                   {['Acceso inmediato', 'Certificado al completar', 'Comunidad incluida', 'Recursos descargables'].map(item => (
                     <div key={item} className="flex items-center gap-2 text-xs text-foreground/70">
-                      <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                      <CheckCircle className="w-3.5 h-3.5 text-accent shrink-0" />
                       {item}
                     </div>
                   ))}

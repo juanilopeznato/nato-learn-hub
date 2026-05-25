@@ -130,7 +130,7 @@ export function ImageUpload({
               <button
                 type="button"
                 onClick={e => { e.stopPropagation(); removeImage() }}
-                className="p-2 rounded-full bg-white/20 hover:bg-red-500/70 transition-colors text-white"
+                className="p-2 rounded-full bg-white/20 hover:bg-destructive/70 transition-colors text-white"
                 title="Eliminar imagen"
                 aria-label="Eliminar imagen"
               >

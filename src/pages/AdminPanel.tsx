@@ -119,8 +119,8 @@ export default function AdminPanel() {
   })
 
   const statCards = [
-    { label: 'Tenants', value: stats?.tenants ?? 0, icon: Building2, color: 'text-blue-600 bg-blue-50' },
-    { label: 'Usuarios', value: stats?.profiles ?? 0, icon: Users, color: 'text-green-600 bg-green-50' },
+    { label: 'Tenants', value: stats?.tenants ?? 0, icon: Building2, color: 'text-primary bg-primary/10' },
+    { label: 'Usuarios', value: stats?.profiles ?? 0, icon: Users, color: 'text-accent bg-accent/10' },
     { label: 'Cursos', value: stats?.courses ?? 0, icon: BookOpen, color: 'text-yellow-600 bg-yellow-50' },
     { label: 'Inscripciones', value: stats?.enrollments ?? 0, icon: TrendingUp, color: 'text-purple-600 bg-purple-50' },
   ]
@@ -166,7 +166,7 @@ export default function AdminPanel() {
         </div>
 
         <Tabs defaultValue="tenants">
-          <TabsList className="bg-gray-100">
+          <TabsList className="bg-secondary">
             <TabsTrigger value="tenants">Tenants</TabsTrigger>
             <TabsTrigger value="courses">Cursos</TabsTrigger>
             <TabsTrigger value="enrollments">Inscripciones</TabsTrigger>

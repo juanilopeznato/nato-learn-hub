@@ -21,7 +21,7 @@ const ACTION_LABELS: Record<string, string> = {
 const LEVEL_LABELS = ['', 'Aprendiz', 'Explorador', 'Avanzado', 'Experto', 'Maestro']
 
 function LevelBadge({ level }: { level: number }) {
-  const colors = ['', 'bg-secondary text-foreground/70', 'bg-blue-50 text-blue-600', 'bg-purple-50 text-purple-600', 'bg-orange-50 text-orange-600', 'bg-yellow-50 text-yellow-700']
+  const colors = ['', 'bg-secondary text-foreground/70', 'bg-primary/10 text-primary', 'bg-purple-50 text-purple-600', 'bg-orange-50 text-orange-600', 'bg-yellow-50 text-yellow-700']
   return (
     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colors[level] ?? colors[1]}`}>
       Nv. {level} · {LEVEL_LABELS[level] ?? ''}

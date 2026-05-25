@@ -30,7 +30,7 @@ export default function CoursesSection() {
 
   if (isLoading) {
     return (
-      <section id="courses" className="py-24 bg-gray-50">
+      <section id="courses" className="py-24 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
@@ -44,7 +44,7 @@ export default function CoursesSection() {
 
   if (!courses?.length) {
     return (
-      <section id="courses" className="py-24 bg-gray-50">
+      <section id="courses" className="py-24 bg-secondary">
         <div className="container mx-auto px-4 text-center">
           <p className="text-muted-foreground/80">Próximamente nuevos cursos.</p>
         </div>
@@ -53,7 +53,7 @@ export default function CoursesSection() {
   }
 
   return (
-    <section id="courses" className="py-24 bg-gray-50">
+    <section id="courses" className="py-24 bg-secondary">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-4">
@@ -95,7 +95,7 @@ export default function CoursesSection() {
                   <div className="flex items-center justify-between">
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                       course.is_free
-                        ? 'bg-green-50 text-green-600'
+                        ? 'bg-accent/10 text-accent'
                         : 'bg-primary/10 text-primary'
                     }`}>
                       {course.is_free ? 'Gratis' : `ARS ${Number(course.price).toLocaleString('es-AR')}`}

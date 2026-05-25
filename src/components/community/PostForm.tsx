@@ -73,7 +73,7 @@ export function PostForm({ onSubmit, onCancel, enrolledCourses = [], defaultCour
       <div className="space-y-1.5">
         <Label htmlFor="title" className="text-foreground/85 font-medium">Título</Label>
         <Input id="title" placeholder="¿Qué querés compartir?" {...register('title')} className="border-border/60 focus:border-primary" />
-        {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
+        {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
       </div>
 
       <div className="space-y-1.5">
@@ -84,7 +84,7 @@ export function PostForm({ onSubmit, onCancel, enrolledCourses = [], defaultCour
           className="resize-none min-h-[120px] border-border/60 focus:border-primary"
           {...register('body')}
         />
-        {errors.body && <p className="text-xs text-red-500">{errors.body.message}</p>}
+        {errors.body && <p className="text-xs text-destructive">{errors.body.message}</p>}
       </div>
 
       <div className="flex justify-end gap-2 pt-1">

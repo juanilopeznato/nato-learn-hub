@@ -26,8 +26,8 @@ const fmt = (n: number) => `ARS ${Number(n).toLocaleString('es-AR')}`
 const fmtK = (n: number) => n >= 1000 ? `ARS ${(n / 1000).toFixed(0)}k` : fmt(n)
 
 const PLAN_COLORS: Record<string, string> = {
-  gratis: 'bg-gray-700 text-foreground/85',
-  starter: 'bg-blue-900/60 text-blue-300',
+  gratis: 'bg-muted-foreground text-foreground/85',
+  starter: 'bg-primary/20 text-primary',
   creador: 'bg-yellow-900/60 text-yellow-300',
   pro: 'bg-purple-900/60 text-purple-300',
 }
@@ -38,14 +38,14 @@ function MetricCard({ label, value, sub, icon: Icon, accent = false }: {
   icon: React.ElementType; accent?: boolean
 }) {
   return (
-    <div className={`rounded-2xl p-5 border ${accent ? 'bg-yellow-400 border-yellow-300' : 'bg-gray-900 border-gray-800'}`}>
+    <div className={`rounded-2xl p-5 border ${accent ? 'bg-yellow-400 border-yellow-300' : 'bg-foreground border-foreground/40'}`}>
       <div className="flex items-start justify-between">
         <div>
           <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${accent ? 'text-yellow-900/70' : 'text-muted-foreground'}`}>{label}</p>
-          <p className={`text-2xl font-bold ${accent ? 'text-yellow-900' : 'text-gray-100'}`}>{value}</p>
+          <p className={`text-2xl font-bold ${accent ? 'text-yellow-900' : 'text-white'}`}>{value}</p>
           {sub && <p className={`text-xs mt-0.5 ${accent ? 'text-yellow-800/70' : 'text-muted-foreground'}`}>{sub}</p>}
         </div>
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent ? 'bg-yellow-300/50' : 'bg-gray-800'}`}>
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent ? 'bg-yellow-300/50' : 'bg-foreground/40'}`}>
           <Icon className={`w-5 h-5 ${accent ? 'text-yellow-900' : 'text-muted-foreground/80'}`} />
         </div>
       </div>
@@ -86,11 +86,11 @@ function CommissionCell({ tenantId, value, onSaved }: { tenantId: string; value:
         autoFocus
         value={input}
         onChange={e => setInput(e.target.value)}
-        className="w-16 h-7 text-xs bg-gray-800 border-gray-600 text-white"
+        className="w-16 h-7 text-xs bg-foreground/40 border-foreground/30 text-white"
         onKeyDown={e => { if (e.key === 'Enter') save.mutate(); if (e.key === 'Escape') setEditing(false) }}
       />
       <span className="text-muted-foreground text-xs">%</span>
-      <button onClick={() => save.mutate()} className="text-green-400 hover:text-green-300">
+      <button onClick={() => save.mutate()} className="text-accent hover:text-accent/80">
         <Check className="w-4 h-4" />
       </button>
       <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-foreground/85">
@@ -218,9 +218,9 @@ export default function NatoOwnerPanel() {
   const pendingSubscriptions = subscriptions.filter(s => s.status === 'pending').length
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-foreground/95 text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900 sticky top-0 z-40">
+      <header className="border-b border-foreground/40 bg-foreground sticky top-0 z-40">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center">
@@ -250,7 +250,7 @@ export default function NatoOwnerPanel() {
         </div>
 
         <Tabs defaultValue="revenue">
-          <TabsList className="bg-gray-800 border border-gray-700 flex-wrap h-auto gap-1 p-1">
+          <TabsList className="bg-foreground/90 border border-foreground/40 flex-wrap h-auto gap-1 p-1">
             {[
               { value: 'revenue', label: 'Revenue' },
               { value: 'escuelas', label: 'Escuelas' },
@@ -261,7 +261,7 @@ export default function NatoOwnerPanel() {
               <TabsTrigger
                 key={t.value}
                 value={t.value}
-                className="data-[state=active]:bg-gray-700 text-muted-foreground/80 data-[state=active]:text-white text-sm"
+                className="data-[state=active]:bg-muted-foreground text-muted-foreground/80 data-[state=active]:text-white text-sm"
               >
                 {t.label}
               </TabsTrigger>
@@ -272,7 +272,7 @@ export default function NatoOwnerPanel() {
           <TabsContent value="revenue" className="mt-6 space-y-6">
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Area chart */}
-              <div className="lg:col-span-2 bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <div className="lg:col-span-2 bg-foreground rounded-2xl border border-foreground/40 p-6">
                 <h2 className="text-base font-semibold text-white mb-6">Revenue mensual — últimos 12 meses</h2>
                 {revenueTrend.length === 0 ? (
                   <div className="h-52 flex items-center justify-center text-foreground/70 text-sm">Sin datos aún</div>
@@ -307,7 +307,7 @@ export default function NatoOwnerPanel() {
               </div>
 
               {/* Leaderboard */}
-              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <div className="bg-foreground rounded-2xl border border-foreground/40 p-6">
                 <h2 className="text-base font-semibold text-white mb-4">Top escuelas por revenue</h2>
                 {leaderboard.length === 0 ? (
                   <div className="text-center text-foreground/70 text-sm py-8">Sin datos</div>
@@ -321,7 +321,7 @@ export default function NatoOwnerPanel() {
                           </span>
                           <span className="text-yellow-400 font-semibold">{fmtK(t.revenue)}</span>
                         </div>
-                        <div className="h-1.5 bg-gray-800 rounded-full">
+                        <div className="h-1.5 bg-foreground/40 rounded-full">
                           <div
                             className="h-full bg-yellow-400/60 rounded-full"
                             style={{ width: leaderboard[0].revenue ? `${(t.revenue / leaderboard[0].revenue) * 100}%` : '0%' }}
@@ -336,7 +336,7 @@ export default function NatoOwnerPanel() {
 
             {/* Revenue por escuela — bar chart */}
             {leaderboard.length > 0 && (
-              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <div className="bg-foreground rounded-2xl border border-foreground/40 p-6">
                 <h2 className="text-base font-semibold text-white mb-6">Revenue por escuela</h2>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={leaderboard} margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
@@ -357,8 +357,8 @@ export default function NatoOwnerPanel() {
 
           {/* ── Escuelas ── */}
           <TabsContent value="escuelas" className="mt-6">
-            <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between gap-4">
+            <div className="bg-foreground rounded-2xl border border-foreground/40 overflow-hidden">
+              <div className="px-6 py-4 border-b border-foreground/40 flex items-center justify-between gap-4">
                 <h2 className="text-base font-semibold text-white shrink-0">Todas las escuelas</h2>
                 <div className="relative max-w-xs w-full">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
@@ -366,7 +366,7 @@ export default function NatoOwnerPanel() {
                     placeholder="Buscar escuela..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="pl-8 h-8 text-xs bg-gray-800 border-gray-700 text-white"
+                    className="pl-8 h-8 text-xs bg-foreground/40 border-foreground/30 text-white"
                   />
                 </div>
               </div>
@@ -376,7 +376,7 @@ export default function NatoOwnerPanel() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-800">
+                      <tr className="border-b border-foreground/40">
                         {['Escuela', 'Plan', 'MP', 'Comisión %', 'Cursos', 'Alumnos', '30d alumnos', 'Revenue total', 'Revenue 30d', 'Última actividad', 'Estado', ''].map(h => (
                           <th key={h} className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
                         ))}
@@ -384,7 +384,7 @@ export default function NatoOwnerPanel() {
                     </thead>
                     <tbody>
                       {filteredTenants.map(t => (
-                        <tr key={t.tenant_id} className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                        <tr key={t.tenant_id} className="border-b border-foreground/30 hover:bg-foreground/30 transition-colors">
                           <td className="px-4 py-3.5">
                             <div>
                               <p className="font-medium text-white">{t.tenant_name}</p>
@@ -398,7 +398,7 @@ export default function NatoOwnerPanel() {
                           </td>
                           <td className="px-4 py-3.5">
                             {t.mp_connected
-                              ? <Wifi className="w-4 h-4 text-green-400" />
+                              ? <Wifi className="w-4 h-4 text-accent" />
                               : <WifiOff className="w-4 h-4 text-foreground/70" />}
                           </td>
                           <td className="px-4 py-3.5">
@@ -412,7 +412,7 @@ export default function NatoOwnerPanel() {
                           <td className="px-4 py-3.5 text-foreground/85">{t.total_students}</td>
                           <td className="px-4 py-3.5">
                             {t.new_students_30d > 0
-                              ? <span className="text-green-400 font-semibold">+{t.new_students_30d}</span>
+                              ? <span className="text-accent font-semibold">+{t.new_students_30d}</span>
                               : <span className="text-foreground/70">0</span>}
                           </td>
                           <td className="px-4 py-3.5 text-yellow-400 font-semibold whitespace-nowrap">
@@ -436,7 +436,7 @@ export default function NatoOwnerPanel() {
                               title={t.active ? 'Desactivar' : 'Activar'}
                             >
                               {t.active
-                                ? <ToggleRight className="w-5 h-5 text-green-500" />
+                                ? <ToggleRight className="w-5 h-5 text-accent" />
                                 : <ToggleLeft className="w-5 h-5" />}
                             </button>
                           </td>
@@ -453,15 +453,15 @@ export default function NatoOwnerPanel() {
           <TabsContent value="suscripciones" className="mt-6 space-y-4">
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+              <div className="bg-foreground rounded-xl border border-foreground/40 p-4">
                 <p className="text-xs text-muted-foreground mb-1">Total recaudado</p>
                 <p className="text-2xl font-bold text-yellow-400">{fmtK(totalSubscriptionRevenue)}</p>
               </div>
-              <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+              <div className="bg-foreground rounded-xl border border-foreground/40 p-4">
                 <p className="text-xs text-muted-foreground mb-1">Pagos totales</p>
                 <p className="text-2xl font-bold text-white">{subscriptions.filter(s => s.status === 'approved').length}</p>
               </div>
-              <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+              <div className="bg-foreground rounded-xl border border-foreground/40 p-4">
                 <p className="text-xs text-muted-foreground mb-1">Pendientes</p>
                 <p className={`text-2xl font-bold ${pendingSubscriptions > 0 ? 'text-yellow-400' : 'text-foreground/70'}`}>
                   {pendingSubscriptions}
@@ -469,8 +469,8 @@ export default function NatoOwnerPanel() {
               </div>
             </div>
 
-            <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-800">
+            <div className="bg-foreground rounded-2xl border border-foreground/40 overflow-hidden">
+              <div className="px-6 py-4 border-b border-foreground/40">
                 <h2 className="text-base font-semibold text-white">Historial de suscripciones</h2>
               </div>
               {loadingSubscriptions ? (
@@ -484,7 +484,7 @@ export default function NatoOwnerPanel() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-800">
+                      <tr className="border-b border-foreground/40">
                         {['Escuela', 'Plan', 'Monto ARS', 'Estado', 'Período', 'Fecha'].map(h => (
                           <th key={h} className="px-5 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide">{h}</th>
                         ))}
@@ -492,7 +492,7 @@ export default function NatoOwnerPanel() {
                     </thead>
                     <tbody>
                       {subscriptions.map(p => (
-                        <tr key={p.payment_id} className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                        <tr key={p.payment_id} className="border-b border-foreground/30 hover:bg-foreground/30 transition-colors">
                           <td className="px-5 py-3.5 font-medium text-white">{p.tenant_name}</td>
                           <td className="px-5 py-3.5">
                             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAN_COLORS[p.plan_name ?? 'gratis'] ?? PLAN_COLORS.gratis}`}>
@@ -528,9 +528,9 @@ export default function NatoOwnerPanel() {
           {/* ── Producción NATO ── */}
           <TabsContent value="produccion" className="mt-6 space-y-4">
             {loadingProduction ? (
-              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-8 text-center text-foreground/70 text-sm">Cargando...</div>
+              <div className="bg-foreground rounded-2xl border border-foreground/40 p-8 text-center text-foreground/70 text-sm">Cargando...</div>
             ) : productionCourses.length === 0 ? (
-              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center space-y-3">
+              <div className="bg-foreground rounded-2xl border border-foreground/40 p-12 text-center space-y-3">
                 <Clapperboard className="w-10 h-10 text-foreground/85 mx-auto" />
                 <p className="text-muted-foreground text-sm">No hay cursos marcados como producidos por NATO.</p>
                 <p className="text-foreground/70 text-xs">Activá "Producido por NATO Creative" al editar un curso.</p>
@@ -539,25 +539,25 @@ export default function NatoOwnerPanel() {
               <>
                 {/* Summary strip */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                  <div className="bg-foreground rounded-xl border border-foreground/40 p-4">
                     <p className="text-xs text-muted-foreground mb-1">Cursos producidos</p>
                     <p className="text-2xl font-bold text-white">{productionCourses.length}</p>
                   </div>
-                  <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                  <div className="bg-foreground rounded-xl border border-foreground/40 p-4">
                     <p className="text-xs text-muted-foreground mb-1">En recupero</p>
                     <p className="text-2xl font-bold text-yellow-400">
                       {productionCourses.filter(c => !c.is_recovered).length}
                     </p>
                   </div>
-                  <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                  <div className="bg-foreground rounded-xl border border-foreground/40 p-4">
                     <p className="text-xs text-muted-foreground mb-1">Sin ventas este mes</p>
-                    <p className="text-xl font-bold text-red-400">
+                    <p className="text-xl font-bold text-destructive">
                       {productionCourses.filter(c => !c.is_recovered && c.sales_last_30d === 0).length}
                     </p>
                   </div>
-                  <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+                  <div className="bg-foreground rounded-xl border border-foreground/40 p-4">
                     <p className="text-xs text-muted-foreground mb-1">Ventas este mes</p>
-                    <p className="text-xl font-bold text-green-400">
+                    <p className="text-xl font-bold text-accent">
                       {productionCourses.reduce((s, c) => s + (c.sales_last_30d ?? 0), 0)}
                     </p>
                   </div>
@@ -568,7 +568,7 @@ export default function NatoOwnerPanel() {
                   {productionCourses.map(c => {
                     const pct = Math.min(100, Math.round((c.nato_sales / c.recovery_target) * 100))
                     return (
-                      <div key={c.course_id} className="bg-gray-900 rounded-2xl border border-gray-800 p-5">
+                      <div key={c.course_id} className="bg-foreground rounded-2xl border border-foreground/40 p-5">
                         <div className="flex items-start justify-between gap-4 mb-4">
                           <div>
                             <p className="font-semibold text-white">{c.course_title}</p>
@@ -576,7 +576,7 @@ export default function NatoOwnerPanel() {
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             {c.is_recovered ? (
-                              <span className="flex items-center gap-1.5 text-xs font-semibold text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
+                              <span className="flex items-center gap-1.5 text-xs font-semibold text-accent bg-accent/10 px-2.5 py-1 rounded-full">
                                 <CheckCircle2 className="w-3.5 h-3.5" /> Recuperado
                               </span>
                             ) : (
@@ -602,9 +602,9 @@ export default function NatoOwnerPanel() {
                             <span>{c.nato_sales} ventas cobradas por NATO</span>
                             <span>Meta: {c.recovery_target}</span>
                           </div>
-                          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                          <div className="h-2 bg-foreground/40 rounded-full overflow-hidden">
                             <div
-                              className={`h-full rounded-full transition-all ${c.is_recovered ? 'bg-green-500' : 'bg-yellow-400'}`}
+                              className={`h-full rounded-full transition-all ${c.is_recovered ? 'bg-accent' : 'bg-yellow-400'}`}
                               style={{ width: `${pct}%` }}
                             />
                           </div>
@@ -619,9 +619,9 @@ export default function NatoOwnerPanel() {
                         {!c.is_recovered && (
                           <div className={`rounded-lg px-3 py-2 mb-4 text-xs ${
                             c.months_to_recovery === null
-                              ? 'bg-red-900/30 text-red-400'
+                              ? 'bg-destructive/20 text-destructive'
                               : c.months_to_recovery <= 2
-                              ? 'bg-green-900/30 text-green-400'
+                              ? 'bg-accent/20 text-accent'
                               : 'bg-yellow-900/20 text-yellow-400'
                           }`}>
                             {c.sales_last_30d === 0 || c.months_to_recovery === null
@@ -632,7 +632,7 @@ export default function NatoOwnerPanel() {
                           </div>
                         )}
 
-                        <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-800">
+                        <div className="grid grid-cols-3 gap-3 pt-3 border-t border-foreground/40">
                           <div>
                             <p className="text-xs text-muted-foreground">Ventas NATO</p>
                             <p className="text-sm font-semibold text-yellow-400 mt-0.5">{c.nato_sales}</p>

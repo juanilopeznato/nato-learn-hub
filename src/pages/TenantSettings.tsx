@@ -292,7 +292,7 @@ export default function TenantSettings() {
         </div>
 
         <Tabs defaultValue="brand">
-          <TabsList className="bg-gray-100">
+          <TabsList className="bg-secondary">
             <TabsTrigger value="brand" className="gap-1.5">
               <Palette className="w-4 h-4" />
               Marca
@@ -324,7 +324,7 @@ export default function TenantSettings() {
                 <div className="space-y-1.5">
                   <Label>Nombre de la escuela</Label>
                   <Input placeholder="NATO University" {...brandForm.register('name')} />
-                  {brandForm.formState.errors.name && <p className="text-xs text-red-500">{brandForm.formState.errors.name.message}</p>}
+                  {brandForm.formState.errors.name && <p className="text-xs text-destructive">{brandForm.formState.errors.name.message}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label>Tagline</Label>
@@ -383,7 +383,7 @@ export default function TenantSettings() {
               <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <CheckCircle2 className="w-5 h-5 text-accent" />
                     <div>
                       <h2 className="font-heading font-semibold text-foreground">Mercado Pago conectado</h2>
                       <p className="text-xs text-muted-foreground/80 mt-0.5">ID: {fullTenant.mp_collector_id}</p>
@@ -494,7 +494,7 @@ export default function TenantSettings() {
               const isExpired = daysLeft !== null && daysLeft <= 0
               const expiringSoon = daysLeft !== null && daysLeft > 0 && daysLeft <= 7
               return (
-                <div className={`bg-white rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-red-300' : expiringSoon ? 'border-orange-300' : 'border-border/60'}`}>
+                <div className={`bg-white rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-destructive/30' : expiringSoon ? 'border-orange-300' : 'border-border/60'}`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="font-heading font-semibold text-foreground">Tu plan actual</h2>
@@ -531,7 +531,7 @@ export default function TenantSettings() {
               </button>
               <button
                 onClick={() => setBillingAnnual(b => !b)}
-                className={`relative w-11 h-6 rounded-full transition-colors ${billingAnnual ? 'bg-primary' : 'bg-gray-300'}`}
+                className={`relative w-11 h-6 rounded-full transition-colors ${billingAnnual ? 'bg-primary' : 'bg-border'}`}
               >
                 <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${billingAnnual ? 'translate-x-5' : ''}`} />
               </button>
@@ -540,7 +540,7 @@ export default function TenantSettings() {
                 className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${billingAnnual ? 'text-primary' : 'text-muted-foreground/80 hover:text-foreground/70'}`}
               >
                 Anual
-                <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">−17%</span>
+                <span className="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded-full font-semibold">−17%</span>
               </button>
             </div>
 
@@ -571,7 +571,7 @@ export default function TenantSettings() {
                         {displayPrice > 0 && <span className="text-sm font-normal text-muted-foreground/80">/mes</span>}
                       </p>
                       {billingAnnual && monthlyPrice > 0 && (
-                        <p className="text-xs text-green-600 mt-0.5">
+                        <p className="text-xs text-accent mt-0.5">
                           ARS {annualTotal.toLocaleString('es-AR')}/año — 2 meses gratis
                         </p>
                       )}
@@ -579,7 +579,7 @@ export default function TenantSettings() {
                     <ul className="space-y-1.5">
                       {(plan.features as string[]).map((f, i) => (
                         <li key={i} className="flex items-start gap-2 text-xs text-foreground/70">
-                          <Check className="w-3.5 h-3.5 text-green-500 shrink-0 mt-0.5" />
+                          <Check className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
                           {f}
                         </li>
                       ))}
@@ -609,7 +609,7 @@ export default function TenantSettings() {
             {payments && payments.length > 0 && (
               <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
                 <h2 className="font-heading font-semibold text-foreground">Historial de pagos</h2>
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-border">
                   {payments.map(p => (
                     <div key={p.id} className="flex items-center justify-between py-3 text-sm">
                       <div>

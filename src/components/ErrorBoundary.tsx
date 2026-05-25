@@ -44,7 +44,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return (
       <div className="min-h-screen bg-secondary/30 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-white rounded-2xl border border-border/60 p-8 shadow-sm">
-          <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4" aria-hidden>
+          <div className="w-12 h-12 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mb-4" aria-hidden>
             <span className="text-2xl">⚠</span>
           </div>
           <h1 className="text-xl font-semibold text-foreground mb-2">Algo salió mal</h1>
@@ -67,7 +67,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </button>
             <a
               href="/"
-              className="flex-1 px-4 py-2 bg-secondary text-foreground/85 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium text-center"
+              className="flex-1 px-4 py-2 bg-secondary text-foreground/85 rounded-lg hover:bg-border transition-colors text-sm font-medium text-center"
             >
               Ir al inicio
             </a>

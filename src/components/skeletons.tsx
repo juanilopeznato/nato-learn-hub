@@ -7,7 +7,7 @@
  */
 
 function Bar({ className }: { className?: string }) {
-  return <div className={`bg-gray-200 rounded animate-pulse ${className ?? ''}`} />
+  return <div className={`bg-border rounded animate-pulse ${className ?? ''}`} />
 }
 
 function Card({ className }: { className?: string }) {
@@ -16,7 +16,7 @@ function Card({ className }: { className?: string }) {
 
 export function DashboardSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary">
       <header className="glass-light">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Bar className="h-8 w-32" />
@@ -61,7 +61,7 @@ export function DashboardSkeleton() {
 
 export function LessonViewSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary">
       <header className="glass-light h-14 flex items-center px-4 gap-3">
         <Bar className="h-6 w-6 rounded" />
         <Bar className="h-4 w-64 max-w-[50%]" />
@@ -84,7 +84,7 @@ export function LessonViewSkeleton() {
 
 export function InstructorPageSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary">
       <header className="glass-light h-16 flex items-center justify-between px-4">
         <Bar className="h-7 w-40" />
         <div className="flex gap-2">
@@ -108,12 +108,12 @@ export function InstructorPageSkeleton() {
 export function CourseDetailSkeleton() {
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-gray-900 h-72 sm:h-96" />
+      <div className="bg-foreground h-72 sm:h-96" />
       <div className="container mx-auto px-4 -mt-32 pb-20">
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3 space-y-6">
-            <Bar className="h-10 w-3/4 bg-gray-700" />
-            <Bar className="h-4 w-1/2 bg-gray-700" />
+            <Bar className="h-10 w-3/4 bg-muted-foreground" />
+            <Bar className="h-4 w-1/2 bg-muted-foreground" />
             <Card className="p-6 space-y-4">
               <Bar className="h-5 w-1/3" />
               <Bar className="h-4 w-full" />

@@ -180,7 +180,7 @@ export function StorageMigration() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+      <div className="bg-foreground border border-foreground/40 rounded-2xl p-5">
         <div className="flex items-start gap-4">
           <ImageIcon className="w-6 h-6 text-yellow-400 mt-0.5 shrink-0" />
           <div className="flex-1 space-y-1">
@@ -207,7 +207,7 @@ export function StorageMigration() {
             </Button>
           )}
           {scanned && files.length === 0 && (
-            <span className="text-sm text-green-400 flex items-center gap-1.5">
+            <span className="text-sm text-accent flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4" /> Todo está optimizado
             </span>
           )}
@@ -216,16 +216,16 @@ export function StorageMigration() {
           <div className="flex gap-4 text-xs text-muted-foreground mt-3">
             <span>✓ {counts.done} listos</span>
             <span>⏳ {counts.pending} pendientes</span>
-            {counts.error > 0 && <span className="text-red-400">✗ {counts.error} con error</span>}
+            {counts.error > 0 && <span className="text-destructive">✗ {counts.error} con error</span>}
             {counts.skipped > 0 && <span>↷ {counts.skipped} salteados</span>}
           </div>
         )}
       </div>
 
       {files.length > 0 && (
-        <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+        <div className="bg-foreground rounded-2xl border border-foreground/40 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-950 text-muted-foreground/80">
+            <thead className="bg-foreground/95 text-muted-foreground/80">
               <tr>
                 <th className="text-left px-5 py-2 font-medium">Archivo</th>
                 <th className="text-right px-5 py-2 font-medium">Bucket</th>
@@ -235,7 +235,7 @@ export function StorageMigration() {
             </thead>
             <tbody>
               {files.map(f => (
-                <tr key={`${f.bucket}/${f.path}`} className="border-t border-gray-800/60">
+                <tr key={`${f.bucket}/${f.path}`} className="border-t border-foreground/30">
                   <td className="px-5 py-2 text-foreground/85 truncate max-w-[420px]">{f.path}</td>
                   <td className="px-5 py-2 text-right text-muted-foreground text-xs">{f.bucket}</td>
                   <td className="px-5 py-2 text-right text-muted-foreground/80">{f.sizeKb} KB</td>
@@ -253,9 +253,9 @@ export function StorageMigration() {
 }
 
 function StatusBadge({ status, message }: { status: Status; message?: string }) {
-  if (status === 'processing') return <span className="inline-flex items-center gap-1 text-blue-400 text-xs"><Loader2 className="w-3 h-3 animate-spin" /> Procesando…</span>
-  if (status === 'done') return <span className="inline-flex items-center gap-1 text-green-400 text-xs"><CheckCircle2 className="w-3 h-3" /> Listo {message ? `(${message})` : ''}</span>
-  if (status === 'error') return <span className="inline-flex items-center gap-1 text-red-400 text-xs" title={message}><AlertTriangle className="w-3 h-3" /> Error</span>
+  if (status === 'processing') return <span className="inline-flex items-center gap-1 text-primary text-xs"><Loader2 className="w-3 h-3 animate-spin" /> Procesando…</span>
+  if (status === 'done') return <span className="inline-flex items-center gap-1 text-accent text-xs"><CheckCircle2 className="w-3 h-3" /> Listo {message ? `(${message})` : ''}</span>
+  if (status === 'error') return <span className="inline-flex items-center gap-1 text-destructive text-xs" title={message}><AlertTriangle className="w-3 h-3" /> Error</span>
   if (status === 'skipped') return <span className="text-muted-foreground text-xs">{message ?? 'Salteado'}</span>
   return <span className="text-muted-foreground text-xs">Pendiente</span>
 }

@@ -282,15 +282,29 @@ export default function Courses() {
                 <Link
                   key={course.id}
                   to={`/courses/${course.slug}`}
-                  className="group rounded-2xl bg-card border border-border/60 overflow-hidden flex flex-col transition-all duration-200 ease-apple hover:shadow-lg hover:-translate-y-1 hover:border-border"
+                  className="group rounded-2xl bg-card border border-border/60 overflow-hidden flex flex-col transition-all duration-300 ease-apple hover:shadow-xl hover:-translate-y-1 hover:border-primary/30"
                 >
                   {/* Thumbnail */}
                   <div className="relative overflow-hidden">
                     {course.thumbnail_url ? (
-                      <SmartImage src={course.thumbnail_url} alt={course.title} size="sm" className="h-44 w-full object-cover transition-transform duration-500 ease-apple group-hover:scale-[1.04]" />
+                      <SmartImage src={course.thumbnail_url} alt={course.title} size="sm" className="h-44 w-full object-cover transition-transform duration-700 ease-apple group-hover:scale-[1.08]" />
                     ) : (
                       <CourseInitialGradient title={course.title} />
                     )}
+                    {/* Gradient overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-foreground/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-apple pointer-events-none" />
+                    {/* Hover CTA pill */}
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-apple pointer-events-none">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-foreground/70 backdrop-blur-md px-3 py-1.5 rounded-full">
+                        <BookOpen className="w-3 h-3" aria-hidden />
+                        Ver curso
+                      </span>
+                      {totalLessons > 0 && (
+                        <span className="text-[11px] font-medium text-white bg-foreground/50 backdrop-blur-md px-2.5 py-1 rounded-full tabular-nums">
+                          {totalLessons} {totalLessons === 1 ? 'clase' : 'clases'}
+                        </span>
+                      )}
+                    </div>
                     {course.is_featured && (
                       <Badge variant="default" size="sm" className="absolute top-3 left-3 bg-yellow-400 text-yellow-900 gap-1 shadow-sm">
                         <Star className="w-3 h-3 fill-yellow-900" aria-hidden />

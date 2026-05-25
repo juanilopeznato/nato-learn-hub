@@ -333,7 +333,7 @@ export default function InstructorDashboard() {
         </div>
 
         <Tabs defaultValue="courses">
-          <TabsList className="bg-gray-100">
+          <TabsList className="bg-secondary">
             <TabsTrigger value="courses" className="gap-1.5">
               <BookOpen className="w-4 h-4" />
               Mis cursos
@@ -361,7 +361,7 @@ export default function InstructorDashboard() {
                   return (
                     <div
                       key={course.id}
-                      className="bg-white border border-border/60 rounded-xl p-4 flex items-center gap-4 hover:border-gray-300 transition-colors"
+                      className="bg-white border border-border/60 rounded-xl p-4 flex items-center gap-4 hover:border-border transition-colors"
                     >
                       {/* Thumbnail */}
                       {course.thumbnail_url ? (
@@ -377,7 +377,7 @@ export default function InstructorDashboard() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-foreground text-sm truncate">{course.title}</h3>
                           {course.is_free && (
-                            <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full font-medium shrink-0">Gratis</span>
+                            <span className="text-xs text-accent bg-accent/10 px-1.5 py-0.5 rounded-full font-medium shrink-0">Gratis</span>
                           )}
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground/80">
@@ -400,11 +400,11 @@ export default function InstructorDashboard() {
                           disabled={togglePublish.isPending}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                             course.is_published
-                              ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                              : 'bg-secondary text-muted-foreground hover:bg-gray-200'
+                              ? 'bg-accent/15 text-accent hover:bg-green-200'
+                              : 'bg-secondary text-muted-foreground hover:bg-border'
                           }`}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full ${course.is_published ? 'bg-green-500' : 'bg-gray-400'}`} />
+                          <span className={`w-1.5 h-1.5 rounded-full ${course.is_published ? 'bg-accent' : 'bg-muted-foreground'}`} />
                           {course.is_published ? 'Publicado' : 'Borrador'}
                         </button>
 
@@ -456,15 +456,15 @@ export default function InstructorDashboard() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Paso 1 */}
-                  <div className="bg-white border-2 border-green-200 rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden">
-                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 text-green-600" />
+                  <div className="bg-white border-2 border-accent/30 rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden">
+                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center">
+                      <Check className="w-3.5 h-3.5 text-accent" />
                     </div>
-                    <div className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
-                      <Building2 className="w-5 h-5 text-green-600" />
+                    <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-accent" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-0.5">Listo</p>
+                      <p className="text-xs font-semibold text-accent uppercase tracking-wide mb-0.5">Listo</p>
                       <h3 className="font-semibold text-foreground text-sm">Tu escuela está creada</h3>
                       <p className="text-xs text-muted-foreground/80 mt-0.5">Ya tenés tu espacio propio.</p>
                     </div>
@@ -571,7 +571,7 @@ export default function InstructorDashboard() {
                   <p className="text-xs text-muted-foreground/80 mt-1">Escuelas referidas</p>
                 </div>
                 <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-2xl font-bold text-accent">
                     {totalEarned > 0 ? `ARS ${totalEarned.toLocaleString('es-AR')}` : '—'}
                   </p>
                   <p className="text-xs text-muted-foreground/80 mt-1">Total cobrado</p>
@@ -605,7 +605,7 @@ export default function InstructorDashboard() {
                           <td className="px-4 py-3 text-foreground/85 font-semibold">ARS {Number(c.amount_ars ?? 0).toLocaleString('es-AR')}</td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                              c.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                              c.status === 'paid' ? 'bg-accent/15 text-accent' : 'bg-amber-100 text-amber-700'
                             }`}>
                               {c.status === 'paid' ? 'Cobrado' : 'Pendiente'}
                             </span>

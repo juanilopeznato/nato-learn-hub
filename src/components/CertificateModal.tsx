@@ -107,10 +107,10 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
 
             <div>
               <p className="text-sm font-sans text-muted-foreground mb-2">completó satisfactoriamente el curso</p>
-              <h3 className="text-2xl font-semibold text-gray-800 leading-tight">{courseTitle}</h3>
+              <h3 className="text-2xl font-semibold text-foreground leading-tight">{courseTitle}</h3>
             </div>
 
-            <div className="w-32 h-px bg-gray-200 mx-auto" />
+            <div className="w-32 h-px bg-border mx-auto" />
 
             <div className="flex items-end justify-between pt-2">
               <div className="text-left">

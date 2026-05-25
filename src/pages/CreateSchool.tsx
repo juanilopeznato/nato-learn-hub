@@ -332,8 +332,8 @@ export default function CreateSchool() {
             <div className="text-center space-y-6">
               {/* Celebration */}
               <div className="space-y-3">
-                <div className="w-20 h-20 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-10 h-10 text-green-400" />
+                <div className="w-20 h-20 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-10 h-10 text-accent" />
                 </div>
                 <div>
                   <h1 className="font-heading text-2xl font-bold text-foreground">

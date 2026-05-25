@@ -286,7 +286,7 @@ export default function ProfileSettings() {
                 }`}
               >
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                  badge.earned ? 'bg-primary/10' : 'bg-gray-100'
+                  badge.earned ? 'bg-primary/10' : 'bg-secondary'
                 }`}>
                   <badge.icon className={`w-4 h-4 ${badge.earned ? 'text-primary' : 'text-muted-foreground/80'}`} />
                 </div>
@@ -329,7 +329,7 @@ export default function ProfileSettings() {
             <div className="space-y-1.5">
               <Label>Nombre completo</Label>
               <Input placeholder="Tu nombre" {...register('full_name')} />
-              {errors.full_name && <p className="text-xs text-red-500">{errors.full_name.message}</p>}
+              {errors.full_name && <p className="text-xs text-destructive">{errors.full_name.message}</p>}
             </div>
 
             <div className="space-y-1.5">
@@ -345,7 +345,7 @@ export default function ProfileSettings() {
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                 {...register('bio')}
               />
-              {errors.bio && <p className="text-xs text-red-500">{errors.bio.message}</p>}
+              {errors.bio && <p className="text-xs text-destructive">{errors.bio.message}</p>}
             </div>
           </div>
 

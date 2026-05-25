@@ -349,9 +349,9 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
   if (rows.length === 0) return null
 
   return (
-    <div className="bg-white border border-red-100 rounded-xl p-4">
+    <div className="bg-white border border-destructive/30 rounded-xl p-4">
       <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
-        <span className="w-4 h-4 text-red-400">⚠️</span>
+        <span className="w-4 h-4 text-destructive">⚠️</span>
         Lecciones con más abandono
       </h4>
       <div className="space-y-2">
@@ -364,13 +364,13 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
                   <span className="text-xs text-muted-foreground/80">{row.module_title}</span>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="text-xs font-semibold text-red-500">{row.abandoned_count} abandonaron</span>
+                  <span className="text-xs font-semibold text-destructive">{row.abandoned_count} abandonaron</span>
                   <span className="text-xs text-muted-foreground/80 block">{row.abandon_rate}% tasa</span>
                 </div>
               </div>
               <div className="mt-1 h-1 bg-secondary rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-red-400 rounded-full"
+                  className="h-full bg-destructive rounded-full"
                   style={{ width: `${row.abandon_rate}%` }}
                 />
               </div>
