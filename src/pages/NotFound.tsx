@@ -77,7 +77,7 @@ const NotFound = () => {
       <div className="max-w-md w-full bg-white rounded-2xl border border-border/60 p-8 space-y-6">
         <div>
           <div className="text-6xl font-heading font-bold text-primary/20 mb-2" aria-hidden>404</div>
-          <h1 className="font-heading text-2xl font-semibold text-gray-900">Esta página no existe</h1>
+          <h1 className="font-heading text-2xl font-semibold text-foreground">Esta página no existe</h1>
           <p className="text-sm text-muted-foreground mt-2">
             El link puede estar mal o el contenido ya no está disponible.
             {location.pathname && (
@@ -90,7 +90,7 @@ const NotFound = () => {
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
             <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" aria-hidden />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-foreground">
                 ¿Quisiste decir <Link to={`/courses/${suggestion.slug}`} className="text-primary underline underline-offset-2 hover:opacity-80">{suggestion.title}</Link>?
               </p>
               <p className="text-xs text-muted-foreground mt-0.5 font-mono truncate">/courses/{suggestion.slug}</p>
@@ -99,7 +99,7 @@ const NotFound = () => {
         )}
 
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Probá yendo a</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">Probá yendo a</p>
           <ul className="space-y-1">
             {SUGGESTIONS.map(s => (
               <li key={s.to}>
@@ -109,8 +109,8 @@ const NotFound = () => {
                 >
                   <s.icon className="w-4 h-4 text-muted-foreground/80 group-hover:text-primary transition-colors" aria-hidden />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">{s.label}</p>
-                    <p className="text-xs text-gray-500">{s.desc}</p>
+                    <p className="text-sm font-medium text-foreground">{s.label}</p>
+                    <p className="text-xs text-muted-foreground">{s.desc}</p>
                   </div>
                 </Link>
               </li>
@@ -123,8 +123,8 @@ const NotFound = () => {
                 >
                   <Home className="w-4 h-4 text-muted-foreground/80 group-hover:text-primary transition-colors" aria-hidden />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">Mi dashboard</p>
-                    <p className="text-xs text-gray-500">Volver a tus cursos</p>
+                    <p className="text-sm font-medium text-foreground">Mi dashboard</p>
+                    <p className="text-xs text-muted-foreground">Volver a tus cursos</p>
                   </div>
                 </Link>
               </li>

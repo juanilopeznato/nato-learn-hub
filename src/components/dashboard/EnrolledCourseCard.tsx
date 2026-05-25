@@ -110,11 +110,11 @@ export function EnrolledCourseCard({
 
         {/* Progress bar */}
         <div className="space-y-1">
-          <div className="flex justify-between text-xs text-gray-400">
+          <div className="flex justify-between text-xs text-muted-foreground/80">
             <span>{isCompleted ? 'Completado' : 'En progreso'}</span>
-            <span className="font-medium text-gray-600">{Math.round(progressPercent)}%</span>
+            <span className="font-medium text-foreground/70">{Math.round(progressPercent)}%</span>
           </div>
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-primary'}`}
               style={{ width: `${progressPercent}%` }}

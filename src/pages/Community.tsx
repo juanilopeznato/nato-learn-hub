@@ -116,7 +116,7 @@ export default function Community() {
             </Link>
             <div className="hidden sm:flex items-center gap-1 text-sm">
               <Users className="w-4 h-4 text-primary" />
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-foreground">
                 {activeCourse ? activeCourse.title : 'Comunidad'}
               </span>
               {activeCourse && (
@@ -135,9 +135,9 @@ export default function Community() {
             </Button>
             <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground mr-1">
               <span className="text-xs font-semibold text-primary">{profileExtras?.points ?? 0} pts</span>
-              <span className="text-xs text-gray-400">· Nv.{profileExtras?.level ?? 1}</span>
+              <span className="text-xs text-muted-foreground/80">· Nv.{profileExtras?.level ?? 1}</span>
             </div>
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400">
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground/80">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -210,7 +210,7 @@ export default function Community() {
             </div>
           ) : posts.length === 0 ? (
             <div className="bg-white border border-border/60 rounded-xl p-12 text-center space-y-3">
-              <Users className="w-12 h-12 text-gray-300 mx-auto" />
+              <Users className="w-12 h-12 text-foreground/85 mx-auto" />
               <p className="text-foreground/85 font-medium">
                 {activeCourse
                   ? `Todavía no hay posts en el foro de ${activeCourse.title}`
@@ -240,7 +240,7 @@ export default function Community() {
       <Dialog open={showPostForm} onOpenChange={setShowPostForm}>
         <DialogContent className="bg-white border-border/60 max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-heading text-gray-900">Nueva publicación</DialogTitle>
+            <DialogTitle className="font-heading text-foreground">Nueva publicación</DialogTitle>
           </DialogHeader>
           <PostForm
             onSubmit={createPost.mutateAsync}

@@ -58,7 +58,7 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode {
     const k = `${keyPrefix}-${i}`
     if (tok.type === 'bold') return <strong key={k}>{tok.value}</strong>
     if (tok.type === 'italic') return <em key={k}>{tok.value}</em>
-    if (tok.type === 'code') return <code key={k} className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-[0.9em] font-mono">{tok.value}</code>
+    if (tok.type === 'code') return <code key={k} className="px-1.5 py-0.5 bg-secondary text-gray-800 rounded text-[0.9em] font-mono">{tok.value}</code>
     if (tok.type === 'link') {
       const safe = /^https?:\/\//.test(tok.href) ? tok.href : `https://${tok.href}`
       return <a key={k} href={safe} target="_blank" rel="noopener noreferrer nofollow" className="text-primary underline underline-offset-2 hover:opacity-80">{tok.value}</a>
@@ -150,11 +150,11 @@ export function MarkdownLight({ children, className }: Props) {
             3: 'text-lg font-semibold',
           }
           const Tag = (b.level === 1 ? 'h2' : b.level === 2 ? 'h3' : 'h4') as keyof JSX.IntrinsicElements
-          return <Tag key={i} className={`${sizes[b.level]} text-gray-900`}>{renderInline(b.content, `h-${i}`)}</Tag>
+          return <Tag key={i} className={`${sizes[b.level]} text-foreground`}>{renderInline(b.content, `h-${i}`)}</Tag>
         }
         if (b.type === 'ul') {
           return (
-            <ul key={i} className="list-disc list-outside pl-5 space-y-1 text-gray-700">
+            <ul key={i} className="list-disc list-outside pl-5 space-y-1 text-foreground/85">
               {b.items.map((it, j) => <li key={j}>{renderInline(it, `li-${i}-${j}`)}</li>)}
             </ul>
           )

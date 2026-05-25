@@ -59,7 +59,7 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
             <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
               <span className="text-2xl">👋</span>
             </div>
-            <h2 className="font-heading text-2xl font-bold text-gray-900">
+            <h2 className="font-heading text-2xl font-bold text-foreground">
               ¡Bienvenido/a!
             </h2>
             <p className="text-muted-foreground text-sm">
@@ -68,7 +68,7 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
           </div>
 
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-gray-700">¿Qué querés lograr?</p>
+            <p className="text-sm font-semibold text-foreground/85">¿Qué querés lograr?</p>
             {GOALS.map(goal => (
               <button
                 key={goal.value}
@@ -76,7 +76,7 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all ${
                   selected === goal.value
                     ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-border/60 hover:border-gray-300 text-gray-700'
+                    : 'border-border/60 hover:border-gray-300 text-foreground/85'
                 }`}
               >
                 {goal.label}

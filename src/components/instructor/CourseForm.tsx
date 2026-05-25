@@ -133,7 +133,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Tabs defaultValue="basic">
-        <TabsList className="bg-gray-100 w-full">
+        <TabsList className="bg-secondary w-full">
           <TabsTrigger value="basic" className="flex-1 text-xs">Básico</TabsTrigger>
           <TabsTrigger value="sales" className="flex-1 text-xs">Ventas</TabsTrigger>
           <TabsTrigger value="instructor" className="flex-1 text-xs">Instructor</TabsTrigger>
@@ -143,20 +143,20 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
         <TabsContent value="basic" className="space-y-4 mt-4">
           <div className="space-y-1.5">
             <Label className="text-foreground">Título</Label>
-            <Input placeholder="Edición Limitada" className="bg-gray-100 border-border/50 text-foreground" {...register('title')} />
+            <Input placeholder="Edición Limitada" className="bg-secondary border-border/50 text-foreground" {...register('title')} />
             {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-foreground">Slug (URL)</Label>
-            <Input placeholder="edicion-limitada" className="bg-gray-100 border-border/50 text-foreground" {...register('slug')} />
+            <Input placeholder="edicion-limitada" className="bg-secondary border-border/50 text-foreground" {...register('slug')} />
             {errors.slug && <p className="text-xs text-destructive">{errors.slug.message}</p>}
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-foreground">Categoría</Label>
             <Select value={watch('category') ?? 'otro'} onValueChange={v => setValue('category', v)}>
-              <SelectTrigger className="bg-gray-100 border-border/50 text-foreground">
+              <SelectTrigger className="bg-secondary border-border/50 text-foreground">
                 <SelectValue placeholder="Elegí una categoría" />
               </SelectTrigger>
               <SelectContent>
@@ -171,7 +171,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
             <Label className="text-foreground">Descripción (subtítulo del curso)</Label>
             <textarea
               placeholder="Una frase que resume el valor del curso..."
-              className="w-full bg-gray-100 border border-border/50 text-foreground rounded-md px-3 py-2 text-sm resize-none h-20 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full bg-secondary border border-border/50 text-foreground rounded-md px-3 py-2 text-sm resize-none h-20 focus:outline-none focus:ring-1 focus:ring-primary"
               {...register('description')}
             />
           </div>
@@ -193,7 +193,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
 
           <div className="space-y-1.5">
             <Label className="text-foreground">Video de presentación (URL YouTube/Vimeo)</Label>
-            <Input placeholder="https://youtube.com/watch?v=..." className="bg-gray-100 border-border/50 text-foreground" {...register('intro_video_url')} />
+            <Input placeholder="https://youtube.com/watch?v=..." className="bg-secondary border-border/50 text-foreground" {...register('intro_video_url')} />
           </div>
 
           {/* Tipo de venta */}
@@ -217,10 +217,10 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                       isSelected ? 'bg-primary/10' : 'bg-white border border-border/60'
                     }`}>
-                      <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-gray-400'}`} />
+                      <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-muted-foreground/80'}`} />
                     </div>
                     <div className="min-w-0">
-                      <p className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-gray-700'}`}>{opt.label}</p>
+                      <p className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-foreground/85'}`}>{opt.label}</p>
                       <p className="text-xs text-muted-foreground/80 leading-tight">{opt.description}</p>
                     </div>
                   </button>
@@ -270,7 +270,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
           {/* Qué vas a aprender */}
           <div className="space-y-2">
             <Label className="text-foreground font-semibold">¿Qué vas a aprender? (bullets)</Label>
-            <p className="text-xs text-gray-500">Listá los resultados concretos del curso. Estos aparecen como checklist en la landing.</p>
+            <p className="text-xs text-muted-foreground">Listá los resultados concretos del curso. Estos aparecen como checklist en la landing.</p>
             <div className="space-y-2">
               {outcomes.map((o, i) => (
                 <div key={i} className="flex gap-2">
@@ -278,7 +278,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     value={o}
                     onChange={e => updateOutcome(i, e.target.value)}
                     placeholder={`Resultado ${i + 1}...`}
-                    className="bg-gray-100 border-border/50 text-foreground text-sm flex-1"
+                    className="bg-secondary border-border/50 text-foreground text-sm flex-1"
                   />
                   {outcomes.length > 1 && (
                     <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground/80 hover:text-destructive" onClick={() => removeOutcome(i)}>
@@ -298,7 +298,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
             <Label className="text-foreground font-semibold">¿Para quién es este curso?</Label>
             <textarea
               placeholder="Este curso es para vos si sos community manager, dueño de una marca personal, o querés..."
-              className="w-full bg-gray-100 border border-border/50 text-foreground rounded-md px-3 py-2 text-sm resize-none h-24 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full bg-secondary border border-border/50 text-foreground rounded-md px-3 py-2 text-sm resize-none h-24 focus:outline-none focus:ring-1 focus:ring-primary"
               {...register('for_who')}
             />
           </div>
@@ -340,7 +340,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
 
         {/* Tab: Instructor */}
         <TabsContent value="instructor" className="space-y-4 mt-4">
-          <p className="text-xs text-gray-500">Estos datos aparecen en la sección "Tu instructor" de la landing del curso.</p>
+          <p className="text-xs text-muted-foreground">Estos datos aparecen en la sección "Tu instructor" de la landing del curso.</p>
           <Controller
             control={control}
             name="instructor_avatar_url"
@@ -359,7 +359,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
             <Label className="text-foreground">Bio del instructor</Label>
             <textarea
               placeholder="Soy diseñador de marca con 10 años de experiencia. Trabajé con marcas como..."
-              className="w-full bg-gray-100 border border-border/50 text-foreground rounded-md px-3 py-2 text-sm resize-none h-28 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full bg-secondary border border-border/50 text-foreground rounded-md px-3 py-2 text-sm resize-none h-28 focus:outline-none focus:ring-1 focus:ring-primary"
               {...register('instructor_bio')}
             />
           </div>
@@ -368,10 +368,10 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
             <Label className="text-foreground">Meta Pixel (este curso)</Label>
             <Input
               placeholder="123456789012345"
-              className="bg-gray-100 border-border/50 text-foreground"
+              className="bg-secondary border-border/50 text-foreground"
               {...register('meta_pixel_id')}
             />
-            <p className="text-xs text-gray-500">Opcional. Sobreescribe el pixel de la escuela.</p>
+            <p className="text-xs text-muted-foreground">Opcional. Sobreescribe el pixel de la escuela.</p>
           </div>
 
           <div className="space-y-3 pt-2 border-t border-border/20">
@@ -385,7 +385,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                 <Label htmlFor="nato_produced" className="text-foreground cursor-pointer">
                   Producido por NATO Creative
                 </Label>
-                <p className="text-xs text-gray-500">Los primeros N cobros recuperan el costo de producción</p>
+                <p className="text-xs text-muted-foreground">Los primeros N cobros recuperan el costo de producción</p>
               </div>
             </div>
             {watch('nato_produced') && (
@@ -395,10 +395,10 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                   type="number"
                   min={1}
                   placeholder="10"
-                  className="bg-gray-100 border-border/50 text-foreground w-32"
+                  className="bg-secondary border-border/50 text-foreground w-32"
                   {...register('production_recovery_sales')}
                 />
-                <p className="text-xs text-gray-500">Primeras N ventas van 100% a NATO. A partir de ahí cobra el creador.</p>
+                <p className="text-xs text-muted-foreground">Primeras N ventas van 100% a NATO. A partir de ahí cobra el creador.</p>
               </div>
             )}
           </div>

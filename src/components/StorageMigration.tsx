@@ -185,7 +185,7 @@ export function StorageMigration() {
           <ImageIcon className="w-6 h-6 text-yellow-400 mt-0.5 shrink-0" />
           <div className="flex-1 space-y-1">
             <h3 className="text-white font-medium">Migración de imágenes legacy a WebP + thumbs</h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-muted-foreground/80">
               Escanea los buckets, lista imágenes que no están optimizadas y las procesa
               en batch desde el browser. Las nuevas se generan con compresión + thumb +
               cacheControl 1 año. Idempotente — podés pausar y reanudar.
@@ -201,7 +201,7 @@ export function StorageMigration() {
               size="sm"
               onClick={runMigration}
               disabled={running || counts.pending === 0}
-              className="bg-yellow-500 hover:bg-yellow-600 text-gray-900"
+              className="bg-yellow-500 hover:bg-yellow-600 text-foreground"
             >
               {running ? <><Loader2 className="w-4 h-4 animate-spin" /> Procesando…</> : `Migrar ${counts.pending} archivos`}
             </Button>
@@ -225,7 +225,7 @@ export function StorageMigration() {
       {files.length > 0 && (
         <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-950 text-gray-400">
+            <thead className="bg-gray-950 text-muted-foreground/80">
               <tr>
                 <th className="text-left px-5 py-2 font-medium">Archivo</th>
                 <th className="text-right px-5 py-2 font-medium">Bucket</th>
@@ -236,9 +236,9 @@ export function StorageMigration() {
             <tbody>
               {files.map(f => (
                 <tr key={`${f.bucket}/${f.path}`} className="border-t border-gray-800/60">
-                  <td className="px-5 py-2 text-gray-300 truncate max-w-[420px]">{f.path}</td>
+                  <td className="px-5 py-2 text-foreground/85 truncate max-w-[420px]">{f.path}</td>
                   <td className="px-5 py-2 text-right text-muted-foreground text-xs">{f.bucket}</td>
-                  <td className="px-5 py-2 text-right text-gray-400">{f.sizeKb} KB</td>
+                  <td className="px-5 py-2 text-right text-muted-foreground/80">{f.sizeKb} KB</td>
                   <td className="px-5 py-2 text-right">
                     <StatusBadge status={f.status} message={f.message} />
                   </td>

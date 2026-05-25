@@ -79,7 +79,7 @@ export function UpsellModal({ open, onClose, tenantId, completedCourseId }: Prop
                       <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                         {course.title}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {course.is_free ? 'Gratis' : `ARS ${Number(course.price).toLocaleString('es-AR')}`}
                       </p>
                     </div>

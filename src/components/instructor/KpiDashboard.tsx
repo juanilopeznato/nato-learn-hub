@@ -32,12 +32,12 @@ interface KpiRow {
 function StatCard({ icon: Icon, label, value, sub }: { icon: LucideIcon; label: string; value: string | number; sub?: string }) {
   return (
     <div className="bg-white border border-border/60 rounded-xl p-4 space-y-1">
-      <div className="flex items-center gap-2 text-gray-500">
+      <div className="flex items-center gap-2 text-muted-foreground">
         <Icon className="w-4 h-4" />
         <span className="text-xs font-medium">{label}</span>
       </div>
-      <div className="font-heading text-2xl font-bold text-gray-900">{value}</div>
-      {sub && <div className="text-xs text-gray-400">{sub}</div>}
+      <div className="font-heading text-2xl font-bold text-foreground">{value}</div>
+      {sub && <div className="text-xs text-muted-foreground/80">{sub}</div>}
     </div>
   )
 }
@@ -204,18 +204,18 @@ export function KpiDashboard({ courseIds }: Props) {
                     return (
                       <div key={step.label} className="space-y-1">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="flex items-center gap-2 text-gray-700">
-                            <step.icon className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="flex items-center gap-2 text-foreground/85">
+                            <step.icon className="w-3.5 h-3.5 text-muted-foreground/80" />
                             {step.label}
                           </span>
                           <div className="flex items-center gap-3">
                             {convFromPrev !== null && (
-                              <span className="text-xs text-gray-400">{convFromPrev}% del paso anterior</span>
+                              <span className="text-xs text-muted-foreground/80">{convFromPrev}% del paso anterior</span>
                             )}
                             <span className="font-semibold text-foreground tabular-nums w-10 text-right">{step.value.toLocaleString()}</span>
                           </div>
                         </div>
-                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
                           <div
                             className={`h-full ${step.color} rounded-full transition-all duration-500`}
                             style={{ width: `${pct}%` }}
@@ -227,7 +227,7 @@ export function KpiDashboard({ courseIds }: Props) {
                   {/* Overall conversion rate */}
                   {funnelData.page_views > 0 && (
                     <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Conversión total (visita → inscripción)</span>
+                      <span className="text-muted-foreground">Conversión total (visita → inscripción)</span>
                       <span className="font-bold text-primary">
                         {((funnelData.enrollments / funnelData.page_views) * 100).toFixed(1)}%
                       </span>
@@ -236,7 +236,7 @@ export function KpiDashboard({ courseIds }: Props) {
                 </div>
               )
             })() : (
-              <div className="h-24 flex items-center justify-center text-sm text-gray-400">
+              <div className="h-24 flex items-center justify-center text-sm text-muted-foreground/80">
                 Sin datos de visitas todavía
               </div>
             )}
@@ -259,7 +259,7 @@ export function KpiDashboard({ courseIds }: Props) {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[200px] flex items-center justify-center text-sm text-gray-400">
+              <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground/80">
                 Sin actividad en los últimos 30 días
               </div>
             )}
@@ -289,7 +289,7 @@ export function KpiDashboard({ courseIds }: Props) {
             </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[180px] flex items-center justify-center text-sm text-gray-400">
+          <div className="h-[180px] flex items-center justify-center text-sm text-muted-foreground/80">
             Aún no hay inscripciones en los últimos 30 días
           </div>
         )}
@@ -311,7 +311,7 @@ export function KpiDashboard({ courseIds }: Props) {
                     <span className="text-sm text-foreground/85 truncate">{lesson.title}</span>
                     <span className="text-xs font-semibold text-primary shrink-0">{lesson.count}</span>
                   </div>
-                  <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="mt-1 h-1 bg-secondary rounded-full overflow-hidden">
                     <div
                       className="h-full bg-primary/60 rounded-full"
                       style={{ width: `${Math.round((lesson.count / (topLessons[0].count || 1)) * 100)}%` }}
@@ -361,14 +361,14 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
                   <span className="text-sm text-foreground/85 truncate block">{row.lesson_title}</span>
-                  <span className="text-xs text-gray-400">{row.module_title}</span>
+                  <span className="text-xs text-muted-foreground/80">{row.module_title}</span>
                 </div>
                 <div className="text-right shrink-0">
                   <span className="text-xs font-semibold text-red-500">{row.abandoned_count} abandonaron</span>
                   <span className="text-xs text-muted-foreground/80 block">{row.abandon_rate}% tasa</span>
                 </div>
               </div>
-              <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+              <div className="mt-1 h-1 bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-red-400 rounded-full"
                   style={{ width: `${row.abandon_rate}%` }}

@@ -26,7 +26,7 @@ const fmt = (n: number) => `ARS ${Number(n).toLocaleString('es-AR')}`
 const fmtK = (n: number) => n >= 1000 ? `ARS ${(n / 1000).toFixed(0)}k` : fmt(n)
 
 const PLAN_COLORS: Record<string, string> = {
-  gratis: 'bg-gray-700 text-gray-300',
+  gratis: 'bg-gray-700 text-foreground/85',
   starter: 'bg-blue-900/60 text-blue-300',
   creador: 'bg-yellow-900/60 text-yellow-300',
   pro: 'bg-purple-900/60 text-purple-300',
@@ -41,12 +41,12 @@ function MetricCard({ label, value, sub, icon: Icon, accent = false }: {
     <div className={`rounded-2xl p-5 border ${accent ? 'bg-yellow-400 border-yellow-300' : 'bg-gray-900 border-gray-800'}`}>
       <div className="flex items-start justify-between">
         <div>
-          <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${accent ? 'text-yellow-900/70' : 'text-gray-500'}`}>{label}</p>
+          <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${accent ? 'text-yellow-900/70' : 'text-muted-foreground'}`}>{label}</p>
           <p className={`text-2xl font-bold ${accent ? 'text-yellow-900' : 'text-gray-100'}`}>{value}</p>
-          {sub && <p className={`text-xs mt-0.5 ${accent ? 'text-yellow-800/70' : 'text-gray-500'}`}>{sub}</p>}
+          {sub && <p className={`text-xs mt-0.5 ${accent ? 'text-yellow-800/70' : 'text-muted-foreground'}`}>{sub}</p>}
         </div>
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent ? 'bg-yellow-300/50' : 'bg-gray-800'}`}>
-          <Icon className={`w-5 h-5 ${accent ? 'text-yellow-900' : 'text-gray-400'}`} />
+          <Icon className={`w-5 h-5 ${accent ? 'text-yellow-900' : 'text-muted-foreground/80'}`} />
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@ function CommissionCell({ tenantId, value, onSaved }: { tenantId: string; value:
   if (!editing) {
     return (
       <button
-        className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white group"
+        className="flex items-center gap-1.5 text-sm text-foreground/85 hover:text-white group"
         onClick={() => { setInput(String(value)); setEditing(true) }}
       >
         <span>{value}%</span>
@@ -93,7 +93,7 @@ function CommissionCell({ tenantId, value, onSaved }: { tenantId: string; value:
       <button onClick={() => save.mutate()} className="text-green-400 hover:text-green-300">
         <Check className="w-4 h-4" />
       </button>
-      <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-gray-300">
+      <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-foreground/85">
         <X className="w-4 h-4" />
       </button>
     </div>
@@ -316,8 +316,8 @@ export default function NatoOwnerPanel() {
                     {leaderboard.map((t, i) => (
                       <div key={i} className="space-y-1">
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-300 font-medium flex items-center gap-1.5">
-                            <span className="text-gray-600">#{i + 1}</span> {t.name}
+                          <span className="text-foreground/85 font-medium flex items-center gap-1.5">
+                            <span className="text-foreground/70">#{i + 1}</span> {t.name}
                           </span>
                           <span className="text-yellow-400 font-semibold">{fmtK(t.revenue)}</span>
                         </div>
@@ -361,7 +361,7 @@ export default function NatoOwnerPanel() {
               <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between gap-4">
                 <h2 className="text-base font-semibold text-white shrink-0">Todas las escuelas</h2>
                 <div className="relative max-w-xs w-full">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                   <Input
                     placeholder="Buscar escuela..."
                     value={search}
@@ -388,7 +388,7 @@ export default function NatoOwnerPanel() {
                           <td className="px-4 py-3.5">
                             <div>
                               <p className="font-medium text-white">{t.tenant_name}</p>
-                              <p className="text-xs text-gray-600">{new Date(t.tenant_created_at).toLocaleDateString('es-AR')}</p>
+                              <p className="text-xs text-foreground/70">{new Date(t.tenant_created_at).toLocaleDateString('es-AR')}</p>
                             </div>
                           </td>
                           <td className="px-4 py-3.5">
@@ -399,7 +399,7 @@ export default function NatoOwnerPanel() {
                           <td className="px-4 py-3.5">
                             {t.mp_connected
                               ? <Wifi className="w-4 h-4 text-green-400" />
-                              : <WifiOff className="w-4 h-4 text-gray-600" />}
+                              : <WifiOff className="w-4 h-4 text-foreground/70" />}
                           </td>
                           <td className="px-4 py-3.5">
                             <CommissionCell
@@ -408,17 +408,17 @@ export default function NatoOwnerPanel() {
                               onSaved={() => refetchTenants()}
                             />
                           </td>
-                          <td className="px-4 py-3.5 text-gray-300">{t.total_courses}</td>
-                          <td className="px-4 py-3.5 text-gray-300">{t.total_students}</td>
+                          <td className="px-4 py-3.5 text-foreground/85">{t.total_courses}</td>
+                          <td className="px-4 py-3.5 text-foreground/85">{t.total_students}</td>
                           <td className="px-4 py-3.5">
                             {t.new_students_30d > 0
                               ? <span className="text-green-400 font-semibold">+{t.new_students_30d}</span>
-                              : <span className="text-gray-600">0</span>}
+                              : <span className="text-foreground/70">0</span>}
                           </td>
                           <td className="px-4 py-3.5 text-yellow-400 font-semibold whitespace-nowrap">
                             {t.total_revenue_ars > 0 ? fmtK(t.total_revenue_ars) : '—'}
                           </td>
-                          <td className="px-4 py-3.5 text-gray-300 whitespace-nowrap">
+                          <td className="px-4 py-3.5 text-foreground/85 whitespace-nowrap">
                             {t.revenue_30d > 0 ? fmtK(t.revenue_30d) : '—'}
                           </td>
                           <td className="px-4 py-3.5 text-muted-foreground text-xs whitespace-nowrap">
@@ -432,7 +432,7 @@ export default function NatoOwnerPanel() {
                           <td className="px-4 py-3.5">
                             <button
                               onClick={() => toggleActive.mutate({ id: t.tenant_id, active: t.active })}
-                              className="text-muted-foreground hover:text-gray-300 transition-colors"
+                              className="text-muted-foreground hover:text-foreground/85 transition-colors"
                               title={t.active ? 'Desactivar' : 'Activar'}
                             >
                               {t.active
@@ -463,7 +463,7 @@ export default function NatoOwnerPanel() {
               </div>
               <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
                 <p className="text-xs text-muted-foreground mb-1">Pendientes</p>
-                <p className={`text-2xl font-bold ${pendingSubscriptions > 0 ? 'text-yellow-400' : 'text-gray-600'}`}>
+                <p className={`text-2xl font-bold ${pendingSubscriptions > 0 ? 'text-yellow-400' : 'text-foreground/70'}`}>
                   {pendingSubscriptions}
                 </p>
               </div>
@@ -598,7 +598,7 @@ export default function NatoOwnerPanel() {
                         </div>
 
                         <div className="space-y-1.5 mb-4">
-                          <div className="flex justify-between text-xs text-gray-500">
+                          <div className="flex justify-between text-xs text-muted-foreground">
                             <span>{c.nato_sales} ventas cobradas por NATO</span>
                             <span>Meta: {c.recovery_target}</span>
                           </div>
@@ -608,7 +608,7 @@ export default function NatoOwnerPanel() {
                               style={{ width: `${pct}%` }}
                             />
                           </div>
-                          <p className="text-xs text-gray-600">
+                          <p className="text-xs text-foreground/70">
                             {c.is_recovered
                               ? `✅ Recuperado — todas las ventas van al creador`
                               : `Faltan ${c.recovery_target - c.nato_sales} ventas para completar el recupero`}
@@ -634,16 +634,16 @@ export default function NatoOwnerPanel() {
 
                         <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-800">
                           <div>
-                            <p className="text-xs text-gray-500">Ventas NATO</p>
+                            <p className="text-xs text-muted-foreground">Ventas NATO</p>
                             <p className="text-sm font-semibold text-yellow-400 mt-0.5">{c.nato_sales}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Últ. 30 días</p>
+                            <p className="text-xs text-muted-foreground">Últ. 30 días</p>
                             <p className="text-sm font-semibold text-white mt-0.5">{c.sales_last_30d}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Progreso</p>
-                            <p className="text-sm font-semibold mt-0.5 text-gray-300">{pct}%</p>
+                            <p className="text-xs text-muted-foreground">Progreso</p>
+                            <p className="text-sm font-semibold mt-0.5 text-foreground/85">{pct}%</p>
                           </div>
                         </div>
                       </div>

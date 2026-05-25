@@ -119,7 +119,7 @@ export default function CreateSchool() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Helmet>
         <title>Crear mi escuela online gratis — NATO University</title>
         <meta name="description" content="Lanzá tu escuela online en minutos. Vendé cursos, gestioná tus alumnos y cobrá con Mercado Pago. Gratis para empezar." />
@@ -132,42 +132,42 @@ export default function CreateSchool() {
         <meta property="og:site_name" content="NATO University" />
         <meta property="og:locale" content="es_AR" />
       </Helmet>
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/nato-logo.png" alt="NATO University" className="h-7 w-auto" />
-            <span className="font-heading text-sm font-bold text-white hidden sm:block">NATO University</span>
+      {/* Header glass */}
+      <header className="glass-light shrink-0">
+        <div className="container h-14 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 group">
+            <img src="/nato-logo.png" alt="NATO University" className="h-6 w-auto transition-transform group-hover:scale-105" />
+            <span className="font-heading text-sm font-semibold text-foreground hidden sm:block tracking-tight">NATO University</span>
           </Link>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-muted-foreground">
             ¿Ya tenés escuela?{' '}
-            <Link to="/login" className="text-primary hover:underline font-medium">Iniciar sesión</Link>
+            <Link to="/login" className="text-primary hover:underline font-medium underline-offset-4">Iniciar sesión</Link>
           </p>
         </div>
       </header>
 
       {/* Progress bar */}
-      <div className="bg-gray-900 border-b border-gray-800">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-3 max-w-sm mx-auto">
+      <div className="border-b border-border/40 bg-secondary/30">
+        <div className="container py-4">
+          <div className="flex items-center gap-2 max-w-md mx-auto">
             {[
               { n: 1, label: 'Tu cuenta', icon: User },
               { n: 2, label: 'Tu escuela', icon: School },
               { n: 3, label: 'Listo', icon: CheckCircle2 },
-            ].map(({ n, label, icon: Icon }, i) => (
+            ].map(({ n, label }, i) => (
               <div key={n} className="flex items-center gap-1 flex-1">
-                <div className={`flex items-center gap-1.5 ${step >= n ? 'text-primary' : 'text-gray-600'}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border ${
-                    step > n ? 'bg-primary border-primary text-white' :
-                    step === n ? 'border-primary text-primary' :
-                    'border-gray-700 text-gray-600'
+                <div className={`flex items-center gap-2 ${step >= n ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-200 ease-apple ${
+                    step > n ? 'bg-primary text-primary-foreground shadow-primary-md' :
+                    step === n ? 'bg-primary/10 text-primary border border-primary/30' :
+                    'bg-background border border-border text-muted-foreground'
                   }`}>
                     {step > n ? '✓' : n}
                   </div>
-                  <span className="text-xs font-medium hidden sm:block">{label}</span>
+                  <span className={`text-xs font-medium hidden sm:block ${step === n ? 'text-foreground' : ''}`}>{label}</span>
                 </div>
                 {i < 2 && (
-                  <div className={`flex-1 h-px mx-2 ${step > n ? 'bg-primary' : 'bg-gray-700'}`} />
+                  <div className={`flex-1 h-px mx-2 transition-colors ${step > n ? 'bg-primary' : 'bg-border'}`} />
                 )}
               </div>
             ))}
@@ -183,62 +183,62 @@ export default function CreateSchool() {
           {step === 1 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
-                <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <User className="w-6 h-6 text-primary" />
                 </div>
-                <h1 className="font-heading text-2xl font-bold text-white">Creá tu cuenta</h1>
+                <h1 className="font-heading text-2xl font-bold text-foreground">Creá tu cuenta</h1>
                 <p className="text-muted-foreground/80 text-sm">Con esto accedés a tu panel de instructor</p>
               </div>
 
               <form onSubmit={accountForm.handleSubmit(d => { setAccountData(d); setStep(2) })} className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label className="text-gray-300">Tu nombre completo</Label>
+                  <Label className="text-foreground/85">Tu nombre completo</Label>
                   <Input
                     placeholder="Juan López"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
+                    className="border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('fullName')}
                   />
                   {accountForm.formState.errors.fullName && (
-                    <p className="text-xs text-red-400">{accountForm.formState.errors.fullName.message}</p>
+                    <p className="text-xs text-destructive">{accountForm.formState.errors.fullName.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-gray-300">Email</Label>
+                  <Label className="text-foreground/85">Email</Label>
                   <Input
                     type="email"
                     placeholder="vos@tuescuela.com"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
+                    className="border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('email')}
                   />
                   {accountForm.formState.errors.email && (
-                    <p className="text-xs text-red-400">{accountForm.formState.errors.email.message}</p>
+                    <p className="text-xs text-destructive">{accountForm.formState.errors.email.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-gray-300">Contraseña</Label>
+                  <Label className="text-foreground/85">Contraseña</Label>
                   <Input
                     type="password"
                     placeholder="Mínimo 6 caracteres"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
+                    className="border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('password')}
                   />
                   {accountForm.formState.errors.password && (
-                    <p className="text-xs text-red-400">{accountForm.formState.errors.password.message}</p>
+                    <p className="text-xs text-destructive">{accountForm.formState.errors.password.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-gray-300">Repetir contraseña</Label>
+                  <Label className="text-foreground/85">Repetir contraseña</Label>
                   <Input
                     type="password"
                     placeholder="Repetí la contraseña"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
+                    className="border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('confirmPassword')}
                   />
                   {accountForm.formState.errors.confirmPassword && (
-                    <p className="text-xs text-red-400">{accountForm.formState.errors.confirmPassword.message}</p>
+                    <p className="text-xs text-destructive">{accountForm.formState.errors.confirmPassword.message}</p>
                   )}
                 </div>
 
@@ -247,7 +247,7 @@ export default function CreateSchool() {
                 </Button>
               </form>
 
-              <p className="text-center text-xs text-gray-600">
+              <p className="text-center text-xs text-muted-foreground">
                 Al continuar aceptás los términos de uso de NATO University
               </p>
             </div>
@@ -257,19 +257,19 @@ export default function CreateSchool() {
           {step === 2 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
-                <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <School className="w-6 h-6 text-primary" />
                 </div>
-                <h1 className="font-heading text-2xl font-bold text-white">Nombrá tu escuela</h1>
+                <h1 className="font-heading text-2xl font-bold text-foreground">Nombrá tu escuela</h1>
                 <p className="text-muted-foreground/80 text-sm">Este será el nombre que ven tus estudiantes</p>
               </div>
 
               <form onSubmit={schoolForm.handleSubmit(handleCreateSchool)} className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label className="text-gray-300">Nombre de la escuela</Label>
+                  <Label className="text-foreground/85">Nombre de la escuela</Label>
                   <Input
                     placeholder="Ej: Academia de Marketing Digital"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
+                    className="border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
                     value={schoolName}
                     onChange={e => {
                       handleSchoolNameChange(e.target.value)
@@ -277,29 +277,29 @@ export default function CreateSchool() {
                     }}
                   />
                   {schoolForm.formState.errors.schoolName && (
-                    <p className="text-xs text-red-400">{schoolForm.formState.errors.schoolName.message}</p>
+                    <p className="text-xs text-destructive">{schoolForm.formState.errors.schoolName.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-gray-300">
+                  <Label className="text-foreground/85">
                     URL de tu escuela
                     <span className="text-muted-foreground font-normal ml-2">(editable)</span>
                   </Label>
-                  <div className="flex items-center bg-gray-800 border border-gray-700 rounded-md overflow-hidden focus-within:border-primary transition-colors">
-                    <span className="px-3 text-muted-foreground text-sm border-r border-gray-700 bg-gray-900 h-10 flex items-center shrink-0">
+                  <div className="flex items-center border-border bg-background rounded-md overflow-hidden focus-within:border-primary transition-colors">
+                    <span className="px-3 text-muted-foreground text-sm border-r border-border bg-secondary/40 h-10 flex items-center shrink-0">
                       tu-escuela.com/
                     </span>
                     <input
-                      className="flex-1 bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-gray-500"
+                      className="flex-1 bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
                       placeholder="mi-escuela"
                       {...schoolForm.register('schoolSlug')}
                     />
                   </div>
                   {schoolForm.formState.errors.schoolSlug && (
-                    <p className="text-xs text-red-400">{schoolForm.formState.errors.schoolSlug.message}</p>
+                    <p className="text-xs text-destructive">{schoolForm.formState.errors.schoolSlug.message}</p>
                   )}
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Podés conectar tu propio dominio después desde Configuración
                   </p>
                 </div>
@@ -308,7 +308,7 @@ export default function CreateSchool() {
                   <Button
                     type="button"
                     variant="ghost"
-                    className="flex-1 text-gray-400"
+                    className="flex-1 text-muted-foreground/80"
                     onClick={() => setStep(1)}
                   >
                     Atrás
@@ -336,7 +336,7 @@ export default function CreateSchool() {
                   <CheckCircle2 className="w-10 h-10 text-green-400" />
                 </div>
                 <div>
-                  <h1 className="font-heading text-2xl font-bold text-white">
+                  <h1 className="font-heading text-2xl font-bold text-foreground">
                     ¡{schoolName || 'Tu escuela'} está lista!
                   </h1>
                   <p className="text-muted-foreground/80 text-sm mt-1">
@@ -346,7 +346,7 @@ export default function CreateSchool() {
               </div>
 
               {/* What happens next — outcomes, not tasks */}
-              <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-5 text-left space-y-4">
+              <div className="bg-secondary/30 border border-border/60 rounded-xl p-5 text-left space-y-4">
                 <p className="text-xs font-semibold text-primary uppercase tracking-wide">Tu camino al primer cobro</p>
                 {[
                   { step: '1', action: 'Subís 3 lecciones', outcome: 'Tu curso ya puede recibir inscriptos' },
@@ -354,11 +354,11 @@ export default function CreateSchool() {
                   { step: '3', action: 'Compartís el link', outcome: 'Tu primer alumno puede pagar hoy' },
                 ].map((item) => (
                   <div key={item.step} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {item.step}
                     </div>
                     <div>
-                      <span className="text-white text-sm font-medium">{item.action}</span>
+                      <span className="text-foreground text-sm font-medium">{item.action}</span>
                       <span className="text-muted-foreground/80 text-sm"> → {item.outcome}</span>
                     </div>
                   </div>
@@ -374,7 +374,7 @@ export default function CreateSchool() {
                 Ir a mi panel — crear mi primer curso
               </Button>
 
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-muted-foreground">
                 Si necesitás confirmar tu email primero, revisá tu bandeja de entrada
               </p>
             </div>

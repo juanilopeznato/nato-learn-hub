@@ -34,7 +34,7 @@ export default function CertificateVerify() {
   const school = course?.tenant
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-4 py-12">
       {/* Logo */}
       <div className="mb-8">
         {school?.logo_url ? (
@@ -60,7 +60,7 @@ export default function CertificateVerify() {
             <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
               <XCircle className="w-9 h-9 text-red-500" />
             </div>
-            <h1 className="font-heading text-xl font-bold text-gray-900">Certificado inválido</h1>
+            <h1 className="font-heading text-xl font-bold text-foreground">Certificado inválido</h1>
             <p className="text-muted-foreground text-sm">
               Certificado no encontrado o inválido. El código de verificación no coincide con ningún certificado emitido.
             </p>
@@ -74,7 +74,7 @@ export default function CertificateVerify() {
               <span className="inline-block bg-green-50 text-green-700 border border-green-200 text-xs font-semibold px-3 py-1 rounded-full mb-3">
                 Certificado verificado
               </span>
-              <h1 className="font-heading text-2xl font-bold text-gray-900">
+              <h1 className="font-heading text-2xl font-bold text-foreground">
                 {student?.full_name ?? 'Estudiante'}
               </h1>
               <p className="text-muted-foreground mt-1 text-sm">completó satisfactoriamente el curso</p>
@@ -84,11 +84,11 @@ export default function CertificateVerify() {
               <p className="font-heading font-semibold text-foreground text-lg">
                 {course?.title ?? '—'}
               </p>
-              <p className="text-sm text-gray-500">
-                Emitido por <span className="font-medium text-gray-700">{school?.name ?? 'NATO University'}</span>
+              <p className="text-sm text-muted-foreground">
+                Emitido por <span className="font-medium text-foreground/85">{school?.name ?? 'NATO University'}</span>
               </p>
               {certificate.issued_at && (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted-foreground/80">
                   Fecha de emisión:{' '}
                   {new Date(certificate.issued_at).toLocaleDateString('es-AR', {
                     year: 'numeric',
@@ -100,16 +100,16 @@ export default function CertificateVerify() {
             </div>
 
             <div className="border-t border-border/40 pt-4">
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground/80">
                 Código de verificación:{' '}
-                <span className="font-mono text-gray-600">{code}</span>
+                <span className="font-mono text-foreground/70">{code}</span>
               </p>
             </div>
           </div>
         )}
       </div>
 
-      <p className="mt-8 text-xs text-gray-400">
+      <p className="mt-8 text-xs text-muted-foreground/80">
         Powered by{' '}
         <Link to="/" className="hover:text-foreground/70 transition-colors">NATO University</Link>
       </p>

@@ -81,10 +81,10 @@ export default function Status() {
             <Loader2 className="w-7 h-7 text-muted-foreground/80 animate-spin" aria-hidden />
           )}
           <div>
-            <h1 className="font-heading text-xl font-semibold text-gray-900">
+            <h1 className="font-heading text-xl font-semibold text-foreground">
               {anyFail ? 'Hay problemas' : allOk ? 'Todo funcionando' : 'Verificando…'}
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               {anyFail ? 'Algunos servicios no responden' : 'Estado de los servicios de NATO University'}
             </p>
           </div>
@@ -101,12 +101,12 @@ export default function Status() {
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 {c.latencyMs !== undefined && (
-                  <span className={`text-xs ${c.latencyMs > 1000 ? 'text-yellow-500' : 'text-gray-400'}`}>
+                  <span className={`text-xs ${c.latencyMs > 1000 ? 'text-yellow-500' : 'text-muted-foreground/80'}`}>
                     {c.latencyMs} ms
                   </span>
                 )}
                 <span className={`text-xs font-medium uppercase ${
-                  c.status === 'ok' ? 'text-green-600' : c.status === 'fail' ? 'text-red-600' : 'text-gray-400'
+                  c.status === 'ok' ? 'text-green-600' : c.status === 'fail' ? 'text-red-600' : 'text-muted-foreground/80'
                 }`}>
                   {c.status === 'pending' ? '…' : c.status}
                 </span>

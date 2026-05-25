@@ -288,16 +288,16 @@ export default function InstructorDashboard() {
               </Link>
             </Button>
             <Button variant="ghost" size="icon" asChild title="Email marketing">
-              <Link to="/instructor/email" className="text-muted-foreground hover:text-gray-700">
+              <Link to="/instructor/email" className="text-muted-foreground hover:text-foreground/85">
                 <Mail className="w-4 h-4" />
               </Link>
             </Button>
             <Button variant="ghost" size="icon" asChild title="Configuración">
-              <Link to="/settings" className="text-muted-foreground hover:text-gray-700">
+              <Link to="/settings" className="text-muted-foreground hover:text-foreground/85">
                 <Settings className="w-4 h-4" />
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" onClick={signOut} title="Cerrar sesión" className="text-muted-foreground/80 hover:text-gray-600">
+            <Button variant="ghost" size="icon" onClick={signOut} title="Cerrar sesión" className="text-muted-foreground/80 hover:text-foreground/70">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -309,7 +309,7 @@ export default function InstructorDashboard() {
         {/* Saludo personalizado */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-heading text-2xl font-bold text-gray-900">
+            <h1 className="font-heading text-2xl font-bold text-foreground">
               Hola, {firstName}
             </h1>
             <p className="text-muted-foreground text-sm mt-0.5">
@@ -367,8 +367,8 @@ export default function InstructorDashboard() {
                       {course.thumbnail_url ? (
                         <SmartImage src={course.thumbnail_url} alt={course.title ?? ''} size="thumb" className="w-14 h-14 rounded-lg object-cover shrink-0 hidden sm:block" />
                       ) : (
-                        <div className="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 hidden sm:block">
-                          <BookOpen className="w-5 h-5 text-gray-300" />
+                        <div className="w-14 h-14 rounded-lg bg-secondary flex items-center justify-center shrink-0 hidden sm:block">
+                          <BookOpen className="w-5 h-5 text-foreground/85" />
                         </div>
                       )}
 
@@ -380,7 +380,7 @@ export default function InstructorDashboard() {
                             <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full font-medium shrink-0">Gratis</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                        <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground/80">
                           <span className="flex items-center gap-1">
                             <Users className="w-3 h-3" />
                             {students} alumno{students !== 1 ? 's' : ''}
@@ -401,7 +401,7 @@ export default function InstructorDashboard() {
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                             course.is_published
                               ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                              : 'bg-gray-100 text-muted-foreground hover:bg-gray-200'
+                              : 'bg-secondary text-muted-foreground hover:bg-gray-200'
                           }`}
                         >
                           <span className={`w-1.5 h-1.5 rounded-full ${course.is_published ? 'bg-green-500' : 'bg-gray-400'}`} />
@@ -419,7 +419,7 @@ export default function InstructorDashboard() {
                         {/* Ver en público */}
                         <Button variant="ghost" size="icon" asChild title="Ver página pública">
                           <Link to={`/courses/${course.slug}`} target="_blank" rel="noopener noreferrer">
-                            <Eye className="w-4 h-4 text-gray-400" />
+                            <Eye className="w-4 h-4 text-muted-foreground/80" />
                           </Link>
                         </Button>
 
@@ -428,7 +428,7 @@ export default function InstructorDashboard() {
                           variant="ghost"
                           size="icon"
                           title="Eliminar curso"
-                          className="text-gray-300 hover:text-red-400 transition-colors"
+                          className="text-foreground/85 hover:text-red-400 transition-colors"
                           onClick={() => setDeletingCourse({ id: course.id, title: course.title })}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -488,8 +488,8 @@ export default function InstructorDashboard() {
 
                   {/* Paso 3 */}
                   <div className="bg-white border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
-                    <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
-                      <CreditCard className="w-5 h-5 text-gray-400" />
+                    <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
+                      <CreditCard className="w-5 h-5 text-muted-foreground/80" />
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide mb-0.5">Después</p>
@@ -503,8 +503,8 @@ export default function InstructorDashboard() {
 
                   {/* Paso 4 */}
                   <div className="bg-white border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
-                    <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-gray-400" />
+                    <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-muted-foreground/80" />
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide mb-0.5">Al final</p>
@@ -520,7 +520,7 @@ export default function InstructorDashboard() {
           {/* Tab: Estadísticas */}
           <TabsContent value="kpis" className="mt-6">
             {courses && courses.length > 0 ? (
-              <Suspense fallback={<div className="text-sm text-gray-500">Cargando métricas…</div>}><KpiDashboard courseIds={courses.map(c => c.id)} /></Suspense>
+              <Suspense fallback={<div className="text-sm text-muted-foreground">Cargando métricas…</div>}><KpiDashboard courseIds={courses.map(c => c.id)} /></Suspense>
             ) : (
               <div className="bg-white border border-border/60 rounded-2xl p-12 text-center">
                 <BarChart3 className="w-10 h-10 text-gray-200 mx-auto mb-3" />
@@ -534,7 +534,7 @@ export default function InstructorDashboard() {
           <TabsContent value="affiliates" className="mt-6">
             <div className="max-w-2xl space-y-6">
               <div>
-                <h2 className="font-heading text-lg font-bold text-gray-900">Programa de afiliados</h2>
+                <h2 className="font-heading text-lg font-bold text-foreground">Programa de afiliados</h2>
                 <p className="text-sm text-muted-foreground mt-0.5">
                   Recomendá NATO University y ganás comisiones automáticas cada vez que alguien se suscribe con tu link.
                 </p>
@@ -542,7 +542,7 @@ export default function InstructorDashboard() {
 
               {/* Link de afiliado */}
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 space-y-3">
-                <p className="text-sm font-semibold text-gray-700">Tu link único</p>
+                <p className="text-sm font-semibold text-foreground/85">Tu link único</p>
                 <div className="flex gap-2">
                   <div className="flex-1 bg-white border border-amber-200 rounded-lg px-3 py-2 text-sm font-mono text-foreground/70 truncate">
                     {affiliateUrl}
@@ -567,7 +567,7 @@ export default function InstructorDashboard() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
-                  <p className="text-2xl font-bold text-gray-900">{referredCount}</p>
+                  <p className="text-2xl font-bold text-foreground">{referredCount}</p>
                   <p className="text-xs text-muted-foreground/80 mt-1">Escuelas referidas</p>
                 </div>
                 <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
@@ -588,7 +588,7 @@ export default function InstructorDashboard() {
               {affiliateCommissions && affiliateCommissions.length > 0 ? (
                 <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
                   <div className="px-4 py-3 border-b border-border/40">
-                    <h3 className="text-sm font-semibold text-gray-700">Historial</h3>
+                    <h3 className="text-sm font-semibold text-foreground/85">Historial</h3>
                   </div>
                   <table className="w-full text-sm">
                     <thead className="bg-secondary/30 border-b border-border/60">
@@ -601,7 +601,7 @@ export default function InstructorDashboard() {
                     <tbody className="divide-y divide-gray-100">
                       {commissions.map(c => (
                         <tr key={c.id} className="hover:bg-secondary/30">
-                          <td className="px-4 py-3 font-medium text-gray-900">{c.referred_tenant?.name ?? '—'}</td>
+                          <td className="px-4 py-3 font-medium text-foreground">{c.referred_tenant?.name ?? '—'}</td>
                           <td className="px-4 py-3 text-foreground/85 font-semibold">ARS {Number(c.amount_ars ?? 0).toLocaleString('es-AR')}</td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -632,9 +632,9 @@ export default function InstructorDashboard() {
 
       {/* Dialog crear curso */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="bg-gray-100 border-border/60">
+        <DialogContent className="bg-secondary border-border/60">
           <DialogHeader>
-            <DialogTitle className="font-heading text-gray-900">Crear nuevo curso</DialogTitle>
+            <DialogTitle className="font-heading text-foreground">Crear nuevo curso</DialogTitle>
           </DialogHeader>
           <CourseForm
             onSubmit={createCourse.mutateAsync}

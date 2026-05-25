@@ -50,13 +50,13 @@ export default function MpOAuthCallback() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center max-w-sm w-full shadow-sm">
+    <div className="min-h-screen bg-secondary/30 flex items-center justify-center">
+      <div className="bg-white rounded-2xl border border-border/60 p-10 text-center max-w-sm w-full shadow-sm">
         {status === 'loading' && (
           <>
             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-700 font-medium">Conectando tu cuenta de Mercado Pago...</p>
-            <p className="text-gray-400 text-sm mt-1">Esto tarda unos segundos</p>
+            <p className="text-foreground/85 font-medium">Conectando tu cuenta de Mercado Pago...</p>
+            <p className="text-muted-foreground/80 text-sm mt-1">Esto tarda unos segundos</p>
           </>
         )}
         {status === 'success' && (
@@ -66,8 +66,8 @@ export default function MpOAuthCallback() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <p className="text-gray-900 font-semibold text-lg">¡Cuenta conectada!</p>
-            <p className="text-gray-500 text-sm mt-1">Redirigiendo a Configuración...</p>
+            <p className="text-foreground font-semibold text-lg">¡Cuenta conectada!</p>
+            <p className="text-muted-foreground text-sm mt-1">Redirigiendo a Configuración...</p>
           </>
         )}
         {status === 'error' && (
@@ -77,8 +77,8 @@ export default function MpOAuthCallback() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <p className="text-gray-900 font-semibold text-lg">Algo salió mal</p>
-            <p className="text-gray-500 text-sm mt-1">No pudimos conectar tu cuenta de Mercado Pago.</p>
+            <p className="text-foreground font-semibold text-lg">Algo salió mal</p>
+            <p className="text-muted-foreground text-sm mt-1">No pudimos conectar tu cuenta de Mercado Pago.</p>
             <button
               onClick={() => navigate('/settings')}
               className="mt-5 text-primary text-sm underline"

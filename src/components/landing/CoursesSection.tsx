@@ -46,7 +46,7 @@ export default function CoursesSection() {
     return (
       <section id="courses" className="py-24 bg-gray-50">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">Próximamente nuevos cursos.</p>
+          <p className="text-muted-foreground/80">Próximamente nuevos cursos.</p>
         </div>
       </section>
     )
@@ -100,7 +100,7 @@ export default function CoursesSection() {
                     }`}>
                       {course.is_free ? 'Gratis' : `ARS ${Number(course.price).toLocaleString('es-AR')}`}
                     </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-400">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground/80">
                       <BookOpen className="w-3 h-3" />
                       {totalLessons} lecciones
                     </span>

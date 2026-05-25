@@ -18,7 +18,7 @@ export function StreakBadge({ streak, size = 'md' }: Props) {
           ? 'bg-orange-100 text-orange-600 ring-1 ring-orange-200'
           : isFire
           ? 'bg-amber-50 text-amber-600'
-          : 'bg-gray-100 text-gray-500'
+          : 'bg-secondary text-muted-foreground'
       }`}
       title={`${streak} día${streak !== 1 ? 's' : ''} seguido${streak !== 1 ? 's' : ''} aprendiendo`}
     >

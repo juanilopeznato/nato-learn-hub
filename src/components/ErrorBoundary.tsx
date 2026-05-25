@@ -51,8 +51,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
           <p className="text-sm text-foreground/70 mb-6">
             La página tuvo un error inesperado. Probá recargar o volver al inicio.
           </p>
-          <details className="mb-6 text-xs text-gray-500">
-            <summary className="cursor-pointer select-none hover:text-gray-700">Ver detalle técnico</summary>
+          <details className="mb-6 text-xs text-muted-foreground">
+            <summary className="cursor-pointer select-none hover:text-foreground/85">Ver detalle técnico</summary>
             <pre className="mt-2 p-3 bg-secondary/30 rounded-lg overflow-x-auto whitespace-pre-wrap">
               {this.state.error.message}
             </pre>
@@ -67,7 +67,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </button>
             <a
               href="/"
-              className="flex-1 px-4 py-2 bg-gray-100 text-foreground/85 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium text-center"
+              className="flex-1 px-4 py-2 bg-secondary text-foreground/85 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium text-center"
             >
               Ir al inicio
             </a>

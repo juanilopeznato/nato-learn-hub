@@ -124,7 +124,7 @@ export default function Pricing() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-foreground text-sm">14 días gratis en Creator o Pro</p>
-              <p className="text-gray-400 text-xs mt-0.5">Sin tarjeta de crédito. Cancelá cuando quieras.</p>
+              <p className="text-muted-foreground/80 text-xs mt-0.5">Sin tarjeta de crédito. Cancelá cuando quieras.</p>
             </div>
             <Button variant="hero" size="sm" asChild className="shrink-0">
               <Link to="/create-school">Empezar gratis</Link>

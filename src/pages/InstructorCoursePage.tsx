@@ -286,21 +286,21 @@ export default function InstructorCoursePage() {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                 course.is_published
                   ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                  : 'bg-gray-100 text-muted-foreground hover:bg-gray-200'
+                  : 'bg-secondary text-muted-foreground hover:bg-gray-200'
               }`}
             >
               {course.is_published ? <Globe className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
               {course.is_published ? 'Publicado' : 'Borrador'}
             </button>
 
-            <Button variant="ghost" size="sm" asChild className="text-muted-foreground/80 hover:text-gray-700">
+            <Button variant="ghost" size="sm" asChild className="text-muted-foreground/80 hover:text-foreground/85">
               <Link to={`/courses/${course.slug}`} target="_blank" rel="noopener noreferrer" title="Ver página pública">
                 <ExternalLink className="w-4 h-4" />
                 <span className="hidden sm:block ml-1 text-xs">Ver landing</span>
               </Link>
             </Button>
 
-            <Button variant="ghost" size="icon" onClick={signOut} className="text-gray-300 hover:text-gray-500" title="Cerrar sesión">
+            <Button variant="ghost" size="icon" onClick={signOut} className="text-foreground/85 hover:text-muted-foreground" title="Cerrar sesión">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -329,7 +329,7 @@ export default function InstructorCoursePage() {
           <TabsContent value="content">
             <div className="max-w-3xl space-y-4">
               <div>
-                <h2 className="font-heading text-lg font-bold text-gray-900">Módulos y lecciones</h2>
+                <h2 className="font-heading text-lg font-bold text-foreground">Módulos y lecciones</h2>
                 <p className="text-sm text-muted-foreground/80 mt-0.5">
                   Agregá módulos para organizar el contenido y lecciones dentro de cada módulo.
                 </p>
@@ -342,7 +342,7 @@ export default function InstructorCoursePage() {
           <TabsContent value="details">
             <div className="max-w-2xl">
               <div className="mb-5">
-                <h2 className="font-heading text-lg font-bold text-gray-900">Página del curso</h2>
+                <h2 className="font-heading text-lg font-bold text-foreground">Página del curso</h2>
                 <p className="text-sm text-muted-foreground/80 mt-0.5">
                   Todo lo que completés acá aparece en la landing del curso. Un buen copy vende solo.
                 </p>
@@ -383,7 +383,7 @@ export default function InstructorCoursePage() {
               {/* Header con toggle Todos / Inactivos */}
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div>
-                  <h2 className="font-heading text-lg font-bold text-gray-900">Alumnos</h2>
+                  <h2 className="font-heading text-lg font-bold text-foreground">Alumnos</h2>
                   <p className="text-sm text-muted-foreground/80 mt-0.5">
                     {enrollments?.length ?? 0} inscripto{(enrollments?.length ?? 0) !== 1 ? 's' : ''}
                     {inactiveEnrollments.length > 0 && ` · ${inactiveEnrollments.length} inactivo${inactiveEnrollments.length !== 1 ? 's' : ''}`}
@@ -391,11 +391,11 @@ export default function InstructorCoursePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   {inactiveEnrollments.length > 0 && (
-                    <div className="flex items-center gap-2 bg-gray-100 rounded-full p-1">
+                    <div className="flex items-center gap-2 bg-secondary rounded-full p-1">
                       <button
                         onClick={() => setShowInactive(false)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                          !showInactive ? 'bg-white text-foreground shadow-sm' : 'text-gray-500'
+                          !showInactive ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground'
                         }`}
                       >
                         <Users className="w-3.5 h-3.5" />
@@ -404,7 +404,7 @@ export default function InstructorCoursePage() {
                       <button
                         onClick={() => setShowInactive(true)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                          showInactive ? 'bg-orange-400 text-white' : 'text-gray-500'
+                          showInactive ? 'bg-orange-400 text-white' : 'text-muted-foreground'
                         }`}
                       >
                         <UserX className="w-3.5 h-3.5" />
@@ -483,7 +483,7 @@ export default function InstructorCoursePage() {
                                   alt={student?.full_name ?? ''}
                                   size={32}
                                   fallbackInitials={(student?.full_name ?? '?').charAt(0).toUpperCase()}
-                                  className="shrink-0 bg-gray-200 text-gray-500"
+                                  className="shrink-0 bg-gray-200 text-muted-foreground"
                                 />
                                 <div className="min-w-0">
                                   <p className="font-medium text-foreground truncate max-w-[140px]">{student?.full_name ?? '—'}</p>
@@ -509,7 +509,7 @@ export default function InstructorCoursePage() {
                                 </td>
                                 <td className="px-4 py-3">
                                   {(() => {
-                                    const color = days === null ? 'bg-gray-100 text-gray-500'
+                                    const color = days === null ? 'bg-secondary text-muted-foreground'
                                       : days >= 7 ? 'bg-red-100 text-red-700'
                                       : 'bg-orange-100 text-orange-700'
                                     return (
@@ -566,12 +566,12 @@ export default function InstructorCoursePage() {
                     </div>
                     <div className="text-left">
                       <p className="font-semibold text-foreground text-sm">Cupones de descuento</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-muted-foreground/80">
                         {coupons?.length ? `${coupons.length} cupón${coupons.length !== 1 ? 'es' : ''} creado${coupons.length !== 1 ? 's' : ''}` : 'Creá códigos para tu audiencia'}
                       </p>
                     </div>
                   </div>
-                  {openSection === 'coupons' ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+                  {openSection === 'coupons' ? <ChevronDown className="w-4 h-4 text-muted-foreground/80" /> : <ChevronRight className="w-4 h-4 text-muted-foreground/80" />}
                 </button>
 
                 {openSection === 'coupons' && (
@@ -640,7 +640,7 @@ export default function InstructorCoursePage() {
                               />
                               <Label>Solo para este curso</Label>
                             </div>
-                            <p className="text-xs text-gray-400">Si está desactivado aplica a todos tus cursos</p>
+                            <p className="text-xs text-muted-foreground/80">Si está desactivado aplica a todos tus cursos</p>
                           </div>
                         </div>
                         <div className="flex gap-2 justify-end">
@@ -711,10 +711,10 @@ export default function InstructorCoursePage() {
                     </div>
                     <div className="text-left">
                       <p className="font-semibold text-foreground text-sm">Clases en vivo</p>
-                      <p className="text-xs text-gray-400">Programá sesiones en vivo para tus alumnos</p>
+                      <p className="text-xs text-muted-foreground/80">Programá sesiones en vivo para tus alumnos</p>
                     </div>
                   </div>
-                  {openSection === 'calendar' ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+                  {openSection === 'calendar' ? <ChevronDown className="w-4 h-4 text-muted-foreground/80" /> : <ChevronRight className="w-4 h-4 text-muted-foreground/80" />}
                 </button>
                 {openSection === 'calendar' && (
                   <div className="border-t border-border/40 p-5">
@@ -735,14 +735,14 @@ export default function InstructorCoursePage() {
                     </div>
                     <div className="text-left">
                       <p className="font-semibold text-foreground text-sm">Métricas del curso</p>
-                      <p className="text-xs text-gray-400">Funnel de conversión y tasa de abandono por lección</p>
+                      <p className="text-xs text-muted-foreground/80">Funnel de conversión y tasa de abandono por lección</p>
                     </div>
                   </div>
-                  {openSection === 'metrics' ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+                  {openSection === 'metrics' ? <ChevronDown className="w-4 h-4 text-muted-foreground/80" /> : <ChevronRight className="w-4 h-4 text-muted-foreground/80" />}
                 </button>
                 {openSection === 'metrics' && (
                   <div className="border-t border-border/40 p-5">
-                    <Suspense fallback={<div className="text-sm text-gray-500">Cargando métricas…</div>}><KpiDashboard courseIds={[courseId!]} /></Suspense>
+                    <Suspense fallback={<div className="text-sm text-muted-foreground">Cargando métricas…</div>}><KpiDashboard courseIds={[courseId!]} /></Suspense>
                   </div>
                 )}
               </div>

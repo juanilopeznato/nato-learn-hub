@@ -267,10 +267,10 @@ export default function LessonView() {
 
   if (courseError) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary/30 flex items-center justify-center">
         <div className="text-center space-y-3">
-          <p className="text-gray-900 font-medium">No se pudo cargar la lección</p>
-          <p className="text-gray-500 text-sm">Verificá tu conexión o intentá de nuevo.</p>
+          <p className="text-foreground font-medium">No se pudo cargar la lección</p>
+          <p className="text-muted-foreground text-sm">Verificá tu conexión o intentá de nuevo.</p>
           <Link to="/" className="text-primary text-sm hover:underline">Volver al inicio</Link>
         </div>
       </div>
@@ -284,8 +284,8 @@ export default function LessonView() {
   // Wait for enrollment check when logged in before deciding access
   if (profile && enrollmentLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-gray-500">
+      <div className="min-h-screen bg-secondary/30 flex items-center justify-center">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <span className="text-sm">Cargando lección...</span>
         </div>
@@ -338,8 +338,8 @@ export default function LessonView() {
             {currentLesson.video_url && currentLesson.video_provider ? (
               <VideoEmbed videoUrl={currentLesson.video_url} videoProvider={currentLesson.video_provider} />
             ) : (
-              <div className="aspect-video bg-gray-100 rounded-xl flex items-center justify-center">
-                <p className="text-gray-400">Esta lección no tiene video.</p>
+              <div className="aspect-video bg-secondary rounded-xl flex items-center justify-center">
+                <p className="text-muted-foreground/80">Esta lección no tiene video.</p>
               </div>
             )}
 
@@ -370,8 +370,8 @@ export default function LessonView() {
 
             {/* Recursos */}
             {resources && resources.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
-                <h3 className="text-sm font-semibold text-gray-900">Recursos</h3>
+              <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-foreground">Recursos</h3>
                 <div className="flex flex-wrap gap-2">
                   {resources.map(r => (
                     <a
@@ -380,7 +380,7 @@ export default function LessonView() {
                       download
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 hover:bg-primary/5 hover:text-primary border border-gray-200 rounded-lg px-3 py-2 transition-colors"
+                      className="flex items-center gap-2 text-sm text-foreground/70 bg-secondary/30 hover:bg-primary/5 hover:text-primary border border-border/60 rounded-lg px-3 py-2 transition-colors"
                     >
                       <FileDown className="w-4 h-4 shrink-0" />
                       {r.title}
@@ -392,14 +392,14 @@ export default function LessonView() {
 
             {/* Notas del estudiante */}
             {profile && (
-              <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+              <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Pencil className="w-4 h-4 text-gray-400" />
-                    <h3 className="text-sm font-semibold text-gray-900">Mis notas</h3>
+                    <Pencil className="w-4 h-4 text-muted-foreground/80" />
+                    <h3 className="text-sm font-semibold text-foreground">Mis notas</h3>
                   </div>
                   {noteSaveStatus === 'saving' && (
-                    <span className="text-xs text-gray-400">Guardando...</span>
+                    <span className="text-xs text-muted-foreground/80">Guardando...</span>
                   )}
                   {noteSaveStatus === 'saved' && (
                     <span className="text-xs text-green-600">Guardado ✓</span>
@@ -410,21 +410,21 @@ export default function LessonView() {
                   onChange={e => handleNoteChange(e.target.value)}
                   placeholder="Escribí tus apuntes sobre esta lección..."
                   rows={5}
-                  className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
+                  className="w-full resize-none rounded-lg border border-border/60 bg-secondary/30 px-3 py-2 text-sm text-foreground/85 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
                 />
               </div>
             )}
 
             {/* Foro del curso */}
             {enrollment && course && (
-              <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4">
+              <div className="bg-white border border-border/60 rounded-xl p-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                     <MessageSquare className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Foro del curso</p>
-                    <p className="text-xs text-gray-500">Preguntá, compartí o conectá con otros estudiantes</p>
+                    <p className="text-sm font-semibold text-foreground">Foro del curso</p>
+                    <p className="text-xs text-muted-foreground">Preguntá, compartí o conectá con otros estudiantes</p>
                   </div>
                 </div>
                 <Link
@@ -468,7 +468,7 @@ export default function LessonView() {
       </div>
 
       {/* Sticky action bar — siempre visible */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-gray-200 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-border/60 shadow-lg">
         <div className="container mx-auto px-4 h-16 flex items-center gap-3 max-w-5xl">
           {/* Anterior */}
           <Button
@@ -476,7 +476,7 @@ export default function LessonView() {
             size="sm"
             disabled={!prevLesson}
             onClick={() => prevLesson && navigate(`/learn/${courseSlug}/${prevLesson.id}`)}
-            className="shrink-0 text-gray-500"
+            className="shrink-0 text-muted-foreground"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:block">Anterior</span>
@@ -484,10 +484,10 @@ export default function LessonView() {
 
           {/* Progreso central */}
           <div className="flex-1 flex flex-col items-center gap-1">
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-muted-foreground/80">
               {currentIndex + 1} de {allLessons.length} lecciones
             </div>
-            <div className="w-full max-w-xs h-1 bg-gray-100 rounded-full overflow-hidden">
+            <div className="w-full max-w-xs h-1 bg-secondary rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary rounded-full transition-all duration-500"
                 style={{ width: `${Math.round(Number(progressData?.percent ?? 0))}%` }}
@@ -570,10 +570,10 @@ export default function LessonView() {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileSidebarOpen(false)} />
           <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[90vw] bg-white shadow-xl flex flex-col">
-            <div className="flex items-center justify-between px-4 h-14 border-b border-gray-200 shrink-0">
-              <span className="font-heading font-semibold text-gray-900 text-sm">Contenido del curso</span>
+            <div className="flex items-center justify-between px-4 h-14 border-b border-border/60 shrink-0">
+              <span className="font-heading font-semibold text-foreground text-sm">Contenido del curso</span>
               <button
-                className="p-1.5 rounded-md text-gray-500 hover:bg-gray-100 transition-colors"
+                className="p-1.5 rounded-md text-muted-foreground hover:bg-secondary transition-colors"
                 onClick={() => setMobileSidebarOpen(false)}
               >
                 <X className="w-5 h-5" />

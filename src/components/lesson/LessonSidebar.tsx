@@ -52,7 +52,7 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
                 className="transition-all duration-700"
               />
             </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-700">
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-foreground/85">
               {Math.round(progressPercent)}%
             </span>
           </div>
@@ -72,8 +72,8 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
             <div key={module.id}>
               {/* Módulo header */}
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-bold text-gray-500">{moduleIdx + 1}</span>
+                <div className="w-5 h-5 rounded-full bg-secondary flex items-center justify-center shrink-0">
+                  <span className="text-[10px] font-bold text-muted-foreground">{moduleIdx + 1}</span>
                 </div>
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider truncate">
                   {module.title}
@@ -126,7 +126,7 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
                             ? 'text-primary font-semibold'
                             : isCompleted
                             ? 'text-green-700 text-xs hover:text-green-800'
-                            : 'text-foreground/70 hover:text-gray-900'
+                            : 'text-foreground/70 hover:text-foreground'
                         } text-xs leading-snug`}
                       >
                         {lesson.title}

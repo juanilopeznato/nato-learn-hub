@@ -139,7 +139,7 @@ export function ImageUpload({
             </div>
           </>
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-400">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground/80">
             {uploading ? (
               <>
                 <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -153,7 +153,7 @@ export function ImageUpload({
                 }
                 {aspectRatio !== 'square' && (
                   <div className="text-center">
-                    <p className="text-xs font-medium text-gray-500">
+                    <p className="text-xs font-medium text-muted-foreground">
                       {dragOver ? 'Soltá la imagen' : 'Arrastrá o hacé click'}
                     </p>
                     <p className="text-xs text-muted-foreground/80 mt-0.5">{hint ?? defaultHint}</p>

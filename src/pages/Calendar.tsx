@@ -43,7 +43,7 @@ const EVENT_BADGE_COLORS: Record<EventType, string> = {
   live_session: 'bg-purple-100 text-purple-700',
   webinar: 'bg-blue-100 text-blue-700',
   deadline: 'bg-red-100 text-red-700',
-  other: 'bg-gray-100 text-gray-600',
+  other: 'bg-secondary text-foreground/70',
 }
 
 const EVENT_TYPE_LABELS: Record<EventType, string> = {
@@ -179,7 +179,7 @@ export default function Calendar() {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/dashboard">Dashboard</Link>
             </Button>
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400">
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground/80">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -189,7 +189,7 @@ export default function Calendar() {
       <main className="container mx-auto px-4 py-10 max-w-3xl space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-heading text-3xl font-bold text-gray-900">Calendario</h1>
+            <h1 className="font-heading text-3xl font-bold text-foreground">Calendario</h1>
             <p className="text-muted-foreground mt-1">Próximos eventos y sesiones</p>
           </div>
           {isInstructor && (
@@ -221,16 +221,16 @@ export default function Calendar() {
                     >
                       <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-semibold text-gray-900">{event.title}</span>
+                          <span className="font-semibold text-foreground">{event.title}</span>
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${EVENT_BADGE_COLORS[event.event_type]}`}>
                             {EVENT_TYPE_LABELS[event.event_type]}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {format(new Date(event.starts_at), "d 'de' MMMM 'a las' HH:mm", { locale: es })}
                         </p>
                         {event.course && (
-                          <p className="text-xs text-gray-400">{event.course.title}</p>
+                          <p className="text-xs text-muted-foreground/80">{event.course.title}</p>
                         )}
                         {event.description && (
                           <p className="text-sm text-foreground/70 mt-1">{event.description}</p>
@@ -250,7 +250,7 @@ export default function Calendar() {
                       {isInstructor && (
                         <button
                           onClick={() => deleteEvent.mutate(event.id)}
-                          className="text-gray-300 hover:text-red-400 transition-colors shrink-0"
+                          className="text-foreground/85 hover:text-red-400 transition-colors shrink-0"
                           title="Eliminar evento"
                         >
                           <X className="w-4 h-4" />
@@ -264,8 +264,8 @@ export default function Calendar() {
           </div>
         ) : (
           <div className="bg-white border border-border/60 rounded-2xl p-12 text-center space-y-4">
-            <CalendarDays className="w-12 h-12 text-gray-300 mx-auto" />
-            <p className="text-gray-500">No hay eventos próximos.</p>
+            <CalendarDays className="w-12 h-12 text-foreground/85 mx-auto" />
+            <p className="text-muted-foreground">No hay eventos próximos.</p>
             {isInstructor && (
               <Button variant="hero" onClick={() => setShowDialog(true)}>
                 <Plus className="w-4 h-4" />
@@ -279,7 +279,7 @@ export default function Calendar() {
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="bg-white border-border/60">
           <DialogHeader>
-            <DialogTitle className="font-heading text-gray-900">Nuevo evento</DialogTitle>
+            <DialogTitle className="font-heading text-foreground">Nuevo evento</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">

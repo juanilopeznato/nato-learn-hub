@@ -201,7 +201,7 @@ export default function Dashboard() {
         {communityPosts && communityPosts.length > 0 && (
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="font-heading text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="font-heading text-lg font-semibold text-foreground flex items-center gap-2">
                 <Users className="w-5 h-5 text-primary" />
                 Comunidad
               </h2>
@@ -217,7 +217,7 @@ export default function Dashboard() {
                   <Link
                     key={post.id}
                     to="/community"
-                    className="flex items-start gap-3 bg-white border border-gray-100 rounded-xl p-4 hover:border-primary/30 hover:shadow-sm transition-all group"
+                    className="flex items-start gap-3 bg-white border border-border/40 rounded-xl p-4 hover:border-primary/30 hover:shadow-sm transition-all group"
                   >
                     <div className="mt-0.5">
                       <SmartAvatar
@@ -229,12 +229,12 @@ export default function Dashboard() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate group-hover:text-primary transition-colors">{post.title}</p>
+                      <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">{post.title}</p>
                       {post.body && (
-                        <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{post.body}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{post.body}</p>
                       )}
                     </div>
-                    <MessageSquare className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors shrink-0 mt-0.5" />
+                    <MessageSquare className="w-4 h-4 text-foreground/85 group-hover:text-primary transition-colors shrink-0 mt-0.5" />
                   </Link>
                 )
               })}
@@ -246,12 +246,12 @@ export default function Dashboard() {
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-xl h-48 animate-pulse border border-gray-100" />
+              <div key={i} className="bg-white rounded-xl h-48 animate-pulse border border-border/40" />
             ))}
           </div>
         ) : enrollments && enrollments.length > 0 ? (
           <section className="space-y-4">
-            <h2 className="font-heading text-lg font-semibold text-gray-900">Mis cursos</h2>
+            <h2 className="font-heading text-lg font-semibold text-foreground">Mis cursos</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {enrollments.map(enrollment => {
                 const course = enrollment.courses as unknown as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
@@ -276,14 +276,14 @@ export default function Dashboard() {
             </div>
           </section>
         ) : (
-          <div className="bg-white rounded-2xl p-12 text-center space-y-4 border border-gray-100">
+          <div className="bg-white rounded-2xl p-12 text-center space-y-4 border border-border/40">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto" aria-hidden>
               <BookOpen className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="font-heading text-xl font-semibold text-gray-900">
+            <h3 className="font-heading text-xl font-semibold text-foreground">
               Tu lista está vacía
             </h3>
-            <p className="text-gray-500 max-w-sm mx-auto">
+            <p className="text-muted-foreground max-w-sm mx-auto">
               Tenés <strong>{(tenant as { name?: string } | null)?.name ?? 'la escuela'}</strong> entera para explorar. Hay cursos gratuitos para arrancar sin pagar.
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
@@ -305,7 +305,7 @@ export default function Dashboard() {
         {/* Leaderboard */}
         {tenant && (
           <section className="space-y-3">
-            <h2 className="font-heading text-lg font-semibold text-gray-900">Ranking mensual</h2>
+            <h2 className="font-heading text-lg font-semibold text-foreground">Ranking mensual</h2>
             <Leaderboard tenantId={tenant.id} currentProfileId={profile?.id} />
           </section>
         )}

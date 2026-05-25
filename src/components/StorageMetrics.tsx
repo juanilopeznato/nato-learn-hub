@@ -135,7 +135,7 @@ export function StorageMetrics() {
           <h3 className="text-white font-medium">Por bucket</h3>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-gray-950 text-gray-400">
+          <thead className="bg-gray-950 text-muted-foreground/80">
             <tr>
               <th className="text-left px-5 py-2 font-medium">Bucket</th>
               <th className="text-right px-5 py-2 font-medium">Archivos</th>
@@ -146,16 +146,16 @@ export function StorageMetrics() {
           </thead>
           <tbody>
             {buckets.length === 0 ? (
-              <tr><td colSpan={5} className="px-5 py-6 text-center text-gray-500">Sin buckets con datos</td></tr>
+              <tr><td colSpan={5} className="px-5 py-6 text-center text-muted-foreground">Sin buckets con datos</td></tr>
             ) : buckets.map(b => {
               const avg = b.files > 0 ? Number(b.total_bytes) / Number(b.files) : 0
               return (
                 <tr key={b.bucket_id} className="border-t border-gray-800/60">
                   <td className="px-5 py-3 text-white">{b.bucket_id}</td>
-                  <td className="px-5 py-3 text-right text-gray-300">{Number(b.files).toLocaleString('es-AR')}</td>
-                  <td className="px-5 py-3 text-right text-gray-300">{fmtBytes(Number(b.total_bytes))}</td>
-                  <td className="px-5 py-3 text-right text-gray-400">{fmtBytes(avg)}</td>
-                  <td className={`px-5 py-3 text-right ${Number(b.largest_mb) > 1 ? 'text-yellow-300' : 'text-gray-400'}`}>
+                  <td className="px-5 py-3 text-right text-foreground/85">{Number(b.files).toLocaleString('es-AR')}</td>
+                  <td className="px-5 py-3 text-right text-foreground/85">{fmtBytes(Number(b.total_bytes))}</td>
+                  <td className="px-5 py-3 text-right text-muted-foreground/80">{fmtBytes(avg)}</td>
+                  <td className={`px-5 py-3 text-right ${Number(b.largest_mb) > 1 ? 'text-yellow-300' : 'text-muted-foreground/80'}`}>
                     {Number(b.largest_mb).toFixed(2)} MB
                   </td>
                 </tr>
@@ -193,15 +193,15 @@ function TopFilesTable({ bucket }: { bucket: string }) {
 
   return (
     <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
-      <div className="px-5 py-2 border-b border-gray-800 text-xs uppercase tracking-wider text-gray-500">
+      <div className="px-5 py-2 border-b border-gray-800 text-xs uppercase tracking-wider text-muted-foreground">
         {bucket}
       </div>
       <table className="w-full text-sm">
         <tbody>
           {(data ?? []).map((f, i) => (
             <tr key={f.name} className={i % 2 ? 'bg-gray-950/50' : ''}>
-              <td className="px-5 py-2 text-gray-300 truncate max-w-[400px]">{f.name}</td>
-              <td className={`px-5 py-2 text-right ${f.size_kb > 500 ? 'text-yellow-300' : 'text-gray-400'}`}>
+              <td className="px-5 py-2 text-foreground/85 truncate max-w-[400px]">{f.name}</td>
+              <td className={`px-5 py-2 text-right ${f.size_kb > 500 ? 'text-yellow-300' : 'text-muted-foreground/80'}`}>
                 {f.size_kb > 1024 ? `${(f.size_kb / 1024).toFixed(1)} MB` : `${Math.round(f.size_kb)} KB`}
               </td>
               <td className="px-5 py-2 text-right text-muted-foreground text-xs">
@@ -210,7 +210,7 @@ function TopFilesTable({ bucket }: { bucket: string }) {
             </tr>
           ))}
           {(!data || data.length === 0) && (
-            <tr><td className="px-5 py-3 text-center text-gray-500" colSpan={3}>Sin archivos</td></tr>
+            <tr><td className="px-5 py-3 text-center text-muted-foreground" colSpan={3}>Sin archivos</td></tr>
           )}
         </tbody>
       </table>

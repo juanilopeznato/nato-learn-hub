@@ -57,14 +57,14 @@ const PathsSection = () => {
                 <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
                   {path.level}
                 </span>
-                <h3 className="font-heading text-xl font-semibold text-gray-900">
+                <h3 className="font-heading text-xl font-semibold text-foreground">
                   {path.title}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   {path.description}
                 </p>
                 
-                <div className="flex items-center gap-4 text-sm text-gray-400">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground/80">
                   <span className="flex items-center gap-1">
                     <BookOpen className="w-4 h-4" />
                     {path.lessons} lecciones

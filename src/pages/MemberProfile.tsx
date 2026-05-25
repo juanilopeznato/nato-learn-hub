@@ -21,7 +21,7 @@ const ACTION_LABELS: Record<string, string> = {
 const LEVEL_LABELS = ['', 'Aprendiz', 'Explorador', 'Avanzado', 'Experto', 'Maestro']
 
 function LevelBadge({ level }: { level: number }) {
-  const colors = ['', 'bg-gray-100 text-gray-600', 'bg-blue-50 text-blue-600', 'bg-purple-50 text-purple-600', 'bg-orange-50 text-orange-600', 'bg-yellow-50 text-yellow-700']
+  const colors = ['', 'bg-secondary text-foreground/70', 'bg-blue-50 text-blue-600', 'bg-purple-50 text-purple-600', 'bg-orange-50 text-orange-600', 'bg-yellow-50 text-yellow-700']
   return (
     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colors[level] ?? colors[1]}`}>
       Nv. {level} · {LEVEL_LABELS[level] ?? ''}
@@ -104,7 +104,7 @@ export default function MemberProfile() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-secondary/30 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-gray-500">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <span className="text-sm">Cargando perfil...</span>
         </div>
@@ -151,14 +151,14 @@ export default function MemberProfile() {
               className="shrink-0 bg-primary/10 text-primary"
             />
             <div className="flex-1 min-w-0 space-y-1.5">
-              <h1 className="font-heading text-xl font-bold text-gray-900">{member.full_name}</h1>
+              <h1 className="font-heading text-xl font-bold text-foreground">{member.full_name}</h1>
               <LevelBadge level={member.level ?? 1} />
-              <div className="flex items-center gap-3 text-sm text-gray-500">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 text-yellow-500" />
                   {member.points ?? 0} puntos totales
                 </span>
-                <span className="text-gray-300">·</span>
+                <span className="text-foreground/85">·</span>
                 <span>Desde {formatDistanceToNow(new Date(member.created_at), { addSuffix: true, locale: es })}</span>
               </div>
             </div>
@@ -207,7 +207,7 @@ export default function MemberProfile() {
         {/* Enrolled courses */}
         {enrollments.length > 0 && (
           <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <BookOpen className="w-4 h-4 text-primary" />
               Cursos inscriptos
             </h3>
@@ -228,17 +228,17 @@ export default function MemberProfile() {
         {/* Recent activity */}
         {activity.length > 0 && (
           <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Zap className="w-4 h-4 text-yellow-500" />
               Actividad reciente
             </h3>
             <div className="space-y-2">
               {activity.map((a, i) => (
                 <div key={i} className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600">{ACTION_LABELS[a.action] ?? a.action}</span>
+                  <span className="text-sm text-foreground/70">{ACTION_LABELS[a.action] ?? a.action}</span>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-xs font-semibold text-primary">+{a.delta} pts</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-muted-foreground/80">
                       {formatDistanceToNow(new Date(a.created_at), { addSuffix: true, locale: es })}
                     </span>
                   </div>

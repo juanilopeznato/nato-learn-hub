@@ -36,7 +36,7 @@ function NotifIcon({ type }: { type: Notification['type'] }) {
     case 'post_comment':     return <MessageSquare className={`${cls} text-violet-500`} />
     case 'new_lesson':       return <BookOpen className={`${cls} text-primary`} />
     case 'course_completed': return <Trophy className={`${cls} text-yellow-500`} />
-    default:                 return <Bell className={`${cls} text-gray-400`} />
+    default:                 return <Bell className={`${cls} text-muted-foreground/80`} />
   }
 }
 
@@ -114,7 +114,7 @@ export function NotificationBell({ profileId }: Props) {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm" className="relative p-2">
-          <Bell className="w-5 h-5 text-gray-500" />
+          <Bell className="w-5 h-5 text-muted-foreground" />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center px-1 leading-none">
               {unreadCount > 99 ? '99+' : unreadCount}
@@ -124,7 +124,7 @@ export function NotificationBell({ profileId }: Props) {
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
-          <span className="font-heading text-sm font-semibold text-gray-900">Notificaciones</span>
+          <span className="font-heading text-sm font-semibold text-foreground">Notificaciones</span>
           {unreadCount > 0 && (
             <button
               onClick={markAllRead}
@@ -137,7 +137,7 @@ export function NotificationBell({ profileId }: Props) {
 
         <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
           {allNotifications.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-gray-400">
+            <div className="px-4 py-8 text-center text-sm text-muted-foreground/80">
               No tenés notificaciones
             </div>
           ) : (
@@ -150,7 +150,7 @@ export function NotificationBell({ profileId }: Props) {
                     <NotifIcon type={notif.type} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-xs leading-snug ${!notif.read ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                    <p className={`text-xs leading-snug ${!notif.read ? 'font-semibold text-foreground' : 'text-foreground/85'}`}>
                       {notif.title}
                     </p>
                     {notif.body && (
@@ -174,7 +174,7 @@ export function NotificationBell({ profileId }: Props) {
         </div>
 
         {allNotifications.length > 0 && unreadCount === 0 && (
-          <div className="px-4 py-2 border-t border-border/40 text-center text-xs text-gray-400">
+          <div className="px-4 py-2 border-t border-border/40 text-center text-xs text-muted-foreground/80">
             Todo al día
           </div>
         )}

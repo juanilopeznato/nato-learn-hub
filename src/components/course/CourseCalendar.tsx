@@ -36,7 +36,7 @@ const TYPE_BADGES: Record<EventType, string> = {
   live_session: 'bg-purple-100 text-purple-700',
   webinar: 'bg-blue-100 text-blue-700',
   deadline: 'bg-red-100 text-red-700',
-  other: 'bg-gray-100 text-gray-600',
+  other: 'bg-secondary text-foreground/70',
 }
 
 const TYPE_LABELS: Record<EventType, string> = {
@@ -136,7 +136,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
           {upcoming.slice(0, 3).map(event => (
             <div key={event.id} className={`border-l-2 pl-2 py-1 ${TYPE_COLORS[event.event_type]}`}>
               <p className="text-xs font-medium text-gray-800 leading-snug line-clamp-1">{event.title}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground/80">
                 {format(new Date(event.starts_at), "d MMM 'a las' HH:mm", { locale: es })}
               </p>
               {event.meeting_url && (
@@ -153,7 +153,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
             </div>
           ))}
           {upcoming.length > 3 && (
-            <p className="text-xs text-gray-400">+{upcoming.length - 3} más</p>
+            <p className="text-xs text-muted-foreground/80">+{upcoming.length - 3} más</p>
           )}
         </div>
       </div>
@@ -165,7 +165,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-heading text-xl font-bold text-gray-900">Clases en vivo</h2>
+          <h2 className="font-heading text-xl font-bold text-foreground">Clases en vivo</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
             Programá sesiones en vivo, webinars o entregas para los alumnos de este curso.
           </p>
@@ -180,11 +180,11 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
 
       {isLoading ? (
         <div className="space-y-2">
-          {[1, 2].map(i => <div key={i} className="h-16 bg-gray-100 rounded-xl animate-pulse" />)}
+          {[1, 2].map(i => <div key={i} className="h-16 bg-secondary rounded-xl animate-pulse" />)}
         </div>
       ) : displayed.length === 0 && !showPast ? (
         <div className="bg-white border border-border/60 rounded-xl p-10 text-center space-y-3">
-          <CalendarDays className="w-10 h-10 text-gray-300 mx-auto" />
+          <CalendarDays className="w-10 h-10 text-foreground/85 mx-auto" />
           <p className="text-muted-foreground text-sm">No hay clases programadas próximamente.</p>
           {canManage && (
             <Button variant="hero-outline" size="sm" onClick={() => setShowDialog(true)}>
@@ -204,18 +204,18 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
               >
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-gray-900">{event.title}</span>
+                    <span className="font-semibold text-foreground">{event.title}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${TYPE_BADGES[event.event_type]}`}>
                       {TYPE_LABELS[event.event_type]}
                     </span>
                     {inPast && <Badge variant="secondary" className="text-xs">Pasado</Badge>}
                   </div>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     {format(new Date(event.starts_at), "EEEE d 'de' MMMM 'a las' HH:mm", { locale: es })}
                     {event.ends_at && ` — ${format(new Date(event.ends_at), 'HH:mm')}`}
                   </p>
                   {event.description && (
-                    <p className="text-sm text-gray-600">{event.description}</p>
+                    <p className="text-sm text-foreground/70">{event.description}</p>
                   )}
                   {event.meeting_url && (
                     <a

@@ -95,10 +95,10 @@ export function FeedbackButton({
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h2 className="font-heading font-semibold text-gray-900">{label}</h2>
+                <h2 className="font-heading font-semibold text-foreground">{label}</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Contanos qué pasó. Sumamos contexto técnico automáticamente.</p>
               </div>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar" className="text-muted-foreground/80 hover:text-gray-700">
+              <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar" className="text-muted-foreground/80 hover:text-foreground/85">
                 <X className="w-4 h-4" />
               </button>
             </div>

@@ -36,7 +36,7 @@ const CATEGORY_STYLES: Record<Category, { label: string; class: string }> = {
   question: { label: '❓ Pregunta',  class: 'bg-blue-50 text-blue-600' },
   win:      { label: '🏆 Logro',     class: 'bg-green-50 text-green-600' },
   resource: { label: '📎 Recurso',   class: 'bg-orange-50 text-orange-600' },
-  general:  { label: '💬 General',   class: 'bg-gray-100 text-gray-600' },
+  general:  { label: '💬 General',   class: 'bg-secondary text-foreground/70' },
 }
 
 function Avatar({ name, url }: { name: string; url: string | null }) {
@@ -116,12 +116,12 @@ function CommentSection({ postId, tenantId, profileId }: { postId: string; tenan
           <Avatar name={c.author?.full_name ?? 'Usuario'} url={c.author?.avatar_url ?? null} />
           <div className="flex-1 bg-secondary/30 rounded-xl px-3 py-2">
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-sm font-semibold text-gray-900">{c.author?.full_name ?? 'Usuario'}</span>
-              <span className="text-xs text-gray-400">
+              <span className="text-sm font-semibold text-foreground">{c.author?.full_name ?? 'Usuario'}</span>
+              <span className="text-xs text-muted-foreground/80">
                 {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: es })}
               </span>
             </div>
-            <p className="text-sm text-gray-700">{c.body}</p>
+            <p className="text-sm text-foreground/85">{c.body}</p>
           </div>
         </div>
       ))}
@@ -209,13 +209,13 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
             <Link to={`/members/${post.author?.id}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
               {post.author?.full_name ?? 'Usuario'}
             </Link>
-            <span className="text-xs text-muted-foreground/80 bg-gray-100 px-1.5 py-0.5 rounded-full">
+            <span className="text-xs text-muted-foreground/80 bg-secondary px-1.5 py-0.5 rounded-full">
               Nv. {post.author?.level ?? 1}
             </span>
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cat.class}`}>{cat.label}</span>
             {post.is_pinned && <Pin className="w-3 h-3 text-primary" />}
           </div>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-muted-foreground/80">
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: es })}
           </span>
         </div>

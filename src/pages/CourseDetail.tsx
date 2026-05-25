@@ -351,14 +351,14 @@ export default function CourseDetail() {
   if (isLoading) return <CourseDetailSkeleton />
 
   if (!course) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="max-w-sm w-full bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-4">
-        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto" aria-hidden>
-          <BookOpen className="w-6 h-6 text-gray-400" />
+    <div className="min-h-screen bg-secondary/30 flex items-center justify-center p-6">
+      <div className="max-w-sm w-full bg-white rounded-2xl border border-border/60 p-8 text-center space-y-4">
+        <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mx-auto" aria-hidden>
+          <BookOpen className="w-6 h-6 text-muted-foreground/80" />
         </div>
         <div className="space-y-1">
-          <h1 className="font-heading text-lg font-semibold text-gray-900">No encontramos este curso</h1>
-          <p className="text-sm text-gray-500">El link puede estar mal o el curso ya no está disponible.</p>
+          <h1 className="font-heading text-lg font-semibold text-foreground">No encontramos este curso</h1>
+          <p className="text-sm text-muted-foreground">El link puede estar mal o el curso ya no está disponible.</p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="hero" className="flex-1">
@@ -572,9 +572,9 @@ export default function CourseDetail() {
 
                   {/* Urgencia social — contador de alumnos */}
                   {(enrollmentCount ?? 0) > 5 && (
-                    <p className="text-xs text-center text-gray-500 flex items-center justify-center gap-1">
+                    <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1">
                       <Users className="w-3.5 h-3.5 text-primary" />
-                      <span><strong className="text-gray-700">{enrollmentCount}</strong> personas ya inscriptas</span>
+                      <span><strong className="text-foreground/85">{enrollmentCount}</strong> personas ya inscriptas</span>
                     </p>
                   )}
 
@@ -621,19 +621,19 @@ export default function CourseDetail() {
                   )}
 
                   {!user && (
-                    <p className="text-xs text-center text-gray-500">
+                    <p className="text-xs text-center text-muted-foreground">
                       <Link to="/login" className="text-primary hover:underline">Iniciá sesión</Link> para inscribirte
                     </p>
                   )}
 
-                  <div className="border-t border-gray-100 pt-4 space-y-2">
+                  <div className="border-t border-border/40 pt-4 space-y-2">
                     {[
                       'Acceso inmediato al contenido',
                       'Certificado al completar',
                       'Comunidad de estudiantes',
                       'Recursos descargables',
                     ].map(item => (
-                      <div key={item} className="flex items-center gap-2 text-xs text-gray-600">
+                      <div key={item} className="flex items-center gap-2 text-xs text-foreground/70">
                         <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
                         {item}
                       </div>
@@ -641,14 +641,14 @@ export default function CourseDetail() {
                     {avgRating !== null && (
                       <a
                         href="#reviews"
-                        className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary transition-colors pt-1"
+                        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors pt-1"
                       >
                         <div className="flex">
                           {[1,2,3,4,5].map(s => (
                             <Star key={s} className={`w-3 h-3 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
                           ))}
                         </div>
-                        <span className="font-semibold text-gray-700">{avgRating.toFixed(1)}</span>
+                        <span className="font-semibold text-foreground/85">{avgRating.toFixed(1)}</span>
                         <span className="hover:underline">({reviews?.length ?? 0} {(reviews?.length ?? 0) === 1 ? 'opinión' : 'opiniones'})</span>
                       </a>
                     )}
@@ -668,12 +668,12 @@ export default function CourseDetail() {
             {/* Qué vas a aprender */}
             {outcomes.filter(Boolean).length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold text-gray-900 mb-6">¿Qué vas a aprender?</h2>
+                <h2 className="font-heading text-2xl font-bold text-foreground mb-6">¿Qué vas a aprender?</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {outcomes.filter(Boolean).map((outcome, i) => (
                     <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50 border border-green-100">
                       <CheckCircle className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700">{outcome}</span>
+                      <span className="text-sm text-foreground/85">{outcome}</span>
                     </div>
                   ))}
                 </div>
@@ -683,9 +683,9 @@ export default function CourseDetail() {
             {/* Para quién es */}
             {forWho && (
               <section>
-                <h2 className="font-heading text-2xl font-bold text-gray-900 mb-4">¿Para quién es este curso?</h2>
+                <h2 className="font-heading text-2xl font-bold text-foreground mb-4">¿Para quién es este curso?</h2>
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
-                  <MarkdownLight className="text-gray-700 leading-relaxed">{forWho}</MarkdownLight>
+                  <MarkdownLight className="text-foreground/85 leading-relaxed">{forWho}</MarkdownLight>
                 </div>
               </section>
             )}
@@ -693,47 +693,47 @@ export default function CourseDetail() {
             {/* Contenido del curso */}
             <section>
               <div className="flex items-baseline justify-between mb-6">
-                <h2 className="font-heading text-2xl font-bold text-gray-900">Contenido del curso</h2>
-                <span className="text-sm text-gray-500">{sortedModules.length} módulos · {totalLessons} lecciones</span>
+                <h2 className="font-heading text-2xl font-bold text-foreground">Contenido del curso</h2>
+                <span className="text-sm text-muted-foreground">{sortedModules.length} módulos · {totalLessons} lecciones</span>
               </div>
               <div className="space-y-2">
                 {sortedModules.map(module => (
-                  <div key={module.id} className="border border-gray-200 rounded-xl overflow-hidden">
+                  <div key={module.id} className="border border-border/60 rounded-xl overflow-hidden">
                     <button
                       type="button"
-                      className="w-full min-h-[56px] flex items-center justify-between p-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                      className="w-full min-h-[56px] flex items-center justify-between p-4 text-left hover:bg-secondary/30 active:bg-secondary transition-colors"
                       onClick={() => toggleModule(module.id)}
                       aria-expanded={expandedModules.has(module.id)}
                       aria-label={`${expandedModules.has(module.id) ? 'Cerrar' : 'Abrir'} módulo ${module.title}`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="font-semibold text-gray-900">{module.title}</span>
-                        <span className="text-xs text-gray-400 hidden sm:block">{module.lessons?.length ?? 0} lecciones</span>
+                        <span className="font-semibold text-foreground">{module.title}</span>
+                        <span className="text-xs text-muted-foreground/80 hidden sm:block">{module.lessons?.length ?? 0} lecciones</span>
                       </div>
                       {expandedModules.has(module.id)
-                        ? <ChevronUp className="w-5 h-5 text-gray-400 shrink-0" aria-hidden />
-                        : <ChevronDown className="w-5 h-5 text-gray-400 shrink-0" aria-hidden />
+                        ? <ChevronUp className="w-5 h-5 text-muted-foreground/80 shrink-0" aria-hidden />
+                        : <ChevronDown className="w-5 h-5 text-muted-foreground/80 shrink-0" aria-hidden />
                       }
                     </button>
                     {expandedModules.has(module.id) && (
-                      <div className="border-t border-gray-100 divide-y divide-gray-50">
+                      <div className="border-t border-border/40 divide-y divide-gray-50">
                         {[...(module.lessons ?? [])].sort((a, b) => a.order_index - b.order_index).map(lesson => (
                           <div key={lesson.id} className="flex items-center justify-between px-4 py-3 bg-gray-50/50">
                             <div className="flex items-center gap-3">
                               {lesson.is_free_preview
                                 ? <Play className="w-3.5 h-3.5 text-primary shrink-0" />
                                 : enrollment
-                                ? <Play className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                                : <Lock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                                ? <Play className="w-3.5 h-3.5 text-muted-foreground/80 shrink-0" />
+                                : <Lock className="w-3.5 h-3.5 text-foreground/85 shrink-0" />
                               }
-                              <span className="text-sm text-gray-700">{lesson.title}</span>
+                              <span className="text-sm text-foreground/85">{lesson.title}</span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               {lesson.is_free_preview && (
                                 <span className="text-xs text-primary font-medium">Vista previa</span>
                               )}
                               {lesson.duration_seconds && (
-                                <span className="text-xs text-gray-400">
+                                <span className="text-xs text-muted-foreground/80">
                                   {Math.floor(lesson.duration_seconds / 60)}min
                                 </span>
                               )}
@@ -750,7 +750,7 @@ export default function CourseDetail() {
             {/* Instructor */}
             {instructorBio && (
               <section>
-                <h2 className="font-heading text-2xl font-bold text-gray-900 mb-6">Tu instructor</h2>
+                <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Tu instructor</h2>
                 <div className="flex items-start gap-5">
                   {instructorAvatar ? (
                     <SmartAvatar src={instructorAvatar} alt="Instructor" size={80} className="shrink-0 border-2 border-primary/20" />
@@ -760,7 +760,7 @@ export default function CourseDetail() {
                     </div>
                   )}
                   <div className="space-y-2">
-                    <MarkdownLight className="text-gray-700 leading-relaxed">{instructorBio}</MarkdownLight>
+                    <MarkdownLight className="text-foreground/85 leading-relaxed">{instructorBio}</MarkdownLight>
                   </div>
                 </div>
               </section>
@@ -769,20 +769,20 @@ export default function CourseDetail() {
             {/* FAQ */}
             {faqItems.filter(f => f.q).length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold text-gray-900 mb-6">Preguntas frecuentes</h2>
+                <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Preguntas frecuentes</h2>
                 <div className="space-y-2">
                   {faqItems.filter(f => f.q).map((item, i) => (
-                    <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div key={i} className="border border-border/60 rounded-xl overflow-hidden">
                       <button
-                        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center justify-between p-4 text-left hover:bg-secondary/30 transition-colors"
                         onClick={() => toggleFaq(i)}
                       >
-                        <span className="font-medium text-gray-900">{item.q}</span>
-                        {expandedFaq.has(i) ? <ChevronUp className="w-4 h-4 text-gray-400 shrink-0" /> : <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />}
+                        <span className="font-medium text-foreground">{item.q}</span>
+                        {expandedFaq.has(i) ? <ChevronUp className="w-4 h-4 text-muted-foreground/80 shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground/80 shrink-0" />}
                       </button>
                       {expandedFaq.has(i) && (
-                        <div className="border-t border-gray-100 px-4 py-4 bg-gray-50/50">
-                          <p className="text-sm text-gray-600 leading-relaxed">{item.a}</p>
+                        <div className="border-t border-border/40 px-4 py-4 bg-gray-50/50">
+                          <p className="text-sm text-foreground/70 leading-relaxed">{item.a}</p>
                         </div>
                       )}
                     </div>
@@ -795,7 +795,7 @@ export default function CourseDetail() {
             {((reviews && reviews.length > 0) || (enrollment && myEnrollmentId && !myReview)) && (
               <section id="reviews">
                 <div className="flex items-baseline gap-3 mb-6">
-                  <h2 className="font-heading text-2xl font-bold text-gray-900">Opiniones</h2>
+                  <h2 className="font-heading text-2xl font-bold text-foreground">Opiniones</h2>
                   {avgRating !== null && (
                     <div className="flex items-center gap-1.5">
                       <div className="flex">
@@ -803,16 +803,16 @@ export default function CourseDetail() {
                           <Star key={s} className={`w-4 h-4 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
                         ))}
                       </div>
-                      <span className="text-sm font-semibold text-gray-700">{avgRating.toFixed(1)}</span>
-                      <span className="text-sm text-gray-400">({reviews?.length ?? 0} {(reviews?.length ?? 0) === 1 ? 'opinión' : 'opiniones'})</span>
+                      <span className="text-sm font-semibold text-foreground/85">{avgRating.toFixed(1)}</span>
+                      <span className="text-sm text-muted-foreground/80">({reviews?.length ?? 0} {(reviews?.length ?? 0) === 1 ? 'opinión' : 'opiniones'})</span>
                     </div>
                   )}
                 </div>
 
                 {/* Form: dejar review */}
                 {enrollment && myEnrollmentId && !myReview && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6 space-y-3">
-                    <p className="text-sm font-semibold text-gray-700">¿Qué te pareció el curso?</p>
+                  <div className="bg-secondary/30 border border-border/60 rounded-xl p-5 mb-6 space-y-3">
+                    <p className="text-sm font-semibold text-foreground/85">¿Qué te pareció el curso?</p>
                     <div className="flex gap-1">
                       {[1,2,3,4,5].map(s => (
                         <button
@@ -832,7 +832,7 @@ export default function CourseDetail() {
                           value={reviewComment}
                           onChange={e => setReviewComment(e.target.value)}
                           rows={3}
-                          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
+                          className="w-full rounded-lg border border-border/60 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
                         />
                         <Button size="sm" onClick={submitReview} disabled={reviewSubmitting}>
                           {reviewSubmitting ? 'Enviando...' : 'Enviar opinión'}
@@ -855,15 +855,15 @@ export default function CourseDetail() {
                       />
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-gray-900">{r.reviewer?.full_name ?? 'Estudiante'}</span>
+                          <span className="text-sm font-semibold text-foreground">{r.reviewer?.full_name ?? 'Estudiante'}</span>
                           <div className="flex">
                             {[1,2,3,4,5].map(s => (
                               <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
                             ))}
                           </div>
-                          <span className="text-xs text-gray-400">{new Date(r.created_at).toLocaleDateString('es-AR')}</span>
+                          <span className="text-xs text-muted-foreground/80">{new Date(r.created_at).toLocaleDateString('es-AR')}</span>
                         </div>
-                        {r.comment && <p className="text-sm text-gray-600 leading-relaxed">{r.comment}</p>}
+                        {r.comment && <p className="text-sm text-foreground/70 leading-relaxed">{r.comment}</p>}
                       </div>
                     </div>
                   ))}
@@ -875,18 +875,18 @@ export default function CourseDetail() {
           {/* Right sidebar (desktop) — sticky CTA */}
           <div className="hidden lg:block lg:col-span-1">
             <div className="sticky top-24 space-y-4">
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-6 space-y-4">
+              <div className="bg-white border border-border/60 rounded-2xl shadow-lg p-6 space-y-4">
                 <div>
                   {course.is_free ? (
-                    <span className="font-heading text-3xl font-bold text-gray-900">Gratis</span>
+                    <span className="font-heading text-3xl font-bold text-foreground">Gratis</span>
                   ) : (
                     <div className="space-y-1">
                       <div className="flex items-baseline gap-2 flex-wrap">
-                        <span className="font-heading text-3xl font-bold text-gray-900">
+                        <span className="font-heading text-3xl font-bold text-foreground">
                           ARS {discountedPrice.toLocaleString('es-AR')}
                         </span>
                         {(appliedCoupon || originalPrice > 0) && (
-                          <span className="text-gray-400 text-lg line-through">
+                          <span className="text-muted-foreground/80 text-lg line-through">
                             ARS {Number(course.price).toLocaleString('es-AR')}
                           </span>
                         )}
@@ -897,7 +897,7 @@ export default function CourseDetail() {
                         )}
                       </div>
                       {originalPrice > 0 && !appliedCoupon && (
-                        <p className="text-sm text-gray-400 line-through">
+                        <p className="text-sm text-muted-foreground/80 line-through">
                           Antes ARS {originalPrice.toLocaleString('es-AR')}
                         </p>
                       )}
@@ -960,7 +960,7 @@ export default function CourseDetail() {
 
                 <div className="space-y-2 border-t pt-4">
                   {['Acceso inmediato', 'Certificado al completar', 'Comunidad incluida', 'Recursos descargables'].map(item => (
-                    <div key={item} className="flex items-center gap-2 text-xs text-gray-600">
+                    <div key={item} className="flex items-center gap-2 text-xs text-foreground/70">
                       <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
                       {item}
                     </div>
@@ -972,7 +972,7 @@ export default function CourseDetail() {
               <div className="text-center">
                 <button
                   onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success('Link copiado') }}
-                  className="text-xs text-gray-400 hover:text-primary transition-colors flex items-center gap-1 mx-auto"
+                  className="text-xs text-muted-foreground/80 hover:text-primary transition-colors flex items-center gap-1 mx-auto"
                 >
                   <ExternalLink className="w-3 h-3" />
                   Compartir este curso
@@ -984,7 +984,7 @@ export default function CourseDetail() {
       </div>
 
       {/* Mobile sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 p-3 shadow-lg">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border/60 p-3 shadow-lg">
         <Button
           variant="hero"
           size="lg"

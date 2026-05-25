@@ -278,7 +278,7 @@ export default function TenantSettings() {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/instructor">Panel Instructor</Link>
             </Button>
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400">
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground/80">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -287,7 +287,7 @@ export default function TenantSettings() {
 
       <main className="container mx-auto px-4 py-10 max-w-3xl space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-gray-900">Configuración de la escuela</h1>
+          <h1 className="font-heading text-3xl font-bold text-foreground">Configuración de la escuela</h1>
           <p className="text-muted-foreground mt-1">Personalizá tu plataforma y conectá tus herramientas de venta</p>
         </div>
 
@@ -318,7 +318,7 @@ export default function TenantSettings() {
           {/* Branding */}
           <TabsContent value="brand" className="mt-6">
             <form onSubmit={brandForm.handleSubmit(d => saveBrand.mutate(d))} className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
-              <h2 className="font-heading font-semibold text-gray-900">Identidad de tu escuela</h2>
+              <h2 className="font-heading font-semibold text-foreground">Identidad de tu escuela</h2>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -385,14 +385,14 @@ export default function TenantSettings() {
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500" />
                     <div>
-                      <h2 className="font-heading font-semibold text-gray-900">Mercado Pago conectado</h2>
+                      <h2 className="font-heading font-semibold text-foreground">Mercado Pago conectado</h2>
                       <p className="text-xs text-muted-foreground/80 mt-0.5">ID: {fullTenant.mp_collector_id}</p>
                     </div>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-2 text-gray-500"
+                    className="gap-2 text-muted-foreground"
                     onClick={() => {
                       if (!tenant?.id) return
                       window.location.href = buildMpOAuthUrl(tenant.id)
@@ -402,14 +402,14 @@ export default function TenantSettings() {
                     Reconectar
                   </Button>
                 </div>
-                <p className="text-sm text-gray-500">
-                  Cada venta va directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-gray-700">5% de comisión</strong> automáticamente en cada cobro.
+                <p className="text-sm text-muted-foreground">
+                  Cada venta va directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-foreground/85">5% de comisión</strong> automáticamente en cada cobro.
                 </p>
               </div>
             ) : (
               <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
-                <h2 className="font-heading font-semibold text-gray-900">Conectá tu cuenta de Mercado Pago</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="font-heading font-semibold text-foreground">Conectá tu cuenta de Mercado Pago</h2>
+                <p className="text-sm text-muted-foreground">
                   Para recibir pagos, necesitás conectar tu cuenta de Mercado Pago. El proceso tarda menos de un minuto y es completamente seguro — nunca vemos tu contraseña.
                 </p>
 
@@ -421,7 +421,7 @@ export default function TenantSettings() {
                   ].map(step => (
                     <li key={step.n} className="flex items-center gap-3">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">{step.n}</span>
-                      <p className="text-sm text-gray-600">{step.text}</p>
+                      <p className="text-sm text-foreground/70">{step.text}</p>
                     </li>
                   ))}
                 </ol>
@@ -448,7 +448,7 @@ export default function TenantSettings() {
           {/* Integrations */}
           <TabsContent value="integrations" className="mt-6">
             <form onSubmit={integrationsForm.handleSubmit(d => saveIntegrations.mutate(d))} className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
-              <h2 className="font-heading font-semibold text-gray-900">Integraciones</h2>
+              <h2 className="font-heading font-semibold text-foreground">Integraciones</h2>
 
               <div className="space-y-1.5">
                 <Label>Meta Pixel ID (escuela)</Label>
@@ -456,7 +456,7 @@ export default function TenantSettings() {
                   placeholder="123456789012345"
                   {...integrationsForm.register('meta_pixel_id')}
                 />
-                <p className="text-xs text-gray-500">Se activa en todas las landings. Podés sobreescribir por curso.</p>
+                <p className="text-xs text-muted-foreground">Se activa en todas las landings. Podés sobreescribir por curso.</p>
               </div>
 
               <div className="space-y-1.5">
@@ -467,7 +467,7 @@ export default function TenantSettings() {
                   placeholder={fullTenant?.has_resend_api_key ? '••••••••••••• (configurada)' : 're_...'}
                   {...integrationsForm.register('resend_api_key')}
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {fullTenant?.has_resend_api_key ? (
                     <>Hay una key guardada. Pegá una nueva acá solo si querés reemplazarla. Por seguridad nunca la mostramos.</>
                   ) : (
@@ -497,7 +497,7 @@ export default function TenantSettings() {
                 <div className={`bg-white rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-red-300' : expiringSoon ? 'border-orange-300' : 'border-border/60'}`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="font-heading font-semibold text-gray-900">Tu plan actual</h2>
+                      <h2 className="font-heading font-semibold text-foreground">Tu plan actual</h2>
                       <p className="text-sm text-muted-foreground mt-0.5">
                         {isExpired
                           ? '⚠️ Tu plan venció — renovalo para seguir usando todas las funciones'
@@ -513,7 +513,7 @@ export default function TenantSettings() {
                     </Badge>
                   </div>
                   {(isExpired || expiringSoon) && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       Elegí un plan abajo para renovar o actualizar tu suscripción.
                     </p>
                   )}
@@ -525,7 +525,7 @@ export default function TenantSettings() {
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setBillingAnnual(false)}
-                className={`text-sm font-medium transition-colors ${!billingAnnual ? 'text-gray-900' : 'text-muted-foreground/80 hover:text-gray-600'}`}
+                className={`text-sm font-medium transition-colors ${!billingAnnual ? 'text-foreground' : 'text-muted-foreground/80 hover:text-foreground/70'}`}
               >
                 Mensual
               </button>
@@ -537,7 +537,7 @@ export default function TenantSettings() {
               </button>
               <button
                 onClick={() => setBillingAnnual(true)}
-                className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${billingAnnual ? 'text-primary' : 'text-muted-foreground/80 hover:text-gray-600'}`}
+                className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${billingAnnual ? 'text-primary' : 'text-muted-foreground/80 hover:text-foreground/70'}`}
               >
                 Anual
                 <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">−17%</span>
@@ -560,15 +560,15 @@ export default function TenantSettings() {
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-heading font-bold text-gray-900">{plan.display_name}</span>
+                        <span className="font-heading font-bold text-foreground">{plan.display_name}</span>
                         {isCurrent && <Badge className="text-xs">Actual</Badge>}
                         {plan.name === 'creador' && !isCurrent && (
                           <Badge variant="outline" className="text-xs text-primary border-primary/30">Popular</Badge>
                         )}
                       </div>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-2xl font-bold text-foreground">
                         {displayPrice === 0 ? 'Gratis' : `ARS ${displayPrice.toLocaleString('es-AR')}`}
-                        {displayPrice > 0 && <span className="text-sm font-normal text-gray-400">/mes</span>}
+                        {displayPrice > 0 && <span className="text-sm font-normal text-muted-foreground/80">/mes</span>}
                       </p>
                       {billingAnnual && monthlyPrice > 0 && (
                         <p className="text-xs text-green-600 mt-0.5">
@@ -578,7 +578,7 @@ export default function TenantSettings() {
                     </div>
                     <ul className="space-y-1.5">
                       {(plan.features as string[]).map((f, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-gray-600">
+                        <li key={i} className="flex items-start gap-2 text-xs text-foreground/70">
                           <Check className="w-3.5 h-3.5 text-green-500 shrink-0 mt-0.5" />
                           {f}
                         </li>
@@ -596,7 +596,7 @@ export default function TenantSettings() {
                       </Button>
                     )}
                     {isCurrent && plan.name !== 'gratis' && (
-                      <Button variant="ghost" size="sm" className="w-full text-gray-400" disabled>
+                      <Button variant="ghost" size="sm" className="w-full text-muted-foreground/80" disabled>
                         Plan actual
                       </Button>
                     )}
@@ -608,18 +608,18 @@ export default function TenantSettings() {
             {/* Payment history */}
             {payments && payments.length > 0 && (
               <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
-                <h2 className="font-heading font-semibold text-gray-900">Historial de pagos</h2>
+                <h2 className="font-heading font-semibold text-foreground">Historial de pagos</h2>
                 <div className="divide-y divide-gray-100">
                   {payments.map(p => (
                     <div key={p.id} className="flex items-center justify-between py-3 text-sm">
                       <div>
-                        <span className="font-medium capitalize text-gray-900">{p.plan_name}</span>
+                        <span className="font-medium capitalize text-foreground">{p.plan_name}</span>
                         <span className="text-muted-foreground/80 ml-2">
                           {new Date(p.created_at).toLocaleDateString('es-AR')}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-foreground">
                           ARS {Number(p.amount_ars).toLocaleString('es-AR')}
                         </span>
                         <Badge variant={p.status === 'approved' ? 'default' : p.status === 'pending' ? 'secondary' : 'destructive'} className="text-xs">
@@ -636,21 +636,21 @@ export default function TenantSettings() {
           {/* Domain */}
           <TabsContent value="domain" className="mt-6">
             <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
-              <h2 className="font-heading font-semibold text-gray-900">Dominio personalizado</h2>
-              <p className="text-sm text-gray-500">
-                Conectá tu propio dominio para que tus estudiantes accedan a tu escuela en <code className="bg-gray-100 px-1 rounded">tuescuela.com</code>.
+              <h2 className="font-heading font-semibold text-foreground">Dominio personalizado</h2>
+              <p className="text-sm text-muted-foreground">
+                Conectá tu propio dominio para que tus estudiantes accedan a tu escuela en <code className="bg-secondary px-1 rounded">tuescuela.com</code>.
               </p>
               <div className="space-y-1.5">
                 <Label>Dominio actual</Label>
                 <div className="flex items-center gap-2">
-                  <Input value={fullTenant?.custom_domain ?? `${tenant?.slug}.nato-university.com`} readOnly className="bg-secondary/30 text-gray-500" />
+                  <Input value={fullTenant?.custom_domain ?? `${tenant?.slug}.nato-university.com`} readOnly className="bg-secondary/30 text-muted-foreground" />
                   <Badge variant="secondary">{fullTenant?.custom_domain ? 'Configurado' : 'Default'}</Badge>
                 </div>
               </div>
               <div className="bg-secondary/30 border border-border/60 rounded-lg p-4 text-sm text-foreground/70 space-y-2">
                 <p className="font-medium">Para configurar tu dominio:</p>
                 <ol className="list-decimal list-inside space-y-1">
-                  <li>Agregá un registro CNAME en tu DNS apuntando a <code className="bg-gray-100 px-1 rounded">app.nato-university.com</code></li>
+                  <li>Agregá un registro CNAME en tu DNS apuntando a <code className="bg-secondary px-1 rounded">app.nato-university.com</code></li>
                   <li>Contactanos por WhatsApp para activar el dominio en el servidor</li>
                 </ol>
               </div>

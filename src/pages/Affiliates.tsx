@@ -89,7 +89,7 @@ export default function Affiliates() {
             <h2 className="font-heading text-2xl font-bold">Por qué unirte</h2>
             <ul className="space-y-3">
               {BENEFITS.map((b, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-300">
+                <li key={i} className="flex items-center gap-3 text-foreground/85">
                   <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />
                   {b}
                 </li>
@@ -100,7 +100,7 @@ export default function Affiliates() {
           {/* CTA final */}
           <div className="text-center space-y-4">
             <h2 className="font-heading text-2xl font-bold">¿Listo para empezar?</h2>
-            <p className="text-gray-400">Creá tu escuela gratis y encontrá tu enlace de afiliado en el panel de instructor.</p>
+            <p className="text-muted-foreground/80">Creá tu escuela gratis y encontrá tu enlace de afiliado en el panel de instructor.</p>
             <Button variant="hero" size="xl" asChild>
               <Link to="/create-school">
                 Crear mi escuela gratis

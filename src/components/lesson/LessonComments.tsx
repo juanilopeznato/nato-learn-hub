@@ -92,7 +92,7 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
         <div className="flex-1 min-w-0">
           <div className="bg-secondary/30 rounded-xl px-3 py-2.5">
             <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="text-sm font-semibold text-gray-900">{comment.author?.full_name ?? 'Usuario'}</span>
+              <span className="text-sm font-semibold text-foreground">{comment.author?.full_name ?? 'Usuario'}</span>
               <span className="text-xs text-muted-foreground/80 shrink-0">
                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: es })}
               </span>
@@ -142,7 +142,7 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
               <div className="flex-1 min-w-0">
                 <div className="bg-secondary/30 rounded-xl px-3 py-2.5">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-sm font-semibold text-gray-900">{reply.author?.full_name ?? 'Usuario'}</span>
+                    <span className="text-sm font-semibold text-foreground">{reply.author?.full_name ?? 'Usuario'}</span>
                     <span className="text-xs text-muted-foreground/80 shrink-0">
                       {formatDistanceToNow(new Date(reply.created_at), { addSuffix: true, locale: es })}
                     </span>
@@ -221,7 +221,7 @@ export function LessonComments({ lessonId, tenantId, profileId, profileRole }: P
 
   return (
     <div className="bg-white border border-border/60 rounded-xl p-4 space-y-5">
-      <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+      <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
         <MessageCircle className="w-4 h-4" />
         Comentarios ({comments.length})
       </h3>

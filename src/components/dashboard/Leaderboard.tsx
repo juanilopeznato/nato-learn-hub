@@ -9,7 +9,7 @@ interface Props {
   currentProfileId?: string
 }
 
-const RANK_STYLES = ['text-yellow-500', 'text-gray-400', 'text-amber-600']
+const RANK_STYLES = ['text-yellow-500', 'text-muted-foreground/80', 'text-amber-600']
 
 export function Leaderboard({ tenantId, currentProfileId }: Props) {
   const { data: rows = [], isLoading } = useQuery({
@@ -36,11 +36,11 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
       {isLoading ? (
         <div className="p-4 space-y-2">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-10 bg-gray-100 rounded-lg animate-pulse" />
+            <div key={i} className="h-10 bg-secondary rounded-lg animate-pulse" />
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <div className="px-4 py-8 text-center text-sm text-gray-400">
+        <div className="px-4 py-8 text-center text-sm text-muted-foreground/80">
           Completá lecciones o comentá para aparecer acá.
         </div>
       ) : (
@@ -54,7 +54,7 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
                 to={`/members/${row.profile_id}`}
                 className={`flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/30 transition-colors ${isMe ? 'bg-primary/5' : ''}`}
               >
-                <span className={`text-sm font-bold w-5 text-center shrink-0 ${RANK_STYLES[i] ?? 'text-gray-400'}`}>
+                <span className={`text-sm font-bold w-5 text-center shrink-0 ${RANK_STYLES[i] ?? 'text-muted-foreground/80'}`}>
                   {i + 1}
                 </span>
                 <SmartAvatar
@@ -70,7 +70,7 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
                   {isMe && <span className="ml-1 text-xs text-primary">(vos)</span>}
                 </span>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-xs text-gray-400">Nv.{row.level}</span>
+                  <span className="text-xs text-muted-foreground/80">Nv.{row.level}</span>
                   <span className="text-xs font-semibold text-primary">{row.points_this_month} pts</span>
                 </div>
               </Link>

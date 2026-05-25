@@ -137,7 +137,7 @@ export default function AdminPanel() {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/dashboard">Vista estudiante</Link>
             </Button>
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400">
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground/80">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -146,7 +146,7 @@ export default function AdminPanel() {
 
       <main className="container mx-auto px-4 py-10 space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-gray-900">Panel Administrador</h1>
+          <h1 className="font-heading text-3xl font-bold text-foreground">Panel Administrador</h1>
           <p className="text-muted-foreground mt-1">Visión global de la plataforma</p>
         </div>
 
@@ -158,8 +158,8 @@ export default function AdminPanel() {
                 <s.icon className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-heading text-gray-900">{s.value}</p>
-                <p className="text-xs text-gray-500">{s.label}</p>
+                <p className="text-2xl font-bold font-heading text-foreground">{s.value}</p>
+                <p className="text-xs text-muted-foreground">{s.label}</p>
               </div>
             </div>
           ))}
@@ -190,7 +190,7 @@ export default function AdminPanel() {
                 <tbody className="divide-y divide-gray-100">
                   {allTenants?.map(t => (
                     <tr key={t.id} className="hover:bg-secondary/30 transition-colors">
-                      <td className="px-4 py-3 font-medium text-gray-900">{t.name}</td>
+                      <td className="px-4 py-3 font-medium text-foreground">{t.name}</td>
                       <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{t.slug}</td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">{t.custom_domain ?? '—'}</td>
                       <td className="px-4 py-3">
@@ -225,7 +225,7 @@ export default function AdminPanel() {
                       <td className="px-4 py-3">
                         <Link to={`/courses/${c.slug}`} className="font-medium text-foreground hover:text-primary flex items-center gap-1">
                           {c.title}
-                          <ChevronRight className="w-3 h-3 text-gray-400" />
+                          <ChevronRight className="w-3 h-3 text-muted-foreground/80" />
                         </Link>
                       </td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">{c.tenants?.name ?? '—'}</td>
@@ -285,12 +285,12 @@ export default function AdminPanel() {
           <TabsContent value="config" className="mt-6">
             <div className="max-w-xl space-y-4">
               <div>
-                <h2 className="font-heading text-lg font-bold text-gray-900">Configuración de la plataforma</h2>
+                <h2 className="font-heading text-lg font-bold text-foreground">Configuración de la plataforma</h2>
                 <p className="text-sm text-muted-foreground mt-1">Parámetros globales de NATO University.</p>
               </div>
 
               {!platformConfig || platformConfig.length === 0 ? (
-                <div className="bg-white border border-border/60 rounded-xl p-8 text-center text-sm text-gray-400">
+                <div className="bg-white border border-border/60 rounded-xl p-8 text-center text-sm text-muted-foreground/80">
                   No hay configuración disponible
                 </div>
               ) : (
@@ -300,11 +300,11 @@ export default function AdminPanel() {
                     const currentEdit = configEdits[cfg.key] ?? cfg.value
                     return (
                       <div key={cfg.key} className="bg-white border border-border/60 rounded-xl p-4 space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">
+                        <Label className="text-sm font-semibold text-foreground/85">
                           {isCommission ? 'Comisión de plataforma (%)' : cfg.key}
                         </Label>
                         {cfg.description && (
-                          <p className="text-xs text-gray-400">{cfg.description}</p>
+                          <p className="text-xs text-muted-foreground/80">{cfg.description}</p>
                         )}
                         <div className="flex gap-2">
                           {isCommission ? (

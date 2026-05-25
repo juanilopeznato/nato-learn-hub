@@ -264,7 +264,7 @@ export default function EmailMarketing() {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/settings">Configuración</Link>
             </Button>
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-gray-400">
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground/80">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -274,7 +274,7 @@ export default function EmailMarketing() {
       <main className="container mx-auto px-4 py-10 max-w-4xl space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-heading text-3xl font-bold text-gray-900">Email Marketing</h1>
+            <h1 className="font-heading text-3xl font-bold text-foreground">Email Marketing</h1>
             <p className="text-muted-foreground mt-1">Creá y enviá campañas a tus estudiantes</p>
           </div>
           <Button variant="hero" onClick={openCreate}>
@@ -307,7 +307,7 @@ export default function EmailMarketing() {
                         {campaign.target_type === 'all' ? 'Todos los estudiantes' : `Curso: ${campaign.course?.title ?? '—'}`}
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground/80">
                       {campaign.sent_at ? (
                         <span>Enviado: {new Date(campaign.sent_at).toLocaleDateString('es-AR')}</span>
                       ) : (
@@ -327,7 +327,7 @@ export default function EmailMarketing() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-500"
+                          className="text-muted-foreground"
                           onClick={e => { e.stopPropagation(); openEdit(campaign) }}
                         >
                           Editar
@@ -344,8 +344,8 @@ export default function EmailMarketing() {
                       </>
                     )}
                     {expandedId === campaign.id
-                      ? <ChevronUp className="w-4 h-4 text-gray-400" />
-                      : <ChevronDown className="w-4 h-4 text-gray-400" />
+                      ? <ChevronUp className="w-4 h-4 text-muted-foreground/80" />
+                      : <ChevronDown className="w-4 h-4 text-muted-foreground/80" />
                     }
                   </div>
                 </div>
@@ -363,8 +363,8 @@ export default function EmailMarketing() {
           </div>
         ) : (
           <div className="bg-white border border-border/60 rounded-2xl p-12 text-center space-y-4">
-            <Mail className="w-12 h-12 text-gray-300 mx-auto" />
-            <p className="text-gray-500">No hay campañas todavía.</p>
+            <Mail className="w-12 h-12 text-foreground/85 mx-auto" />
+            <p className="text-muted-foreground">No hay campañas todavía.</p>
             <Button variant="hero" onClick={openCreate}>
               <Plus className="w-4 h-4" />
               Crear primera campaña
@@ -377,13 +377,13 @@ export default function EmailMarketing() {
       <Dialog open={showEditor} onOpenChange={open => { if (!open) { setShowEditor(false); setEditingCampaign(null); setFormData(defaultFormData) } }}>
         <DialogContent className="bg-white border-border/60 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="font-heading text-gray-900">
+            <DialogTitle className="font-heading text-foreground">
               {editingCampaign ? 'Editar campaña' : 'Nueva campaña'}
             </DialogTitle>
           </DialogHeader>
 
           <Tabs defaultValue="content" className="mt-2">
-            <TabsList className="bg-gray-100 w-full">
+            <TabsList className="bg-secondary w-full">
               <TabsTrigger value="content" className="flex-1">Contenido</TabsTrigger>
               <TabsTrigger value="recipients" className="flex-1">Destinatarios</TabsTrigger>
             </TabsList>
@@ -465,8 +465,8 @@ export default function EmailMarketing() {
                       className="text-primary"
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Todos los estudiantes</p>
-                      <p className="text-xs text-gray-500">Todos los inscriptos en cualquier curso</p>
+                      <p className="text-sm font-medium text-foreground">Todos los estudiantes</p>
+                      <p className="text-xs text-muted-foreground">Todos los inscriptos en cualquier curso</p>
                     </div>
                   </label>
 
@@ -480,8 +480,8 @@ export default function EmailMarketing() {
                       className="text-primary"
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Estudiantes de un curso específico</p>
-                      <p className="text-xs text-gray-500">Solo los inscriptos en el curso seleccionado</p>
+                      <p className="text-sm font-medium text-foreground">Estudiantes de un curso específico</p>
+                      <p className="text-xs text-muted-foreground">Solo los inscriptos en el curso seleccionado</p>
                     </div>
                   </label>
                 </div>
@@ -535,10 +535,10 @@ export default function EmailMarketing() {
       <Dialog open={!!confirmSendCampaign} onOpenChange={open => !open && setConfirmSendCampaign(null)}>
         <DialogContent className="bg-white border-border/60 max-w-sm">
           <DialogHeader>
-            <DialogTitle className="font-heading text-gray-900">¿Enviar campaña?</DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogTitle className="font-heading text-foreground">¿Enviar campaña?</DialogTitle>
+            <DialogDescription className="text-foreground/70">
               Esto enviará el email a{' '}
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-foreground">
                 {recipientCount ?? '...'} estudiante{recipientCount !== 1 ? 's' : ''}
               </span>
               . Esta acción no se puede deshacer.

@@ -77,7 +77,7 @@ function SortableLesson({ id, children }: { id: string; children: React.ReactNod
     <div ref={setNodeRef} style={style} {...attributes} className="flex items-start gap-1">
       <div
         {...listeners}
-        className="shrink-0 cursor-grab active:cursor-grabbing text-gray-300 hover:text-muted-foreground mt-2 touch-none"
+        className="shrink-0 cursor-grab active:cursor-grabbing text-foreground/85 hover:text-muted-foreground mt-2 touch-none"
       >
         <GripVertical className="w-3.5 h-3.5" />
       </div>
@@ -137,7 +137,7 @@ function LessonResources({ lessonId }: { lessonId: string }) {
 
   return (
     <div className="border-t border-blue-200 pt-2 mt-2 space-y-2">
-      <p className="text-xs font-semibold text-gray-600">Recursos descargables</p>
+      <p className="text-xs font-semibold text-foreground/70">Recursos descargables</p>
 
       {resources && resources.length > 0 && (
         <div className="space-y-1">
@@ -369,7 +369,7 @@ export function ModuleList({ courseId }: Props) {
 
   return (
     <div className="space-y-4">
-      <h3 className="font-heading font-semibold text-gray-900">Módulos y lecciones</h3>
+      <h3 className="font-heading font-semibold text-foreground">Módulos y lecciones</h3>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleModuleDragEnd}>
         <SortableContext items={modules?.map(m => m.id) ?? []} strategy={verticalListSortingStrategy}>
@@ -382,8 +382,8 @@ export function ModuleList({ courseId }: Props) {
                     onClick={() => toggleModule(module.id)}
                   >
                     <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expandedModules.has(module.id) ? 'rotate-180' : ''}`} />
-                    <span className="font-medium text-gray-900">{module.title}</span>
-                    <span className="text-xs text-gray-500">({module.lessons?.length ?? 0} lecciones)</span>
+                    <span className="font-medium text-foreground">{module.title}</span>
+                    <span className="text-xs text-muted-foreground">({module.lessons?.length ?? 0} lecciones)</span>
                   </button>
                   <Button
                     variant="ghost"
@@ -477,7 +477,7 @@ export function ModuleList({ courseId }: Props) {
                                   <Button
                                     size="sm"
                                     variant="ghost"
-                                    className="h-7 text-xs gap-1 text-gray-500"
+                                    className="h-7 text-xs gap-1 text-muted-foreground"
                                     onClick={() => setEditingLesson(null)}
                                   >
                                     <X className="w-3 h-3" />
@@ -498,7 +498,7 @@ export function ModuleList({ courseId }: Props) {
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="w-7 h-7 text-muted-foreground/80 hover:text-gray-700"
+                                      className="w-7 h-7 text-muted-foreground/80 hover:text-foreground/85"
                                       onClick={() => startEdit(lesson)}
                                     >
                                       <Pencil className="w-3.5 h-3.5" />
@@ -528,19 +528,19 @@ export function ModuleList({ courseId }: Props) {
 
                     {/* Agregar lección */}
                     <div className="space-y-2 pt-2 border-t border-border/10">
-                      <Label className="text-xs text-gray-500">Nueva lección</Label>
+                      <Label className="text-xs text-muted-foreground">Nueva lección</Label>
                       <Input
                         placeholder="Título de la lección"
                         value={newLessons[module.id]?.title ?? ''}
                         onChange={e => setNewLessons(prev => ({ ...prev, [module.id]: { ...prev[module.id], title: e.target.value, videoUrl: prev[module.id]?.videoUrl ?? '', provider: prev[module.id]?.provider ?? 'youtube' } }))}
-                        className="bg-gray-100 border-border/50 text-foreground text-sm h-8"
+                        className="bg-secondary border-border/50 text-foreground text-sm h-8"
                       />
                       <div className="flex gap-2">
                         <Select
                           value={newLessons[module.id]?.provider ?? 'youtube'}
                           onValueChange={v => setNewLessons(prev => ({ ...prev, [module.id]: { ...prev[module.id], provider: v, title: prev[module.id]?.title ?? '', videoUrl: prev[module.id]?.videoUrl ?? '' } }))}
                         >
-                          <SelectTrigger className="w-28 h-8 bg-gray-100 border-border/50 text-sm">
+                          <SelectTrigger className="w-28 h-8 bg-secondary border-border/50 text-sm">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -552,7 +552,7 @@ export function ModuleList({ courseId }: Props) {
                           placeholder="URL del video"
                           value={newLessons[module.id]?.videoUrl ?? ''}
                           onChange={e => setNewLessons(prev => ({ ...prev, [module.id]: { ...prev[module.id], videoUrl: e.target.value, title: prev[module.id]?.title ?? '', provider: prev[module.id]?.provider ?? 'youtube' } }))}
-                          className="flex-1 bg-gray-100 border-border/50 text-foreground text-sm h-8"
+                          className="flex-1 bg-secondary border-border/50 text-foreground text-sm h-8"
                         />
                       </div>
                       <Button
@@ -581,7 +581,7 @@ export function ModuleList({ courseId }: Props) {
           value={newModuleTitle}
           onChange={e => setNewModuleTitle(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && addModule.mutate()}
-          className="bg-gray-100 border-border/50 text-foreground"
+          className="bg-secondary border-border/50 text-foreground"
         />
         <Button variant="hero-outline" onClick={() => addModule.mutate()} disabled={addModule.isPending}>
           <Plus className="w-4 h-4" />

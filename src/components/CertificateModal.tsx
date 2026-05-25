@@ -91,7 +91,7 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
             {/* Header */}
             <div className="flex items-center justify-center gap-3">
               <Award className="w-8 h-8 text-yellow-500" />
-              <span className="text-sm font-sans tracking-[0.3em] uppercase text-gray-400">{tenantName}</span>
+              <span className="text-sm font-sans tracking-[0.3em] uppercase text-muted-foreground/80">{tenantName}</span>
               <Award className="w-8 h-8 text-yellow-500" />
             </div>
 
@@ -102,7 +102,7 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
 
             <div>
               <p className="text-sm font-sans text-muted-foreground mb-2">Se certifica que</p>
-              <h2 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Georgia, serif' }}>{studentName}</h2>
+              <h2 className="text-4xl font-bold text-foreground" style={{ fontFamily: 'Georgia, serif' }}>{studentName}</h2>
             </div>
 
             <div>
@@ -114,17 +114,17 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
 
             <div className="flex items-end justify-between pt-2">
               <div className="text-left">
-                <p className="text-xs font-sans text-gray-400">Fecha de emisión</p>
+                <p className="text-xs font-sans text-muted-foreground/80">Fecha de emisión</p>
                 <p className="text-sm font-sans text-foreground/70 font-medium">{dateStr}</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center mx-auto mb-1 shadow-lg">
                   <Award className="w-8 h-8 text-white" />
                 </div>
-                <p className="text-xs font-sans text-gray-400">{tenantName}</p>
+                <p className="text-xs font-sans text-muted-foreground/80">{tenantName}</p>
               </div>
               <div className="text-right">
-                <p className="text-xs font-sans text-gray-400">Código de verificación</p>
+                <p className="text-xs font-sans text-muted-foreground/80">Código de verificación</p>
                 <p className="text-sm font-sans text-foreground/70 font-medium tracking-widest">{verificationCode}</p>
               </div>
             </div>
