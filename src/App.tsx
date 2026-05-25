@@ -9,6 +9,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageLoading } from "@/components/PageLoading";
+import { FeedbackButton } from "@/components/FeedbackButton";
+import { useAuth } from "@/context/AuthContext";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -46,6 +48,13 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+/** Solo monta el FeedbackButton si hay user logueado — no aparece en landings. */
+function LoggedFeedbackButton() {
+  const { user } = useAuth()
+  if (!user) return null
+  return <FeedbackButton />
+}
 
 const App = () => (
   <ErrorBoundary>
@@ -106,6 +115,7 @@ const App = () => (
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 </main>
+                <LoggedFeedbackButton />
               </React.Suspense>
             </AuthProvider>
           </BrowserRouter>

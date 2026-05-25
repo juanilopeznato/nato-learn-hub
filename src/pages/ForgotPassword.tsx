@@ -59,6 +59,26 @@ export default function ForgotPassword() {
       }
     } catch { /* sessionStorage puede fallar */ }
 
+    // Rate limit server-side (defense in depth) — 3 resets cada 1h por email
+    try {
+      const { data: allowed } = await supabase.rpc('check_rate_limit', {
+        p_action: 'forgot_password',
+        p_identifier: data.email,
+        p_max: 3,
+        p_window_seconds: 3600,
+      })
+      if (allowed === false) {
+        // Mostramos success genérico para no revelar al atacante que el rate limit triggered
+        // ni filtrar si el email existe o no
+        logger.warn('forgot-password: rate limit hit', { email: data.email })
+        setSuccess(true)
+        return
+      }
+    } catch (e) {
+      // Si la RPC no existe (SQL no aplicado en este env), seguimos sin bloquear
+      logger.debug('rate-limit RPC unavailable, skipping', e)
+    }
+
     const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
       redirectTo: window.location.origin + '/reset-password',
     })

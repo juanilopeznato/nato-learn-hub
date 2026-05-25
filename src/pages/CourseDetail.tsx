@@ -13,6 +13,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { SmartImage, SmartAvatar } from '@/components/SmartImage'
 import { CourseDetailSkeleton } from '@/components/skeletons'
+import { MarkdownLight } from '@/components/MarkdownLight'
 import { toast } from 'sonner'
 import { useState, useEffect, useRef } from 'react'
 import { MetaPixel, fbTrack } from '@/components/MetaPixel'
@@ -684,7 +685,7 @@ export default function CourseDetail() {
               <section>
                 <h2 className="font-heading text-2xl font-bold text-gray-900 mb-4">¿Para quién es este curso?</h2>
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
-                  <p className="text-gray-700 leading-relaxed">{forWho}</p>
+                  <MarkdownLight className="text-gray-700 leading-relaxed">{forWho}</MarkdownLight>
                 </div>
               </section>
             )}
@@ -759,7 +760,7 @@ export default function CourseDetail() {
                     </div>
                   )}
                   <div className="space-y-2">
-                    <p className="text-gray-700 leading-relaxed">{instructorBio}</p>
+                    <MarkdownLight className="text-gray-700 leading-relaxed">{instructorBio}</MarkdownLight>
                   </div>
                 </div>
               </section>

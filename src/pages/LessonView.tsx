@@ -189,6 +189,21 @@ export default function LessonView() {
         }, { onConflict: 'enrollment_id,lesson_id' })
       if (error) throw error
     },
+    // Optimistic: marcar como completa al instante. Si falla, rollback.
+    onMutate: async () => {
+      if (!enrollment?.id || !lessonId) return { snapshot: null }
+      const queryKey = ['progress', enrollment.id]
+      await queryClient.cancelQueries({ queryKey })
+      const snapshot = queryClient.getQueryData(queryKey)
+      queryClient.setQueryData<unknown>(queryKey, (old) => {
+        if (!old || typeof old !== 'object') return old
+        const typed = old as { completedIds?: Set<string>; courseProgress?: { progress_percent: number } | null }
+        const completedIds = new Set(typed.completedIds ?? [])
+        completedIds.add(lessonId)
+        return { ...typed, completedIds }
+      })
+      return { snapshot }
+    },
     onSuccess: async () => {
       fireLesson()
       events.lessonCompleted({ course: courseSlug, lesson: lessonId })
@@ -222,11 +237,17 @@ export default function LessonView() {
         }
       }
     },
-    onError: (e: Error) => toastError(
-      'No se pudo guardar la lección como completada',
-      e,
-      { retry: () => completeMutation.mutate() },
-    ),
+    onError: (e: Error, _vars, ctx) => {
+      // Rollback al snapshot pre-mutation
+      if (ctx?.snapshot && enrollment?.id) {
+        queryClient.setQueryData(['progress', enrollment.id], ctx.snapshot)
+      }
+      toastError(
+        'No se pudo guardar la lección como completada',
+        e,
+        { retry: () => completeMutation.mutate() },
+      )
+    },
   })
 
   // Navegación anterior/siguiente

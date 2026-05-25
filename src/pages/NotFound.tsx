@@ -1,10 +1,28 @@
 import { Link, useLocation } from "react-router-dom"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { Helmet } from "react-helmet-async"
-import { Home, BookOpen, Compass, Mail } from "lucide-react"
+import { Home, BookOpen, Compass, Mail, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/lib/supabase"
 import { logger } from "@/lib/logger"
+
+/** Distancia Levenshtein simple para sugerir slugs cercanos. */
+function distance(a: string, b: string): number {
+  if (!a.length) return b.length
+  if (!b.length) return a.length
+  const dp: number[][] = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0))
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1
+      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)
+    }
+  }
+  return dp[a.length][b.length]
+}
 
 const SUGGESTIONS = [
   { to: "/", label: "Inicio", icon: Home, desc: "Volver a la página principal" },
@@ -19,6 +37,36 @@ const NotFound = () => {
   useEffect(() => {
     logger.warn(`404: ${location.pathname}`, { from: document.referrer || 'direct' })
   }, [location.pathname])
+
+  // Si el path parece /courses/<slug> o /<slug> con guión-medio, intentar sugerir
+  const candidateSlug = useMemo(() => {
+    const m = location.pathname.match(/\/(?:courses\/)?([a-z0-9-]+)\/?$/i)
+    return m?.[1] ?? null
+  }, [location.pathname])
+
+  const { data: suggestion } = useQuery({
+    queryKey: ['404-suggest', candidateSlug, tenant?.id],
+    enabled: !!candidateSlug && candidateSlug.length > 2 && !!tenant?.id,
+    staleTime: 5 * 60_000,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('courses')
+        .select('slug, title')
+        .eq('tenant_id', tenant!.id)
+        .eq('is_published', true)
+      if (!data || data.length === 0) return null
+      const slug = candidateSlug!.toLowerCase()
+      let best: { slug: string; title: string; d: number } | null = null
+      for (const c of data as { slug: string; title: string }[]) {
+        if (!c.slug) continue
+        const d = distance(slug, c.slug.toLowerCase())
+        if (!best || d < best.d) best = { ...c, d }
+      }
+      // Solo sugerir si la distancia es razonable (< 40% del largo)
+      if (best && best.d <= Math.max(2, Math.floor(slug.length * 0.4))) return best
+      return null
+    },
+  })
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
@@ -37,6 +85,18 @@ const NotFound = () => {
             )}
           </p>
         </div>
+
+        {suggestion && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" aria-hidden />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900">
+                ¿Quisiste decir <Link to={`/courses/${suggestion.slug}`} className="text-primary underline underline-offset-2 hover:opacity-80">{suggestion.title}</Link>?
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5 font-mono truncate">/courses/{suggestion.slug}</p>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Probá yendo a</p>
