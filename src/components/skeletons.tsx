@@ -11,7 +11,7 @@ function Bar({ className }: { className?: string }) {
 }
 
 function Card({ className }: { className?: string }) {
-  return <div className={`bg-white border border-border/40 rounded-2xl ${className ?? ''}`} />
+  return <div className={`bg-card border border-border/40 rounded-2xl ${className ?? ''}`} />
 }
 
 export function DashboardSkeleton() {
@@ -107,7 +107,7 @@ export function InstructorPageSkeleton() {
 
 export function CourseDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       <div className="bg-foreground h-72 sm:h-96" />
       <div className="container mx-auto px-4 -mt-32 pb-20">
         <div className="grid lg:grid-cols-5 gap-8">

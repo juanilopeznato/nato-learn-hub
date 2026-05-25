@@ -220,7 +220,7 @@ export function LessonComments({ lessonId, tenantId, profileId, profileRole }: P
   const getReplies = (parentId: string) => comments.filter(c => c.parent_id === parentId)
 
   return (
-    <div className="bg-white border border-border/60 rounded-xl p-4 space-y-5">
+    <div className="bg-card border border-border/60 rounded-xl p-4 space-y-5">
       <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
         <MessageCircle className="w-4 h-4" />
         Comentarios ({comments.length})

@@ -154,8 +154,8 @@ export default function Community() {
                 onClick={() => setActiveCourseId(null)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   !activeCourseId
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-white border border-border/60 text-foreground/70 hover:border-gray-400'
+                    ? 'bg-foreground text-white'
+                    : 'bg-card border border-border/60 text-foreground/70 hover:border-gray-400'
                 }`}
               >
                 <Users className="w-3 h-3" />
@@ -168,7 +168,7 @@ export default function Community() {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     activeCourseId === course.id
                       ? 'bg-primary text-white'
-                      : 'bg-white border border-border/60 text-foreground/70 hover:border-primary hover:text-primary'
+                      : 'bg-card border border-border/60 text-foreground/70 hover:border-primary hover:text-primary'
                   }`}
                 >
                   <BookOpen className="w-3 h-3" />
@@ -188,7 +188,7 @@ export default function Community() {
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     filter === f.value
                       ? 'bg-primary text-white'
-                      : 'bg-white border border-border/60 text-foreground/70 hover:border-primary hover:text-primary'
+                      : 'bg-card border border-border/60 text-foreground/70 hover:border-primary hover:text-primary'
                   }`}
                 >
                   {f.label}
@@ -205,11 +205,11 @@ export default function Community() {
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="bg-white border border-border/60 rounded-xl h-32 animate-pulse" />
+                <div key={i} className="bg-card border border-border/60 rounded-xl h-32 animate-pulse" />
               ))}
             </div>
           ) : posts.length === 0 ? (
-            <div className="bg-white border border-border/60 rounded-xl p-12 text-center space-y-3">
+            <div className="bg-card border border-border/60 rounded-xl p-12 text-center space-y-3">
               <Users className="w-12 h-12 text-foreground/85 mx-auto" />
               <p className="text-foreground/85 font-medium">
                 {activeCourse
@@ -238,7 +238,7 @@ export default function Community() {
       </main>
 
       <Dialog open={showPostForm} onOpenChange={setShowPostForm}>
-        <DialogContent className="bg-white border-border/60 max-w-lg">
+        <DialogContent className="bg-card border-border/60 max-w-lg">
           <DialogHeader>
             <DialogTitle className="font-heading text-foreground">Nueva publicación</DialogTitle>
           </DialogHeader>

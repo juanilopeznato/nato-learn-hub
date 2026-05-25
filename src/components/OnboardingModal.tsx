@@ -76,7 +76,7 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all ${
                   selected === goal.value
                     ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-border/60 hover:border-gray-300 text-foreground/85'
+                    : 'border-border/60 hover:border-border text-foreground/85'
                 }`}
               >
                 {goal.label}

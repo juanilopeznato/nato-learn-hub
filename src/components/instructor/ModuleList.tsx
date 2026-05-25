@@ -142,7 +142,7 @@ function LessonResources({ lessonId }: { lessonId: string }) {
       {resources && resources.length > 0 && (
         <div className="space-y-1">
           {resources.map(r => (
-            <div key={r.id} className="flex items-center gap-2 bg-white rounded px-2 py-1">
+            <div key={r.id} className="flex items-center gap-2 bg-card rounded px-2 py-1">
               <FileText className="w-3 h-3 text-muted-foreground/80 shrink-0" />
               <span className="text-xs text-foreground/85 flex-1 truncate">{r.title}</span>
               <button
@@ -368,22 +368,25 @@ export function ModuleList({ courseId }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <h3 className="font-heading font-semibold text-foreground">Módulos y lecciones</h3>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleModuleDragEnd}>
         <SortableContext items={modules?.map(m => m.id) ?? []} strategy={verticalListSortingStrategy}>
-          {modules?.map(module => (
+          {modules?.map((module, moduleIdx) => (
             <SortableModule key={module.id} id={module.id}>
-              <div className="bg-white border border-border/60 rounded-xl overflow-hidden ml-6">
-                <div className="flex items-center justify-between p-4">
+              <div className="bg-card border border-border/60 rounded-xl overflow-hidden ml-6 shadow-xs hover:border-border transition-colors">
+                <div className="flex items-center justify-between p-4 gap-2">
                   <button
-                    className="flex items-center gap-2 flex-1 text-left"
+                    className="flex items-center gap-3 flex-1 text-left min-w-0"
                     onClick={() => toggleModule(module.id)}
                   >
-                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expandedModules.has(module.id) ? 'rotate-180' : ''}`} />
-                    <span className="font-medium text-foreground">{module.title}</span>
-                    <span className="text-xs text-muted-foreground">({module.lessons?.length ?? 0} lecciones)</span>
+                    <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0 tabular-nums">
+                      {moduleIdx + 1}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform shrink-0 ${expandedModules.has(module.id) ? 'rotate-180' : ''}`} />
+                    <span className="font-semibold text-foreground truncate">{module.title}</span>
+                    <span className="text-xs text-muted-foreground tabular-nums shrink-0">· {module.lessons?.length ?? 0} {(module.lessons?.length ?? 0) === 1 ? 'lección' : 'lecciones'}</span>
                   </button>
                   <Button
                     variant="ghost"

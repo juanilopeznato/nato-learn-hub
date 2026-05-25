@@ -153,7 +153,7 @@ export default function AdminPanel() {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map(s => (
-            <div key={s.label} className="bg-white rounded-xl p-5 border border-border/60 flex items-center gap-4">
+            <div key={s.label} className="bg-card rounded-xl p-5 border border-border/60 flex items-center gap-4">
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${s.color}`}>
                 <s.icon className="w-5 h-5" />
               </div>
@@ -178,7 +178,7 @@ export default function AdminPanel() {
 
           {/* Tenants */}
           <TabsContent value="tenants" className="mt-6">
-            <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
+            <div className="bg-card rounded-xl border border-border/60 overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-secondary/30 border-b border-border/60">
                   <tr>
@@ -210,7 +210,7 @@ export default function AdminPanel() {
 
           {/* Courses */}
           <TabsContent value="courses" className="mt-6">
-            <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
+            <div className="bg-card rounded-xl border border-border/60 overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-secondary/30 border-b border-border/60">
                   <tr>
@@ -247,7 +247,7 @@ export default function AdminPanel() {
 
           {/* Enrollments */}
           <TabsContent value="enrollments" className="mt-6">
-            <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
+            <div className="bg-card rounded-xl border border-border/60 overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-secondary/30 border-b border-border/60">
                   <tr>
@@ -290,7 +290,7 @@ export default function AdminPanel() {
               </div>
 
               {!platformConfig || platformConfig.length === 0 ? (
-                <div className="bg-white border border-border/60 rounded-xl p-8 text-center text-sm text-muted-foreground/80">
+                <div className="bg-card border border-border/60 rounded-xl p-8 text-center text-sm text-muted-foreground/80">
                   No hay configuración disponible
                 </div>
               ) : (
@@ -299,7 +299,7 @@ export default function AdminPanel() {
                     const isCommission = cfg.key === 'commission_pct'
                     const currentEdit = configEdits[cfg.key] ?? cfg.value
                     return (
-                      <div key={cfg.key} className="bg-white border border-border/60 rounded-xl p-4 space-y-2">
+                      <div key={cfg.key} className="bg-card border border-border/60 rounded-xl p-4 space-y-2">
                         <Label className="text-sm font-semibold text-foreground/85">
                           {isCommission ? 'Comisión de plataforma (%)' : cfg.key}
                         </Label>

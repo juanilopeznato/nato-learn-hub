@@ -27,7 +27,7 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
   })
 
   return (
-    <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
+    <div className="bg-card border border-border/60 rounded-xl overflow-hidden">
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40">
         <Trophy className="w-4 h-4 text-yellow-500" />
         <h3 className="font-heading font-semibold text-foreground text-sm">Top del mes</h3>

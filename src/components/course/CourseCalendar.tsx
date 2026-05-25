@@ -183,7 +183,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
           {[1, 2].map(i => <div key={i} className="h-16 bg-secondary rounded-xl animate-pulse" />)}
         </div>
       ) : displayed.length === 0 && !showPast ? (
-        <div className="bg-white border border-border/60 rounded-xl p-10 text-center space-y-3">
+        <div className="bg-card border border-border/60 rounded-xl p-10 text-center space-y-3">
           <CalendarDays className="w-10 h-10 text-foreground/85 mx-auto" />
           <p className="text-muted-foreground text-sm">No hay clases programadas próximamente.</p>
           {canManage && (
@@ -200,7 +200,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
             return (
               <div
                 key={event.id}
-                className={`bg-white border border-border/60 rounded-xl p-4 flex items-start gap-4 border-l-4 ${TYPE_COLORS[event.event_type]} ${inPast ? 'opacity-60' : ''}`}
+                className={`bg-card border border-border/60 rounded-xl p-4 flex items-start gap-4 border-l-4 ${TYPE_COLORS[event.event_type]} ${inPast ? 'opacity-60' : ''}`}
               >
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">

@@ -370,7 +370,7 @@ export default function LessonView() {
 
             {/* Recursos */}
             {resources && resources.length > 0 && (
-              <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
+              <div className="bg-card border border-border/60 rounded-xl p-4 space-y-3">
                 <h3 className="text-sm font-semibold text-foreground">Recursos</h3>
                 <div className="flex flex-wrap gap-2">
                   {resources.map(r => (
@@ -392,7 +392,7 @@ export default function LessonView() {
 
             {/* Notas del estudiante */}
             {profile && (
-              <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
+              <div className="bg-card border border-border/60 rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Pencil className="w-4 h-4 text-muted-foreground/80" />
@@ -417,7 +417,7 @@ export default function LessonView() {
 
             {/* Foro del curso */}
             {enrollment && course && (
-              <div className="bg-white border border-border/60 rounded-xl p-4 flex items-center justify-between gap-4">
+              <div className="bg-card border border-border/60 rounded-xl p-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                     <MessageSquare className="w-4 h-4 text-primary" />
@@ -468,7 +468,7 @@ export default function LessonView() {
       </div>
 
       {/* Sticky action bar — siempre visible */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-border/60 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border/60 shadow-lg">
         <div className="container mx-auto px-4 h-16 flex items-center gap-3 max-w-5xl">
           {/* Anterior */}
           <Button
@@ -569,7 +569,7 @@ export default function LessonView() {
       {mobileSidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileSidebarOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[90vw] bg-white shadow-xl flex flex-col">
+          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[90vw] bg-card shadow-xl flex flex-col">
             <div className="flex items-center justify-between px-4 h-14 border-b border-border/60 shrink-0">
               <span className="font-heading font-semibold text-foreground text-sm">Contenido del curso</span>
               <button

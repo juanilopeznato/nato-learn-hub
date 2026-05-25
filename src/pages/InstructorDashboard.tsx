@@ -230,7 +230,7 @@ export default function InstructorDashboard() {
             {allProfiles.length > 1 ? (
               <div className="relative">
                 <button
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border/60 bg-white hover:bg-secondary/30 transition-colors text-sm font-medium text-foreground/85 max-w-[180px]"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border/60 bg-card hover:bg-secondary/30 transition-colors text-sm font-medium text-foreground/85 max-w-[180px]"
                   onClick={() => setSchoolMenuOpen(o => !o)}
                   disabled={switching}
                 >
@@ -238,7 +238,7 @@ export default function InstructorDashboard() {
                   <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/80 shrink-0" />
                 </button>
                 {schoolMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-56 bg-white border border-border/60 rounded-xl shadow-lg py-1 z-50">
+                  <div className="absolute left-0 top-full mt-1 w-56 bg-card border border-border/60 rounded-xl shadow-lg py-1 z-50">
                     <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">Mis escuelas</p>
                     {allProfiles.map(p => (
                       <button
@@ -352,7 +352,7 @@ export default function InstructorDashboard() {
           <TabsContent value="courses" className="mt-6">
             {isLoading ? (
               <div className="space-y-3">
-                {[1, 2].map(i => <div key={i} className="bg-white border border-border/60 rounded-xl h-20 animate-pulse" />)}
+                {[1, 2].map(i => <div key={i} className="bg-card border border-border/60 rounded-xl h-20 animate-pulse" />)}
               </div>
             ) : courses && courses.length > 0 ? (
               <div className="space-y-3">
@@ -361,7 +361,7 @@ export default function InstructorDashboard() {
                   return (
                     <div
                       key={course.id}
-                      className="bg-white border border-border/60 rounded-xl p-4 flex items-center gap-4 hover:border-border transition-colors"
+                      className="bg-card border border-border/60 rounded-xl p-4 flex items-center gap-4 hover:border-border transition-colors"
                     >
                       {/* Thumbnail */}
                       {course.thumbnail_url ? (
@@ -456,7 +456,7 @@ export default function InstructorDashboard() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Paso 1 */}
-                  <div className="bg-white border-2 border-accent/30 rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden">
+                  <div className="bg-card border-2 border-accent/30 rounded-2xl p-5 flex flex-col gap-3 relative overflow-hidden">
                     <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center">
                       <Check className="w-3.5 h-3.5 text-accent" />
                     </div>
@@ -471,7 +471,7 @@ export default function InstructorDashboard() {
                   </div>
 
                   {/* Paso 2 — acción principal */}
-                  <div className="bg-white border-2 border-primary rounded-2xl p-5 flex flex-col gap-3 shadow-sm shadow-primary/10">
+                  <div className="bg-card border-2 border-primary rounded-2xl p-5 flex flex-col gap-3 shadow-sm shadow-primary/10">
                     <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
                       <BookOpen className="w-5 h-5 text-primary" />
                     </div>
@@ -487,7 +487,7 @@ export default function InstructorDashboard() {
                   </div>
 
                   {/* Paso 3 */}
-                  <div className="bg-white border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
+                  <div className="bg-card border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
                     <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
                       <CreditCard className="w-5 h-5 text-muted-foreground/80" />
                     </div>
@@ -502,7 +502,7 @@ export default function InstructorDashboard() {
                   </div>
 
                   {/* Paso 4 */}
-                  <div className="bg-white border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
+                  <div className="bg-card border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
                     <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
                       <TrendingUp className="w-5 h-5 text-muted-foreground/80" />
                     </div>
@@ -522,7 +522,7 @@ export default function InstructorDashboard() {
             {courses && courses.length > 0 ? (
               <Suspense fallback={<div className="text-sm text-muted-foreground">Cargando métricas…</div>}><KpiDashboard courseIds={courses.map(c => c.id)} /></Suspense>
             ) : (
-              <div className="bg-white border border-border/60 rounded-2xl p-12 text-center">
+              <div className="bg-card border border-border/60 rounded-2xl p-12 text-center">
                 <BarChart3 className="w-10 h-10 text-gray-200 mx-auto mb-3" />
                 <p className="text-muted-foreground font-medium">Nada que mostrar todavía</p>
                 <p className="text-sm text-muted-foreground/80 mt-1">Cuando tengas inscriptos, acá vas a ver las métricas de tu escuela.</p>
@@ -544,7 +544,7 @@ export default function InstructorDashboard() {
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 space-y-3">
                 <p className="text-sm font-semibold text-foreground/85">Tu link único</p>
                 <div className="flex gap-2">
-                  <div className="flex-1 bg-white border border-amber-200 rounded-lg px-3 py-2 text-sm font-mono text-foreground/70 truncate">
+                  <div className="flex-1 bg-card border border-amber-200 rounded-lg px-3 py-2 text-sm font-mono text-foreground/70 truncate">
                     {affiliateUrl}
                   </div>
                   <button
@@ -566,17 +566,17 @@ export default function InstructorDashboard() {
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
+                <div className="bg-card border border-border/60 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-foreground">{referredCount}</p>
                   <p className="text-xs text-muted-foreground/80 mt-1">Escuelas referidas</p>
                 </div>
-                <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
+                <div className="bg-card border border-border/60 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-accent">
                     {totalEarned > 0 ? `ARS ${totalEarned.toLocaleString('es-AR')}` : '—'}
                   </p>
                   <p className="text-xs text-muted-foreground/80 mt-1">Total cobrado</p>
                 </div>
-                <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
+                <div className="bg-card border border-border/60 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-amber-500">
                     {totalPending > 0 ? `ARS ${totalPending.toLocaleString('es-AR')}` : '—'}
                   </p>
@@ -586,7 +586,7 @@ export default function InstructorDashboard() {
 
               {/* Historial */}
               {affiliateCommissions && affiliateCommissions.length > 0 ? (
-                <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
+                <div className="bg-card rounded-xl border border-border/60 overflow-hidden">
                   <div className="px-4 py-3 border-b border-border/40">
                     <h3 className="text-sm font-semibold text-foreground/85">Historial</h3>
                   </div>
@@ -619,7 +619,7 @@ export default function InstructorDashboard() {
                   </table>
                 </div>
               ) : (
-                <div className="bg-white border border-border/60 rounded-xl p-10 text-center">
+                <div className="bg-card border border-border/60 rounded-xl p-10 text-center">
                   <Gift className="w-8 h-8 text-gray-200 mx-auto mb-3" />
                   <p className="text-muted-foreground text-sm font-medium">Todavía no tenés comisiones</p>
                   <p className="text-xs text-muted-foreground/80 mt-1">Compartí tu link y empezá a ganar.</p>

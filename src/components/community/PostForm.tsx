@@ -46,7 +46,7 @@ export function PostForm({ onSubmit, onCancel, enrolledCourses = [], defaultCour
           <Label className="text-foreground/85 font-medium">¿A qué curso pertenece? <span className="text-muted-foreground/80 font-normal">(opcional)</span></Label>
           <select
             {...register('course_id')}
-            className="w-full h-10 rounded-md border border-border/60 bg-white px-3 text-sm text-foreground/85 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full h-10 rounded-md border border-border/60 bg-card px-3 text-sm text-foreground/85 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
             <option value="">Toda la escuela</option>
             {enrolledCourses.map(c => (

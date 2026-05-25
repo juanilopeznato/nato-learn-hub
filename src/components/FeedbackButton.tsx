@@ -90,7 +90,7 @@ export function FeedbackButton({
       {open && (
         <div className="fixed inset-0 z-[55] bg-black/40 flex items-end sm:items-center justify-center p-4" onClick={() => setOpen(false)}>
           <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5 space-y-4"
+            className="bg-card rounded-2xl shadow-2xl w-full max-w-sm p-5 space-y-4"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">

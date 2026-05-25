@@ -275,7 +275,7 @@ export default function InstructorCoursePage() {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:block">Mis cursos</span>
           </Link>
-          <span className="text-gray-200">/</span>
+          <span className="text-muted-foreground/40">/</span>
           <span className="text-sm font-semibold text-foreground truncate flex-1">{course.title}</span>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -283,10 +283,10 @@ export default function InstructorCoursePage() {
             <button
               onClick={() => togglePublish.mutate()}
               disabled={togglePublish.isPending}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ease-apple ${
                 course.is_published
-                  ? 'bg-accent/15 text-accent hover:bg-green-200'
-                  : 'bg-secondary text-muted-foreground hover:bg-border'
+                  ? 'bg-accent/15 text-accent hover:bg-accent/25 ring-1 ring-accent/20'
+                  : 'bg-secondary text-muted-foreground hover:bg-secondary/80 ring-1 ring-border'
               }`}
             >
               {course.is_published ? <Globe className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
@@ -310,19 +310,19 @@ export default function InstructorCoursePage() {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <Tabs defaultValue="content" className="space-y-6">
 
-          {/* 4 tabs en vez de 7 */}
-          <TabsList className="bg-secondary">
-            <TabsTrigger value="content">Contenido</TabsTrigger>
-            <TabsTrigger value="details">Página del curso</TabsTrigger>
-            <TabsTrigger value="students">
+          {/* 4 tabs — segmented control style */}
+          <TabsList className="bg-secondary p-1 h-10 rounded-full inline-flex border border-border/40">
+            <TabsTrigger value="content" className="rounded-full px-4 data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground text-muted-foreground transition-all">Contenido</TabsTrigger>
+            <TabsTrigger value="details" className="rounded-full px-4 data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground text-muted-foreground transition-all">Página del curso</TabsTrigger>
+            <TabsTrigger value="students" className="rounded-full px-4 data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground text-muted-foreground transition-all">
               Alumnos
               {inactiveEnrollments.length > 0 && (
-                <span className="ml-1.5 w-4 h-4 rounded-full bg-orange-400 text-white text-[10px] font-bold inline-flex items-center justify-center">
+                <span className="ml-1.5 min-w-4 h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold inline-flex items-center justify-center tabular-nums">
                   {inactiveEnrollments.length}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="tools">Herramientas</TabsTrigger>
+            <TabsTrigger value="tools" className="rounded-full px-4 data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground text-muted-foreground transition-all">Herramientas</TabsTrigger>
           </TabsList>
 
           {/* Tab: Contenido */}
@@ -347,7 +347,7 @@ export default function InstructorCoursePage() {
                   Todo lo que completés acá aparece en la landing del curso. Un buen copy vende solo.
                 </p>
               </div>
-              <div className="bg-white rounded-xl border border-border/60 p-6">
+              <div className="bg-card rounded-xl border border-border/60 p-6">
                 <CourseForm
                   isEditing
                   defaultValues={{
@@ -395,7 +395,7 @@ export default function InstructorCoursePage() {
                       <button
                         onClick={() => setShowInactive(false)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                          !showInactive ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground'
+                          !showInactive ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
                         }`}
                       >
                         <Users className="w-3.5 h-3.5" />
@@ -447,7 +447,7 @@ export default function InstructorCoursePage() {
 
               {/* Tabla */}
               {displayedEnrollments.length === 0 ? (
-                <div className="bg-white border border-border/60 rounded-2xl p-12 text-center">
+                <div className="bg-card border border-border/60 rounded-2xl p-12 text-center">
                   {showInactive ? (
                     <p className="text-accent font-medium">Todos los estudiantes están activos</p>
                   ) : (
@@ -455,7 +455,7 @@ export default function InstructorCoursePage() {
                   )}
                 </div>
               ) : (
-                <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
+                <div className="bg-card rounded-xl border border-border/60 overflow-hidden">
                   <table className="w-full text-sm">
                     <thead className="bg-secondary/30 border-b border-border/60">
                       <tr>
@@ -555,7 +555,7 @@ export default function InstructorCoursePage() {
             <div className="max-w-3xl space-y-3">
 
               {/* Cupones */}
-              <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
+              <div className="bg-card border border-border/60 rounded-xl overflow-hidden">
                 <button
                   className="w-full flex items-center justify-between px-5 py-4 hover:bg-secondary/30 transition-colors"
                   onClick={() => setOpenSection(openSection === 'coupons' ? null : 'coupons')}
@@ -700,7 +700,7 @@ export default function InstructorCoursePage() {
               </div>
 
               {/* Clases en vivo */}
-              <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
+              <div className="bg-card border border-border/60 rounded-xl overflow-hidden">
                 <button
                   className="w-full flex items-center justify-between px-5 py-4 hover:bg-secondary/30 transition-colors"
                   onClick={() => setOpenSection(openSection === 'calendar' ? null : 'calendar')}
@@ -724,7 +724,7 @@ export default function InstructorCoursePage() {
               </div>
 
               {/* Métricas */}
-              <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
+              <div className="bg-card border border-border/60 rounded-xl overflow-hidden">
                 <button
                   className="w-full flex items-center justify-between px-5 py-4 hover:bg-secondary/30 transition-colors"
                   onClick={() => setOpenSection(openSection === 'metrics' ? null : 'metrics')}

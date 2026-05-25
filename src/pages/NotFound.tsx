@@ -74,7 +74,7 @@ const NotFound = () => {
         <title>Página no encontrada — {tenant?.name ?? "NATO University"}</title>
         <meta name="robots" content="noindex" />
       </Helmet>
-      <div className="max-w-md w-full bg-white rounded-2xl border border-border/60 p-8 space-y-6">
+      <div className="max-w-md w-full bg-card rounded-2xl border border-border/60 p-8 space-y-6">
         <div>
           <div className="text-6xl font-heading font-bold text-primary/20 mb-2" aria-hidden>404</div>
           <h1 className="font-heading text-2xl font-semibold text-foreground">Esta página no existe</h1>

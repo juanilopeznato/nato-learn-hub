@@ -198,7 +198,7 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
   })
 
   return (
-    <div className={`bg-white border border-border/60 rounded-xl p-4 space-y-3 ${post.is_pinned ? 'ring-1 ring-primary/20' : ''}`}>
+    <div className={`bg-card border border-border/60 rounded-xl p-4 space-y-3 ${post.is_pinned ? 'ring-1 ring-primary/20' : ''}`}>
       {/* Header */}
       <div className="flex items-start gap-3">
         <Link to={`/members/${post.author?.id}`}>

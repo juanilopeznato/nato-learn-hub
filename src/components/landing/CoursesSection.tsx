@@ -34,7 +34,7 @@ export default function CoursesSection() {
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-xl h-64 animate-pulse border border-border/40" />
+              <div key={i} className="bg-card rounded-xl h-64 animate-pulse border border-border/40" />
             ))}
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function CoursesSection() {
               <Link
                 key={course.id}
                 to={`/courses/${course.slug}`}
-                className="group bg-white rounded-xl border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col"
+                className="group bg-card rounded-xl border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col"
               >
                 {/* Thumbnail o placeholder */}
                 {course.thumbnail_url ? (

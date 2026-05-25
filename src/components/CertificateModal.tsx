@@ -63,13 +63,13 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
       <DialogContent className="max-w-3xl p-0 overflow-hidden bg-transparent border-0 shadow-none">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-50 p-1.5 rounded-full bg-white/80 hover:bg-white text-foreground/85 transition-colors"
+          className="absolute top-3 right-3 z-50 p-1.5 rounded-full bg-white/80 hover:bg-card text-foreground/85 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Certificate */}
-        <div ref={certRef} className="bg-white relative overflow-hidden" style={{ fontFamily: 'Georgia, serif' }}>
+        <div ref={certRef} className="bg-card relative overflow-hidden" style={{ fontFamily: 'Georgia, serif' }}>
           {/* Background decorations */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500" />

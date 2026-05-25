@@ -219,7 +219,7 @@ export default function Dashboard() {
                   <Link
                     key={post.id}
                     to="/community"
-                    className="flex items-start gap-3 bg-white border border-border/40 rounded-xl p-4 hover:border-primary/30 hover:shadow-sm transition-all group"
+                    className="flex items-start gap-3 bg-card border border-border/40 rounded-xl p-4 hover:border-primary/30 hover:shadow-sm transition-all group"
                   >
                     <div className="mt-0.5">
                       <SmartAvatar
@@ -248,7 +248,7 @@ export default function Dashboard() {
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-xl h-48 animate-pulse border border-border/40" />
+              <div key={i} className="bg-card rounded-xl h-48 animate-pulse border border-border/40" />
             ))}
           </div>
         ) : enrollments && enrollments.length > 0 ? (
@@ -278,7 +278,7 @@ export default function Dashboard() {
             </div>
           </section>
         ) : (
-          <div className="bg-white rounded-2xl p-12 text-center space-y-4 border border-border/40">
+          <div className="bg-card rounded-2xl p-12 text-center space-y-4 border border-border/40">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto" aria-hidden>
               <BookOpen className="w-8 h-8 text-primary" />
             </div>

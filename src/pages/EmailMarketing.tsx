@@ -286,13 +286,13 @@ export default function EmailMarketing() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2].map(i => (
-              <div key={i} className="bg-white border border-border/60 rounded-xl h-20 animate-pulse" />
+              <div key={i} className="bg-card border border-border/60 rounded-xl h-20 animate-pulse" />
             ))}
           </div>
         ) : campaigns && campaigns.length > 0 ? (
           <div className="space-y-3">
             {campaigns.map(campaign => (
-              <div key={campaign.id} className="bg-white border border-border/60 rounded-xl overflow-hidden">
+              <div key={campaign.id} className="bg-card border border-border/60 rounded-xl overflow-hidden">
                 <div
                   className="p-5 flex items-center gap-4 cursor-pointer hover:bg-secondary/30 transition-colors"
                   onClick={() => setExpandedId(expandedId === campaign.id ? null : campaign.id)}
@@ -354,7 +354,7 @@ export default function EmailMarketing() {
                     <p className="text-xs text-muted-foreground mb-2 font-medium">Vista previa del contenido:</p>
                     <SanitizedHtml
                       html={campaign.body_html}
-                      className="text-sm text-foreground/85 whitespace-pre-wrap bg-white border border-border/60 rounded-lg p-4 max-h-48 overflow-y-auto"
+                      className="text-sm text-foreground/85 whitespace-pre-wrap bg-card border border-border/60 rounded-lg p-4 max-h-48 overflow-y-auto"
                     />
                   </div>
                 )}
@@ -362,7 +362,7 @@ export default function EmailMarketing() {
             ))}
           </div>
         ) : (
-          <div className="bg-white border border-border/60 rounded-2xl p-12 text-center space-y-4">
+          <div className="bg-card border border-border/60 rounded-2xl p-12 text-center space-y-4">
             <Mail className="w-12 h-12 text-foreground/85 mx-auto" />
             <p className="text-muted-foreground">No hay campañas todavía.</p>
             <Button variant="hero" onClick={openCreate}>
@@ -375,7 +375,7 @@ export default function EmailMarketing() {
 
       {/* Campaign editor dialog */}
       <Dialog open={showEditor} onOpenChange={open => { if (!open) { setShowEditor(false); setEditingCampaign(null); setFormData(defaultFormData) } }}>
-        <DialogContent className="bg-white border-border/60 max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-card border-border/60 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading text-foreground">
               {editingCampaign ? 'Editar campaña' : 'Nueva campaña'}
@@ -490,7 +490,7 @@ export default function EmailMarketing() {
                   <div className="space-y-1.5 pl-2">
                     <Label>Seleccioná el curso</Label>
                     <select
-                      className="w-full border border-border/60 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+                      className="w-full border border-border/60 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-card"
                       value={formData.target_course_id}
                       onChange={e => setFormData(f => ({ ...f, target_course_id: e.target.value }))}
                     >
@@ -533,7 +533,7 @@ export default function EmailMarketing() {
 
       {/* Confirm send dialog */}
       <Dialog open={!!confirmSendCampaign} onOpenChange={open => !open && setConfirmSendCampaign(null)}>
-        <DialogContent className="bg-white border-border/60 max-w-sm">
+        <DialogContent className="bg-card border-border/60 max-w-sm">
           <DialogHeader>
             <DialogTitle className="font-heading text-foreground">¿Enviar campaña?</DialogTitle>
             <DialogDescription className="text-foreground/70">

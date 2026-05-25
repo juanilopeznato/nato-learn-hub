@@ -317,7 +317,7 @@ export default function TenantSettings() {
 
           {/* Branding */}
           <TabsContent value="brand" className="mt-6">
-            <form onSubmit={brandForm.handleSubmit(d => saveBrand.mutate(d))} className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
+            <form onSubmit={brandForm.handleSubmit(d => saveBrand.mutate(d))} className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
               <h2 className="font-heading font-semibold text-foreground">Identidad de tu escuela</h2>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -380,7 +380,7 @@ export default function TenantSettings() {
           <TabsContent value="payments" className="mt-6 space-y-4">
             {/* Connection status */}
             {fullTenant?.mp_collector_id ? (
-              <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
+              <div className="bg-card rounded-xl border border-border/60 p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-accent" />
@@ -407,7 +407,7 @@ export default function TenantSettings() {
                 </p>
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
+              <div className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
                 <h2 className="font-heading font-semibold text-foreground">Conectá tu cuenta de Mercado Pago</h2>
                 <p className="text-sm text-muted-foreground">
                   Para recibir pagos, necesitás conectar tu cuenta de Mercado Pago. El proceso tarda menos de un minuto y es completamente seguro — nunca vemos tu contraseña.
@@ -447,7 +447,7 @@ export default function TenantSettings() {
 
           {/* Integrations */}
           <TabsContent value="integrations" className="mt-6">
-            <form onSubmit={integrationsForm.handleSubmit(d => saveIntegrations.mutate(d))} className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
+            <form onSubmit={integrationsForm.handleSubmit(d => saveIntegrations.mutate(d))} className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
               <h2 className="font-heading font-semibold text-foreground">Integraciones</h2>
 
               <div className="space-y-1.5">
@@ -494,7 +494,7 @@ export default function TenantSettings() {
               const isExpired = daysLeft !== null && daysLeft <= 0
               const expiringSoon = daysLeft !== null && daysLeft > 0 && daysLeft <= 7
               return (
-                <div className={`bg-white rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-destructive/30' : expiringSoon ? 'border-orange-300' : 'border-border/60'}`}>
+                <div className={`bg-card rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-destructive/30' : expiringSoon ? 'border-orange-300' : 'border-border/60'}`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="font-heading font-semibold text-foreground">Tu plan actual</h2>
@@ -533,7 +533,7 @@ export default function TenantSettings() {
                 onClick={() => setBillingAnnual(b => !b)}
                 className={`relative w-11 h-6 rounded-full transition-colors ${billingAnnual ? 'bg-primary' : 'bg-border'}`}
               >
-                <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${billingAnnual ? 'translate-x-5' : ''}`} />
+                <span className={`absolute top-1 left-1 w-4 h-4 bg-card rounded-full shadow transition-transform ${billingAnnual ? 'translate-x-5' : ''}`} />
               </button>
               <button
                 onClick={() => setBillingAnnual(true)}
@@ -556,7 +556,7 @@ export default function TenantSettings() {
                 return (
                   <div
                     key={plan.id}
-                    className={`bg-white rounded-xl border-2 p-5 space-y-4 ${isCurrent ? 'border-primary' : 'border-border/60'}`}
+                    className={`bg-card rounded-xl border-2 p-5 space-y-4 ${isCurrent ? 'border-primary' : 'border-border/60'}`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -607,7 +607,7 @@ export default function TenantSettings() {
 
             {/* Payment history */}
             {payments && payments.length > 0 && (
-              <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
+              <div className="bg-card rounded-xl border border-border/60 p-6 space-y-4">
                 <h2 className="font-heading font-semibold text-foreground">Historial de pagos</h2>
                 <div className="divide-y divide-border">
                   {payments.map(p => (
@@ -635,7 +635,7 @@ export default function TenantSettings() {
 
           {/* Domain */}
           <TabsContent value="domain" className="mt-6">
-            <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
+            <div className="bg-card rounded-xl border border-border/60 p-6 space-y-4">
               <h2 className="font-heading font-semibold text-foreground">Dominio personalizado</h2>
               <p className="text-sm text-muted-foreground">
                 Conectá tu propio dominio para que tus estudiantes accedan a tu escuela en <code className="bg-secondary px-1 rounded">tuescuela.com</code>.

@@ -31,7 +31,7 @@ interface KpiRow {
 
 function StatCard({ icon: Icon, label, value, sub }: { icon: LucideIcon; label: string; value: string | number; sub?: string }) {
   return (
-    <div className="bg-white border border-border/60 rounded-xl p-4 space-y-1">
+    <div className="bg-card border border-border/60 rounded-xl p-4 space-y-1">
       <div className="flex items-center gap-2 text-muted-foreground">
         <Icon className="w-4 h-4" />
         <span className="text-xs font-medium">{label}</span>
@@ -184,7 +184,7 @@ export function KpiDashboard({ courseIds }: Props) {
       {singleCourseId && (
         <div className="space-y-4">
           {/* Funnel steps */}
-          <div className="bg-white border border-border/60 rounded-xl p-4">
+          <div className="bg-card border border-border/60 rounded-xl p-4">
             <h4 className="text-sm font-semibold text-foreground mb-4">Embudo de conversión</h4>
             {funnelData ? (() => {
               const steps = [
@@ -243,7 +243,7 @@ export function KpiDashboard({ courseIds }: Props) {
           </div>
 
           {/* Daily events chart */}
-          <div className="bg-white border border-border/60 rounded-xl p-4">
+          <div className="bg-card border border-border/60 rounded-xl p-4">
             <h4 className="text-sm font-semibold text-foreground mb-4">Actividad diaria — últimos 30 días</h4>
             {dailyEventsData.length > 0 ? (
               <ResponsiveContainer width="100%" height={200}>
@@ -268,7 +268,7 @@ export function KpiDashboard({ courseIds }: Props) {
       )}
 
       {/* Enrollment trend chart */}
-      <div className="bg-white border border-border/60 rounded-xl p-4">
+      <div className="bg-card border border-border/60 rounded-xl p-4">
         <h4 className="text-sm font-semibold text-foreground mb-4">Inscripciones — últimos 30 días</h4>
         {trendData.length > 0 ? (
           <ResponsiveContainer width="100%" height={180}>
@@ -297,7 +297,7 @@ export function KpiDashboard({ courseIds }: Props) {
 
       {/* Top lessons */}
       {topLessons.length > 0 && (
-        <div className="bg-white border border-border/60 rounded-xl p-4">
+        <div className="bg-card border border-border/60 rounded-xl p-4">
           <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
             <Award className="w-4 h-4 text-yellow-500" />
             Lecciones más completadas
@@ -349,7 +349,7 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
   if (rows.length === 0) return null
 
   return (
-    <div className="bg-white border border-destructive/30 rounded-xl p-4">
+    <div className="bg-card border border-destructive/30 rounded-xl p-4">
       <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
         <span className="w-4 h-4 text-destructive">⚠️</span>
         Lecciones con más abandono

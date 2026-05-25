@@ -21,7 +21,7 @@ export function PageLoading() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[0, 1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="bg-white border border-border/40 rounded-2xl p-4 space-y-3">
+            <div key={i} className="bg-card border border-border/40 rounded-2xl p-4 space-y-3">
               <div className="h-32 w-full bg-secondary rounded-xl animate-pulse" />
               <div className="h-4 w-3/4 bg-border rounded animate-pulse" />
               <div className="h-3 w-1/2 bg-secondary rounded animate-pulse" />

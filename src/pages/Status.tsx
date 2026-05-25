@@ -71,7 +71,7 @@ export default function Status() {
         <meta name="robots" content="noindex" />
         <link rel="canonical" href={canonicalUrl('/status')} />
       </Helmet>
-      <div className="max-w-md w-full bg-white rounded-2xl border border-border/60 p-8 space-y-5">
+      <div className="max-w-md w-full bg-card rounded-2xl border border-border/60 p-8 space-y-5">
         <div className="flex items-center gap-3">
           {anyFail ? (
             <AlertTriangle className="w-7 h-7 text-destructive" aria-hidden />

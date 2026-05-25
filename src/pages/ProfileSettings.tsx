@@ -170,7 +170,7 @@ export default function ProfileSettings() {
         </div>
 
         {/* Stats de logros */}
-        <div className="bg-white rounded-xl border border-border/60 p-6">
+        <div className="bg-card rounded-xl border border-border/60 p-6">
           <div className="flex items-center gap-4 mb-6">
             {/* Avatar grande */}
             <div className="relative shrink-0">
@@ -231,7 +231,7 @@ export default function ProfileSettings() {
 
         {/* Certificados */}
         {certificates && certificates.length > 0 && (
-          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
+          <div className="bg-card rounded-xl border border-border/60 p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Award className="w-4 h-4 text-primary" />
               <h2 className="font-heading font-semibold text-foreground">Mis certificados</h2>
@@ -265,7 +265,7 @@ export default function ProfileSettings() {
         )}
 
         {/* Insignias de nivel */}
-        <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
+        <div className="bg-card rounded-xl border border-border/60 p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-primary" />
             <h2 className="font-heading font-semibold text-foreground">Insignias</h2>
@@ -298,7 +298,7 @@ export default function ProfileSettings() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Avatar */}
-          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
+          <div className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
             <h2 className="font-heading font-semibold text-foreground">Foto de perfil</h2>
             <div className="flex items-center gap-6">
               <Controller
@@ -323,7 +323,7 @@ export default function ProfileSettings() {
           </div>
 
           {/* Info personal */}
-          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
+          <div className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
             <h2 className="font-heading font-semibold text-foreground">Información personal</h2>
 
             <div className="space-y-1.5">
@@ -350,7 +350,7 @@ export default function ProfileSettings() {
           </div>
 
           {/* Redes sociales */}
-          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
+          <div className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
             <h2 className="font-heading font-semibold text-foreground">Redes sociales</h2>
 
             <div className="grid sm:grid-cols-2 gap-4">

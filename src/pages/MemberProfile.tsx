@@ -141,7 +141,7 @@ export default function MemberProfile() {
 
       <main className="container mx-auto px-4 py-8 max-w-2xl space-y-5">
         {/* Profile card */}
-        <div className="bg-white border border-border/60 rounded-2xl p-6 space-y-4">
+        <div className="bg-card border border-border/60 rounded-2xl p-6 space-y-4">
           <div className="flex items-start gap-4">
             <SmartAvatar
               src={member.avatar_url}
@@ -206,7 +206,7 @@ export default function MemberProfile() {
 
         {/* Enrolled courses */}
         {enrollments.length > 0 && (
-          <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
+          <div className="bg-card border border-border/60 rounded-xl p-4 space-y-3">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <BookOpen className="w-4 h-4 text-primary" />
               Cursos inscriptos
@@ -227,7 +227,7 @@ export default function MemberProfile() {
 
         {/* Recent activity */}
         {activity.length > 0 && (
-          <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
+          <div className="bg-card border border-border/60 rounded-xl p-4 space-y-3">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Zap className="w-4 h-4 text-yellow-500" />
               Actividad reciente

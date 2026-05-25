@@ -51,7 +51,7 @@ export default function MpOAuthCallback() {
 
   return (
     <div className="min-h-screen bg-secondary/30 flex items-center justify-center">
-      <div className="bg-white rounded-2xl border border-border/60 p-10 text-center max-w-sm w-full shadow-sm">
+      <div className="bg-card rounded-2xl border border-border/60 p-10 text-center max-w-sm w-full shadow-sm">
         {status === 'loading' && (
           <>
             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />

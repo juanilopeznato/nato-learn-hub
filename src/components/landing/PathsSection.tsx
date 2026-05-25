@@ -48,7 +48,7 @@ const PathsSection = () => {
           {paths.map((path) => (
             <div
               key={path.title}
-              className="group relative rounded-xl overflow-hidden bg-white border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-300"
+              className="group relative rounded-xl overflow-hidden bg-card border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-300"
             >
               {/* Top gradient bar */}
               <div className={`h-1.5 bg-gradient-to-r ${path.color}`} />

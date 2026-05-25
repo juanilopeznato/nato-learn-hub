@@ -71,7 +71,7 @@ export function EnrolledCourseCard({
   })
 
   return (
-    <div className="bg-white rounded-xl border border-border/60 hover:border-primary/30 hover:shadow-md transition-all duration-200 group flex flex-col overflow-hidden">
+    <div className="bg-card rounded-xl border border-border/60 hover:border-primary/30 hover:shadow-md transition-all duration-200 group flex flex-col overflow-hidden">
 
       {/* Thumbnail */}
       {thumbnailUrl ? (

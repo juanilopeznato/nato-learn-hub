@@ -215,7 +215,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                      isSelected ? 'bg-primary/10' : 'bg-white border border-border/60'
+                      isSelected ? 'bg-primary/10' : 'bg-card border border-border/60'
                     }`}>
                       <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-muted-foreground/80'}`} />
                     </div>
@@ -239,11 +239,11 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     {billingType === 'monthly' && <span className="text-muted-foreground/80 font-normal"> / mes</span>}
                     {billingType === 'annual' && <span className="text-muted-foreground/80 font-normal"> / año</span>}
                   </Label>
-                  <Input type="number" min={0} className="bg-white border-border/50 text-foreground" {...register('price')} />
+                  <Input type="number" min={0} className="bg-card border-border/50 text-foreground" {...register('price')} />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-foreground text-sm">Precio tachado (opcional)</Label>
-                  <Input type="number" min={0} placeholder="Precio original" className="bg-white border-border/50 text-foreground" {...register('original_price')} />
+                  <Input type="number" min={0} placeholder="Precio original" className="bg-card border-border/50 text-foreground" {...register('original_price')} />
                 </div>
               </div>
               {billingType === 'monthly' && (
@@ -315,7 +315,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                       value={item.q}
                       onChange={e => updateFaq(i, 'q', e.target.value)}
                       placeholder="¿Cuánto dura el curso?"
-                      className="bg-white border-border/50 text-foreground text-sm flex-1"
+                      className="bg-card border-border/50 text-foreground text-sm flex-1"
                     />
                     {faqItems.length > 1 && (
                       <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground/80 hover:text-destructive w-7 h-7" onClick={() => removeFaq(i)}>
@@ -327,7 +327,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     value={item.a}
                     onChange={e => updateFaq(i, 'a', e.target.value)}
                     placeholder="Respuesta..."
-                    className="bg-white border-border/50 text-foreground text-sm ml-6"
+                    className="bg-card border-border/50 text-foreground text-sm ml-6"
                   />
                 </div>
               ))}

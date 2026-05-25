@@ -352,7 +352,7 @@ export default function CourseDetail() {
 
   if (!course) return (
     <div className="min-h-screen bg-secondary/30 flex items-center justify-center p-6">
-      <div className="max-w-sm w-full bg-white rounded-2xl border border-border/60 p-8 text-center space-y-4">
+      <div className="max-w-sm w-full bg-card rounded-2xl border border-border/60 p-8 text-center space-y-4">
         <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mx-auto" aria-hidden>
           <BookOpen className="w-6 h-6 text-muted-foreground/80" />
         </div>
@@ -373,7 +373,7 @@ export default function CourseDetail() {
   )
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
@@ -875,7 +875,7 @@ export default function CourseDetail() {
           {/* Right sidebar (desktop) — sticky CTA */}
           <div className="hidden lg:block lg:col-span-1">
             <div className="sticky top-24 space-y-4">
-              <div className="bg-white border border-border/60 rounded-2xl shadow-lg p-6 space-y-4">
+              <div className="bg-card border border-border/60 rounded-2xl shadow-lg p-6 space-y-4">
                 <div>
                   {course.is_free ? (
                     <span className="font-heading text-3xl font-bold text-foreground">Gratis</span>
@@ -984,7 +984,7 @@ export default function CourseDetail() {
       </div>
 
       {/* Mobile sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border/60 p-3 shadow-lg">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border/60 p-3 shadow-lg">
         <Button
           variant="hero"
           size="lg"
