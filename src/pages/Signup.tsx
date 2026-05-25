@@ -85,46 +85,48 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left: branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-hero flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-x-1/4 translate-y-1/4" />
-        <div className="absolute top-1/4 -left-12 w-64 h-64 bg-white/5 rounded-full" />
+    <div className="min-h-screen flex bg-background">
+      {/* Left: branding refinado */}
+      <div className="hidden lg:flex lg:w-1/2 bg-mesh-dark flex-col justify-between p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-dark opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)] pointer-events-none" />
 
-        <div className="relative z-10 flex items-center gap-3">
-          <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-10 w-auto object-contain brightness-0 invert" loading="lazy" decoding="async" />
-          <span className="font-heading text-xl font-bold text-white">{tenantName}</span>
-        </div>
+        <Link to="/" className="relative z-10 flex items-center gap-2.5 group w-fit">
+          <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-8 w-auto object-contain brightness-0 invert transition-transform group-hover:scale-105" loading="lazy" decoding="async" />
+          <span className="font-heading text-base font-semibold text-white tracking-tight">{tenantName}</span>
+        </Link>
 
-        <div className="relative z-10 space-y-6">
-          <h2 className="font-heading text-4xl font-bold text-white leading-tight">
-            Tu carrera en marketing empieza acá
+        <div className="relative z-10 space-y-8 max-w-md">
+          <h2 className="font-heading text-display-lg text-white leading-tight tracking-tight">
+            Tu próximo nivel
+            <br />
+            <span className="text-white/60">empieza acá.</span>
           </h2>
-          <ul className="space-y-3">
+          <ul className="space-y-3.5">
             {benefits.map(b => (
-              <li key={b} className="flex items-center gap-3 text-white/90">
-                <CheckCircle className="w-5 h-5 text-accent shrink-0" />
+              <li key={b} className="flex items-center gap-3 text-white/85 text-sm">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent/20">
+                  <CheckCircle className="w-3 h-3 text-accent" aria-hidden />
+                </span>
                 {b}
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="relative z-10 text-white/50 text-sm">© {new Date().getFullYear()} {tenantName}</p>
+        <p className="relative z-10 text-white/40 text-xs">© {new Date().getFullYear()} {tenantName}</p>
       </div>
 
       {/* Right: form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm space-y-8">
-          <div className="flex items-center gap-2 lg:hidden">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
-            <span className="font-heading text-lg font-bold text-gray-900">{tenantName}</span>
-          </div>
+          <Link to="/" className="flex items-center gap-2 lg:hidden">
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenantName} className="h-7 w-auto object-contain" loading="lazy" decoding="async" />
+            <span className="font-heading text-base font-semibold text-foreground tracking-tight">{tenantName}</span>
+          </Link>
 
           <div>
-            <h1 className="font-heading text-2xl font-bold text-gray-900">Creá tu cuenta</h1>
-            <p className="text-gray-500 mt-1">Empezá a aprender gratis hoy</p>
+            <h1 className="font-heading text-display-sm md:text-display-md text-foreground tracking-tight">Creá tu cuenta</h1>
+            <p className="text-muted-foreground text-sm mt-2">Empezá a aprender gratis hoy</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -145,20 +147,19 @@ export default function Signup() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="fullName" className="text-gray-700 font-medium">Nombre completo</Label>
+              <Label htmlFor="fullName" className="text-foreground text-sm font-medium">Nombre completo</Label>
               <Input
                 id="fullName"
                 autoComplete="name"
                 autoCapitalize="words"
                 placeholder="Juan López"
-                className="h-11 border-gray-200 focus:border-primary"
                 {...register('fullName')}
               />
-              {errors.fullName && <p className="text-xs text-red-500">{errors.fullName.message}</p>}
+              {errors.fullName && <p className="text-xs text-destructive mt-1">{errors.fullName.message}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+              <Label htmlFor="email" className="text-foreground text-sm font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -168,40 +169,38 @@ export default function Signup() {
                 autoCorrect="off"
                 spellCheck={false}
                 placeholder="tu@email.com"
-                className="h-11 border-gray-200 focus:border-primary"
                 {...register('email')}
               />
-              {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+              {errors.email && <p className="text-xs text-destructive mt-1">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-gray-700 font-medium">Contraseña</Label>
+              <Label htmlFor="password" className="text-foreground text-sm font-medium">Contraseña</Label>
               <Input
                 id="password"
                 type="password"
                 autoComplete="new-password"
-                placeholder="••••••••"
-                className="h-11 border-gray-200 focus:border-primary"
+                placeholder="Mínimo 6 caracteres"
                 {...register('password')}
               />
-              {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+              {errors.password && <p className="text-xs text-destructive mt-1">{errors.password.message}</p>}
             </div>
 
             {serverError && (
-              <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+              <div className="text-sm text-destructive bg-destructive/[0.06] border border-destructive/20 rounded-md px-3 py-2.5 animate-fade-in">
                 {serverError}
               </div>
             )}
 
-            <Button type="submit" variant="hero" size="lg" className="w-full h-11" disabled={isSubmitting}>
+            <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? 'Creando cuenta...' : 'Crear cuenta gratis'}
-              <ArrowRight className="w-4 h-4" />
+              {!isSubmitting && <ArrowRight />}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-muted-foreground">
             ¿Ya tenés cuenta?{' '}
-            <Link to="/login" className="text-primary hover:text-primary/80 font-medium transition-colors">
+            <Link to="/login" className="text-primary hover:underline font-medium underline-offset-4">
               Iniciá sesión
             </Link>
           </p>

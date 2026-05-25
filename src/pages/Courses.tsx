@@ -148,7 +148,7 @@ export default function Courses() {
   const tenantName = tenant?.name ?? 'NATO University'
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary/30">
       <Helmet>
         <title>Cursos — {tenantName}</title>
         <meta name="description" content={`Explorá todos los cursos disponibles en ${tenantName}. Aprendé marketing digital, negocios, contenido y más.`} />
@@ -161,11 +161,11 @@ export default function Courses() {
         <meta property="og:site_name" content={tenantName} />
         <meta property="og:locale" content="es_AR" />
       </Helmet>
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
+      {/* Header — glass al scrollear */}
+      <header className="glass-light sticky top-0 z-40">
+        <div className="container h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-7 w-auto object-contain transition-transform duration-200 ease-apple group-hover:scale-105" loading="lazy" decoding="async" />
           </Link>
           <div className="flex items-center gap-2">
             {user ? (
@@ -177,7 +177,7 @@ export default function Courses() {
             ) : (
               <>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link to="/login"><LogIn className="w-4 h-4 mr-1" />Ingresar</Link>
+                  <Link to="/login"><LogIn aria-hidden />Ingresar</Link>
                 </Button>
                 <Button variant="hero" size="sm" asChild>
                   <Link to="/signup">Comenzar gratis</Link>
@@ -189,28 +189,29 @@ export default function Courses() {
       </header>
 
       {/* Sticky filter bar */}
-      <div className="sticky top-16 z-30 bg-white border-b border-gray-100 shadow-sm">
-        <div className="container mx-auto px-4 py-3 space-y-3">
+      <div className="sticky top-16 z-30 glass-light">
+        <div className="container py-3 space-y-3">
           {/* Search + price */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar cursos..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="pl-9"
+                className="pl-10"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5 p-1 bg-secondary rounded-full border border-border/60">
               {(['all', 'free', 'paid'] as const).map(p => (
                 <button
                   key={p}
+                  type="button"
                   onClick={() => setPriceFilter(p)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ease-apple ${
                     priceFilter === p
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {p === 'all' ? 'Todos' : p === 'free' ? 'Gratis' : 'De pago'}
@@ -220,15 +221,16 @@ export default function Courses() {
           </div>
 
           {/* Category chips */}
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-6 px-6">
             {CATEGORIES.map(cat => (
               <button
                 key={cat.value}
+                type="button"
                 onClick={() => setCategory(cat.value)}
-                className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                className={`shrink-0 h-7 px-3 rounded-full text-xs font-medium transition-all duration-200 ease-apple ${
                   category === cat.value
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-foreground text-background'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80'
                 }`}
               >
                 {cat.label}
@@ -238,13 +240,13 @@ export default function Courses() {
         </div>
       </div>
 
-      <main className="container mx-auto px-4 py-8 space-y-6">
+      <main className="container py-12 space-y-8 max-w-6xl">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-heading text-2xl font-bold text-gray-900">
+            <h1 className="font-heading text-display-md text-foreground">
               {category ? CATEGORIES.find(c => c.value === category)?.label : 'Todos los cursos'}
             </h1>
-            <p className="text-gray-500 text-sm mt-0.5">
+            <p className="text-muted-foreground text-sm mt-1">
               {filtered.length} {filtered.length === 1 ? 'curso' : 'cursos'} encontrado{filtered.length === 1 ? '' : 's'}
             </p>
           </div>
@@ -260,48 +262,22 @@ export default function Courses() {
             {[1, 2, 3].map(i => <CourseCardSkeleton key={i} />)}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl p-14 text-center space-y-5 border border-gray-100">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-              <BookOpen className="w-8 h-8 text-primary" />
+          <div className="rounded-2xl bg-card border border-border/60 p-16 text-center space-y-5">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+              <BookOpen className="w-7 h-7 text-primary" aria-hidden />
             </div>
             <div>
-              <h3 className="font-heading text-xl font-semibold text-gray-900">Sin resultados</h3>
-              <p className="text-gray-500 max-w-xs mx-auto mt-1">
+              <h3 className="font-heading text-display-sm text-foreground">Sin resultados</h3>
+              <p className="text-muted-foreground text-sm max-w-xs mx-auto mt-1.5">
                 No encontramos cursos{search ? ` para "${search}"` : ' con esos filtros'}.
               </p>
-            </div>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {category && (
-                <button
-                  onClick={() => setCategory('')}
-                  className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition-colors"
-                >
-                  Quitar categoría
-                </button>
-              )}
-              {priceFilter !== 'all' && (
-                <button
-                  onClick={() => setPriceFilter('all')}
-                  className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition-colors"
-                >
-                  Ver todos los precios
-                </button>
-              )}
-              {search && (
-                <button
-                  onClick={() => setSearch('')}
-                  className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition-colors"
-                >
-                  Limpiar búsqueda
-                </button>
-              )}
             </div>
             <Button variant="hero" size="sm" onClick={() => { setSearch(''); setCategory(''); setPriceFilter('all') }}>
               Ver todos los cursos
             </Button>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(course => {
               const totalLessons = lessonCountMap[course.id] ?? 0
               const review = reviewMap[course.id]
@@ -309,63 +285,63 @@ export default function Courses() {
                 <Link
                   key={course.id}
                   to={`/courses/${course.slug}`}
-                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:scale-[1.02] transition-all duration-200 group"
+                  className="group rounded-2xl bg-card border border-border/60 overflow-hidden flex flex-col transition-all duration-200 ease-apple hover:shadow-lg hover:-translate-y-1 hover:border-border"
                 >
                   {/* Thumbnail */}
-                  <div className="relative">
+                  <div className="relative overflow-hidden">
                     {course.thumbnail_url ? (
-                      <SmartImage src={course.thumbnail_url} alt={course.title} size="sm" className="h-44 w-full object-cover" />
+                      <SmartImage src={course.thumbnail_url} alt={course.title} size="sm" className="h-44 w-full object-cover transition-transform duration-500 ease-apple group-hover:scale-[1.04]" />
                     ) : (
                       <CourseInitialGradient title={course.title} />
                     )}
                     {course.is_featured && (
-                      <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-yellow-900" />
+                      <Badge variant="default" size="sm" className="absolute top-3 left-3 bg-yellow-400 text-yellow-900 gap-1 shadow-sm">
+                        <Star className="w-3 h-3 fill-yellow-900" aria-hidden />
                         Destacado
-                      </div>
+                      </Badge>
                     )}
                     {course.category && (
-                      <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-2 py-0.5 rounded-full capitalize">
+                      <Badge size="sm" className="absolute top-3 right-3 bg-background/90 text-foreground backdrop-blur-sm capitalize border border-border/40">
                         {course.category}
-                      </div>
+                      </Badge>
                     )}
                   </div>
 
                   {/* Content */}
                   <div className="p-5 flex flex-col flex-1 space-y-3">
-                    <h2 className="font-heading text-base font-semibold text-gray-900 leading-snug group-hover:text-primary transition-colors">
+                    <h2 className="font-heading text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors duration-150">
                       {course.title}
                     </h2>
                     {review && (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold text-gray-700">{review.avg.toFixed(1)}</span>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" aria-hidden />
+                        <span className="font-semibold text-foreground">{review.avg.toFixed(1)}</span>
                         <span>({review.count} {review.count === 1 ? 'opinión' : 'opiniones'})</span>
                       </div>
                     )}
                     {course.description && (
-                      <p className="text-sm text-gray-500 line-clamp-2 flex-1">{course.description}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2 flex-1 leading-relaxed">{course.description}</p>
                     )}
-                    <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center justify-between pt-2 border-t border-border/40">
                       <div className="flex items-center gap-2 flex-wrap">
                         {(() => {
                           const bt = course.billing_type ?? (course.is_free ? 'free' : 'one_time')
                           if (bt === 'free' || !course.price) return (
-                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 text-xs font-semibold">Gratis</Badge>
+                            <Badge variant="success" size="sm">Gratis</Badge>
                           )
                           const suffix = bt === 'monthly' ? '/mes' : bt === 'annual' ? '/año' : ''
                           return (
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-sm font-bold text-gray-900">
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-sm font-bold text-foreground tabular-nums">
                                 ARS {Number(course.price).toLocaleString('es-AR')}
                               </span>
-                              {suffix && <span className="text-xs text-gray-400 font-medium">{suffix}</span>}
+                              {suffix && <span className="text-xs text-muted-foreground">{suffix}</span>}
                             </div>
                           )
                         })()}
                         {totalLessons > 0 && (
-                          <span className="text-xs text-gray-400 flex items-center gap-1">
-                            <BookOpen className="w-3 h-3" />
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <BookOpen className="w-3 h-3" aria-hidden />
                             {totalLessons} {totalLessons === 1 ? 'clase' : 'clases'}
                           </span>
                         )}
