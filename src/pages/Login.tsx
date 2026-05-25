@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,12 +9,32 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/context/AuthContext'
 import { events } from '@/lib/analytics'
+import { logger } from '@/lib/logger'
 
 const schema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Mínimo 6 caracteres'),
+  // Honeypot — invisible para humanos, bots lo completan
+  website: z.string().max(0, 'Bot detectado').optional(),
 })
 type FormData = z.infer<typeof schema>
+
+const MIN_TIME_TO_SUBMIT_MS = 1500
+// Client-side cooldown anti brute-force entre intentos fallidos
+const FAILED_ATTEMPTS_KEY = 'nato_login_attempts'
+const COOLDOWN_AFTER_ATTEMPTS = 5
+const COOLDOWN_SECONDS = 30
+
+interface AttemptsState { count: number; until: number }
+function getAttempts(): AttemptsState {
+  try {
+    const raw = sessionStorage.getItem(FAILED_ATTEMPTS_KEY)
+    return raw ? JSON.parse(raw) : { count: 0, until: 0 }
+  } catch { return { count: 0, until: 0 } }
+}
+function setAttempts(s: AttemptsState) {
+  try { sessionStorage.setItem(FAILED_ATTEMPTS_KEY, JSON.stringify(s)) } catch { /* */ }
+}
 
 export default function Login() {
   const { signIn, tenant } = useAuth()
@@ -29,10 +49,45 @@ export default function Login() {
     resolver: zodResolver(schema),
   })
 
+  const formLoadedAt = useRef<number>(0)
+  useEffect(() => { formLoadedAt.current = Date.now() }, [])
+
   async function onSubmit(data: FormData) {
     setServerError(null)
+
+    // Honeypot
+    if (data.website && data.website.length > 0) {
+      logger.warn('login blocked: honeypot triggered')
+      setServerError('Email o contraseña incorrectos')
+      return
+    }
+
+    // Cooldown: muy rápido = bot
+    const elapsed = Date.now() - formLoadedAt.current
+    if (elapsed < MIN_TIME_TO_SUBMIT_MS) {
+      logger.warn('login blocked: too fast', { elapsedMs: elapsed })
+      setServerError('Esperá un momento antes de enviar.')
+      return
+    }
+
+    // Cooldown post-intentos fallidos
+    const att = getAttempts()
+    if (att.until > Date.now()) {
+      const secs = Math.ceil((att.until - Date.now()) / 1000)
+      setServerError(`Demasiados intentos. Probá de nuevo en ${secs}s.`)
+      return
+    }
+
     const { error } = await signIn(data.email, data.password)
-    if (error) { setServerError(error); return }
+    if (error) {
+      const next = att.count + 1
+      const until = next >= COOLDOWN_AFTER_ATTEMPTS ? Date.now() + COOLDOWN_SECONDS * 1000 : 0
+      setAttempts({ count: next >= COOLDOWN_AFTER_ATTEMPTS ? 0 : next, until })
+      setServerError(error)
+      return
+    }
+
+    setAttempts({ count: 0, until: 0 })
     events.loginCompleted({ tenant: tenant?.slug })
     navigate(from, { replace: true })
   }
@@ -85,6 +140,20 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Honeypot: invisible para humanos, los bots completan todos los campos */}
+            <div
+              aria-hidden="true"
+              style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+            >
+              <label htmlFor="login_website">No completar</label>
+              <input
+                id="login_website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                {...register('website')}
+              />
+            </div>
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
               <Input

@@ -25,6 +25,23 @@
     <meta name="twitter:title" content="NATO University — Plataforma de cursos online">
     <meta name="twitter:description" content="Aprendé marketing digital, negocios y creación de contenido con NATO University. Cursos prácticos, certificados verificables y comunidad activa.">
 
+    <!-- Fuentes — preconnect + load non-blocking. Saca el @import del CSS para
+         no bloquear el render del shell. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" /></noscript>
+
     <!-- PWA -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/nato-logo.png" />

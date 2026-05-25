@@ -72,6 +72,11 @@ interface SubscriptionPayment {
  * supabase no se están consumiendo (ver nota en lib/supabase.ts), entonces
  * declaramos acá los campos que usamos para evitar `as any`.
  */
+/**
+ * Shape "safe" del tenant tal como lo devuelve la RPC `get_tenant_settings`.
+ * Las credenciales (resend_api_key, mp_access_token) NO se exponen al cliente;
+ * solo flags has_* indicando si están seteadas.
+ */
 interface FullTenant {
   id: string
   name: string | null
@@ -83,13 +88,17 @@ interface FullTenant {
   social_instagram: string | null
   social_whatsapp: string | null
   meta_pixel_id: string | null
-  resend_api_key: string | null
   mp_collector_id: string | null
   plan_name: string | null
   plan_expires_at: string | null
+  has_resend_api_key: boolean
+  has_mp_access_token: boolean
 }
 
-type TenantUpdate = Partial<Omit<FullTenant, 'id'>>
+type TenantUpdate = Partial<Pick<FullTenant,
+  'name' | 'slug' | 'logo_url' | 'primary_color' | 'tagline' |
+  'support_email' | 'social_instagram' | 'social_whatsapp' | 'meta_pixel_id'
+>>
 
 export default function TenantSettings() {
   const { profile, tenant, signOut } = useAuth()
@@ -105,12 +114,12 @@ export default function TenantSettings() {
     queryKey: ['tenant-full', tenant?.id],
     enabled: !!tenant?.id,
     queryFn: async () => {
-      const { data } = await supabase
-        .from('tenants')
-        .select('*')
-        .eq('id', tenant!.id)
-        .single()
-      return (data ?? null) as FullTenant | null
+      // Usar RPC get_tenant_settings: NO trae creds (resend_api_key,
+      // mp_access_token), solo has_* booleans.
+      const { data, error } = await supabase.rpc('get_tenant_settings', { p_tenant_id: tenant!.id })
+      if (error) throw error
+      const rows = (data ?? []) as unknown as FullTenant[]
+      return rows[0] ?? null
     },
   })
 
@@ -152,9 +161,12 @@ export default function TenantSettings() {
       social_instagram: fullTenant.social_instagram ?? '',
       social_whatsapp: fullTenant.social_whatsapp ?? '',
     })
+    // resend_api_key NUNCA viene del backend al cliente. El input arranca vacío;
+    // si has_resend_api_key=true mostramos un placeholder "Configurada" abajo
+    // y solo guardamos lo que el user pegue nuevo.
     integrationsForm.reset({
       meta_pixel_id: fullTenant.meta_pixel_id ?? '',
-      resend_api_key: fullTenant.resend_api_key ?? '',
+      resend_api_key: '',
     })
   }, [fullTenant])
 
@@ -200,15 +212,25 @@ export default function TenantSettings() {
 
   const saveIntegrations = useMutation({
     mutationFn: async (data: IntegrationsData) => {
+      // meta_pixel_id es público (se inyecta en HTML para tracking) → ok update directo
       const update: TenantUpdate = {
         meta_pixel_id: data.meta_pixel_id || null,
-        resend_api_key: data.resend_api_key || null,
       }
       const { error } = await supabase
         .from('tenants')
         .update(update)
         .eq('id', tenant!.id)
       if (error) throw error
+
+      // resend_api_key es secreto → va por RPC SECURITY DEFINER que valida tenant
+      // y solo escribe (no permite read). Solo si el user pegó algo nuevo.
+      if (data.resend_api_key && data.resend_api_key.trim().length > 0) {
+        const { error: e2 } = await supabase.rpc('update_tenant_resend_key', {
+          p_tenant_id: tenant!.id,
+          p_api_key: data.resend_api_key.trim(),
+        })
+        if (e2) throw e2
+      }
     },
     onSuccess: () => toast.success('Integraciones guardadas'),
     onError: (e: Error) => toast.error(e.message),
@@ -441,12 +463,17 @@ export default function TenantSettings() {
                 <Label>Resend API Key</Label>
                 <Input
                   type="password"
-                  placeholder="re_..."
+                  autoComplete="off"
+                  placeholder={fullTenant?.has_resend_api_key ? '••••••••••••• (configurada)' : 're_...'}
                   {...integrationsForm.register('resend_api_key')}
                 />
                 <p className="text-xs text-gray-500">
-                  Necesario para el email marketing. Conseguilo en{' '}
-                  <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com</a>
+                  {fullTenant?.has_resend_api_key ? (
+                    <>Hay una key guardada. Pegá una nueva acá solo si querés reemplazarla. Por seguridad nunca la mostramos.</>
+                  ) : (
+                    <>Necesario para el email marketing. Conseguilo en{' '}
+                    <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com</a></>
+                  )}
                 </p>
               </div>
 

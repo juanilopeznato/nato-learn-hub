@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { SmartAvatar } from '@/components/SmartImage'
 import { toast } from 'sonner'
+import { toastError } from '@/lib/toast-helpers'
 
 type Category = 'question' | 'win' | 'resource' | 'general'
 
@@ -143,7 +144,11 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
       }
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['community-posts'] }),
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(
+      hasLiked ? 'No se pudo sacar el like' : 'No se pudo dar like',
+      e,
+      { retry: () => toggleLike.mutate() },
+    ),
   })
 
   return (

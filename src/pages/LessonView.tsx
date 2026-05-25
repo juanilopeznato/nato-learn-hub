@@ -14,6 +14,7 @@ import { CertificateModal } from '@/components/CertificateModal'
 import { UpsellModal } from '@/components/lesson/UpsellModal'
 import { events } from '@/lib/analytics'
 import { toast } from 'sonner'
+import { toastError } from '@/lib/toast-helpers'
 
 export default function LessonView() {
   const { courseSlug, lessonId } = useParams<{ courseSlug: string; lessonId: string }>()
@@ -207,7 +208,11 @@ export default function LessonView() {
         }
       }
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(
+      'No se pudo guardar la lección como completada',
+      e,
+      { retry: () => completeMutation.mutate() },
+    ),
   })
 
   // Navegación anterior/siguiente
