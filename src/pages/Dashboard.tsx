@@ -12,6 +12,7 @@ import { Leaderboard } from '@/components/dashboard/Leaderboard'
 // fuera del critical path inicial.
 const NotificationBell = lazy(() => import('@/components/NotificationBell').then(m => ({ default: m.NotificationBell })))
 import OnboardingModal from '@/components/OnboardingModal'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { SmartImage, SmartAvatar } from '@/components/SmartImage'
 
 interface ProfileExtras {
@@ -136,6 +137,7 @@ export default function Dashboard() {
                 <StreakBadge streak={profileExtras?.streak_days ?? 0} size="sm" />
               </div>
             </div>
+            <ThemeToggle className="hidden md:inline-flex" />
             <Button variant="ghost" size="icon-sm" onClick={signOut} aria-label="Cerrar sesión">
               <LogOut />
             </Button>

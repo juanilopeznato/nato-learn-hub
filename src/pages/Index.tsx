@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import Navbar from '@/components/landing/Navbar'
 import HeroSection from '@/components/landing/HeroSection'
 import HowItWorks from '@/components/landing/HowItWorks'
+import BentoFeatures from '@/components/landing/BentoFeatures'
 import CoursesSection from '@/components/landing/CoursesSection'
 import CTASection from '@/components/landing/CTASection'
 import Footer from '@/components/landing/Footer'
@@ -44,6 +45,7 @@ export default function Index() {
       <Navbar />
       <HeroSection />
       <HowItWorks />
+      <BentoFeatures />
       <CoursesSection />
       <CTASection />
       <Footer />

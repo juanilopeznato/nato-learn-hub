@@ -10,13 +10,33 @@
     <link rel="dns-prefetch" href="https://hoolsigtquohayhpqgtb.supabase.co" />
     <link rel="preconnect" href="https://hoolsigtquohayhpqgtb.supabase.co" crossorigin />
 
-    <!-- Critical CSS inline: evita el flash of unstyled content mientras carga el
-         stylesheet principal. Solo lo mínimo para el shell. -->
+    <!-- Theme bootstrap: lee localStorage y aplica clase .dark ANTES del primer
+         paint. Evita el flash claro→oscuro. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('nato_theme') || 'system';
+          var dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch (e) { /* */ }
+      })();
+    </script>
+
+    <!-- Critical CSS inline: evita FOUC mientras carga el stylesheet principal.
+         Respeta light/dark via color-scheme (se setea por el script de tema arriba). -->
     <style>
-      html, body { margin: 0; padding: 0; background: #ffffff; color: rgb(13, 13, 13); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+      html { color-scheme: light dark; }
+      html.dark { background: hsl(222 47% 6%); color: hsl(0 0% 95%); }
+      html:not(.dark) { background: #ffffff; color: rgb(31, 32, 39); }
+      body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
       #root { min-height: 100vh; }
       .nato-boot { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-      .nato-boot::after { content: ''; width: 32px; height: 32px; border: 2px solid #e5e5e5; border-top-color: #5B21F5; border-radius: 50%; animation: ns 0.6s linear infinite; }
+      .nato-boot::after { content: ''; width: 32px; height: 32px; border: 2px solid currentColor; border-top-color: #5B21F5; border-radius: 50%; opacity: 0.3; animation: ns 0.6s linear infinite; }
       @keyframes ns { to { transform: rotate(360deg); } }
     </style>
 

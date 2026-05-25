@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { useAuth } from '@/context/AuthContext'
 
 /**
@@ -73,6 +74,7 @@ export default function Navbar() {
 
         {/* Desktop actions */}
         <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           {user ? (
             <Button variant="hero" size="sm" asChild>
               <Link to={dashHref}>Mi panel</Link>

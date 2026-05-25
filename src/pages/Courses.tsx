@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { BookOpen, Search, LogIn, Star } from 'lucide-react'
 import { SmartImage } from '@/components/SmartImage'
+import { EmptyState } from '@/components/EmptyState'
 import { canonicalUrl, absoluteUrl } from '@/lib/seo'
 
 type Course = {
@@ -262,20 +263,16 @@ export default function Courses() {
             {[1, 2, 3].map(i => <CourseCardSkeleton key={i} />)}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl bg-card border border-border/60 p-16 text-center space-y-5">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-              <BookOpen className="w-7 h-7 text-primary" aria-hidden />
-            </div>
-            <div>
-              <h3 className="font-heading text-display-sm text-foreground">Sin resultados</h3>
-              <p className="text-muted-foreground text-sm max-w-xs mx-auto mt-1.5">
-                No encontramos cursos{search ? ` para "${search}"` : ' con esos filtros'}.
-              </p>
-            </div>
-            <Button variant="hero" size="sm" onClick={() => { setSearch(''); setCategory(''); setPriceFilter('all') }}>
-              Ver todos los cursos
-            </Button>
-          </div>
+          <EmptyState
+            illustration="search"
+            title="Sin resultados"
+            description={`No encontramos cursos${search ? ` para "${search}"` : ' con esos filtros'}. Probá ajustando la búsqueda.`}
+            action={
+              <Button variant="hero" size="sm" onClick={() => { setSearch(''); setCategory(''); setPriceFilter('all') }}>
+                Ver todos los cursos
+              </Button>
+            }
+          />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(course => {
