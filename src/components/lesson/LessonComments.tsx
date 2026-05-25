@@ -59,7 +59,7 @@ function CommentForm({ onSubmit, placeholder = 'Escribí tu comentario...', auto
         value={body}
         onChange={e => setBody(e.target.value)}
         placeholder={placeholder}
-        className="resize-none text-sm min-h-[80px] border-gray-200 focus:border-primary"
+        className="resize-none text-sm min-h-[80px] border-border/60 focus:border-primary"
         autoFocus={autoFocus}
       />
       <div className="flex gap-2 justify-end">
@@ -90,18 +90,18 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
       <div className="flex gap-3">
         <Avatar name={comment.author?.full_name ?? 'Usuario'} url={comment.author?.avatar_url ?? null} />
         <div className="flex-1 min-w-0">
-          <div className="bg-gray-50 rounded-xl px-3 py-2.5">
+          <div className="bg-secondary/30 rounded-xl px-3 py-2.5">
             <div className="flex items-center justify-between gap-2 mb-1">
               <span className="text-sm font-semibold text-gray-900">{comment.author?.full_name ?? 'Usuario'}</span>
-              <span className="text-xs text-gray-400 shrink-0">
+              <span className="text-xs text-muted-foreground/80 shrink-0">
                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: es })}
               </span>
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"><AutoLinkText>{comment.body}</AutoLinkText></p>
+            <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-wrap"><AutoLinkText>{comment.body}</AutoLinkText></p>
           </div>
           <div className="flex items-center gap-3 mt-1 ml-1">
             <button
-              className="text-xs text-gray-400 hover:text-primary transition-colors flex items-center gap-1"
+              className="text-xs text-muted-foreground/80 hover:text-primary transition-colors flex items-center gap-1"
               onClick={() => setShowReply(v => !v)}
             >
               <CornerDownRight className="w-3 h-3" />
@@ -109,7 +109,7 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
             </button>
             {canDelete(comment.author?.id ?? '') && (
               <button
-                className="text-xs text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1"
+                className="text-xs text-muted-foreground/80 hover:text-red-500 transition-colors flex items-center gap-1"
                 onClick={() => onDelete(comment.id)}
               >
                 <Trash2 className="w-3 h-3" />
@@ -140,18 +140,18 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
             <div key={reply.id} className="flex gap-3">
               <Avatar name={reply.author?.full_name ?? 'Usuario'} url={reply.author?.avatar_url ?? null} />
               <div className="flex-1 min-w-0">
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
+                <div className="bg-secondary/30 rounded-xl px-3 py-2.5">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <span className="text-sm font-semibold text-gray-900">{reply.author?.full_name ?? 'Usuario'}</span>
-                    <span className="text-xs text-gray-400 shrink-0">
+                    <span className="text-xs text-muted-foreground/80 shrink-0">
                       {formatDistanceToNow(new Date(reply.created_at), { addSuffix: true, locale: es })}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"><AutoLinkText>{reply.body}</AutoLinkText></p>
+                  <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-wrap"><AutoLinkText>{reply.body}</AutoLinkText></p>
                 </div>
                 {canDelete(reply.author?.id ?? '') && (
                   <button
-                    className="text-xs text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 mt-1 ml-1"
+                    className="text-xs text-muted-foreground/80 hover:text-red-500 transition-colors flex items-center gap-1 mt-1 ml-1"
                     onClick={() => onDelete(reply.id)}
                   >
                     <Trash2 className="w-3 h-3" />
@@ -220,7 +220,7 @@ export function LessonComments({ lessonId, tenantId, profileId, profileRole }: P
   const getReplies = (parentId: string) => comments.filter(c => c.parent_id === parentId)
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-5">
+    <div className="bg-white border border-border/60 rounded-xl p-4 space-y-5">
       <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
         <MessageCircle className="w-4 h-4" />
         Comentarios ({comments.length})
@@ -231,7 +231,7 @@ export function LessonComments({ lessonId, tenantId, profileId, profileRole }: P
       />
 
       {rootComments.length > 0 && (
-        <div className="space-y-4 pt-2 border-t border-gray-100">
+        <div className="space-y-4 pt-2 border-t border-border/40">
           {rootComments.map(comment => (
             <CommentItem
               key={comment.id}

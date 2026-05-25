@@ -213,7 +213,7 @@ export function StorageMigration() {
           )}
         </div>
         {files.length > 0 && (
-          <div className="flex gap-4 text-xs text-gray-500 mt-3">
+          <div className="flex gap-4 text-xs text-muted-foreground mt-3">
             <span>✓ {counts.done} listos</span>
             <span>⏳ {counts.pending} pendientes</span>
             {counts.error > 0 && <span className="text-red-400">✗ {counts.error} con error</span>}
@@ -237,7 +237,7 @@ export function StorageMigration() {
               {files.map(f => (
                 <tr key={`${f.bucket}/${f.path}`} className="border-t border-gray-800/60">
                   <td className="px-5 py-2 text-gray-300 truncate max-w-[420px]">{f.path}</td>
-                  <td className="px-5 py-2 text-right text-gray-500 text-xs">{f.bucket}</td>
+                  <td className="px-5 py-2 text-right text-muted-foreground text-xs">{f.bucket}</td>
                   <td className="px-5 py-2 text-right text-gray-400">{f.sizeKb} KB</td>
                   <td className="px-5 py-2 text-right">
                     <StatusBadge status={f.status} message={f.message} />
@@ -256,8 +256,8 @@ function StatusBadge({ status, message }: { status: Status; message?: string }) 
   if (status === 'processing') return <span className="inline-flex items-center gap-1 text-blue-400 text-xs"><Loader2 className="w-3 h-3 animate-spin" /> Procesando…</span>
   if (status === 'done') return <span className="inline-flex items-center gap-1 text-green-400 text-xs"><CheckCircle2 className="w-3 h-3" /> Listo {message ? `(${message})` : ''}</span>
   if (status === 'error') return <span className="inline-flex items-center gap-1 text-red-400 text-xs" title={message}><AlertTriangle className="w-3 h-3" /> Error</span>
-  if (status === 'skipped') return <span className="text-gray-500 text-xs">{message ?? 'Salteado'}</span>
-  return <span className="text-gray-500 text-xs">Pendiente</span>
+  if (status === 'skipped') return <span className="text-muted-foreground text-xs">{message ?? 'Salteado'}</span>
+  return <span className="text-muted-foreground text-xs">Pendiente</span>
 }
 
 /**

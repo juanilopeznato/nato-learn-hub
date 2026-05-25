@@ -53,7 +53,7 @@ export default function CertificateVerify() {
         {isLoading ? (
           <div className="flex flex-col items-center gap-3 py-6">
             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <p className="text-gray-500 text-sm">Verificando certificado...</p>
+            <p className="text-muted-foreground text-sm">Verificando certificado...</p>
           </div>
         ) : (isError || !certificate) ? (
           <div className="space-y-4 py-4">
@@ -61,7 +61,7 @@ export default function CertificateVerify() {
               <XCircle className="w-9 h-9 text-red-500" />
             </div>
             <h1 className="font-heading text-xl font-bold text-gray-900">Certificado inválido</h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-muted-foreground text-sm">
               Certificado no encontrado o inválido. El código de verificación no coincide con ningún certificado emitido.
             </p>
           </div>
@@ -77,11 +77,11 @@ export default function CertificateVerify() {
               <h1 className="font-heading text-2xl font-bold text-gray-900">
                 {student?.full_name ?? 'Estudiante'}
               </h1>
-              <p className="text-gray-500 mt-1 text-sm">completó satisfactoriamente el curso</p>
+              <p className="text-muted-foreground mt-1 text-sm">completó satisfactoriamente el curso</p>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-              <p className="font-heading font-semibold text-gray-900 text-lg">
+            <div className="bg-secondary/30 rounded-xl p-4 space-y-2">
+              <p className="font-heading font-semibold text-foreground text-lg">
                 {course?.title ?? '—'}
               </p>
               <p className="text-sm text-gray-500">
@@ -99,7 +99,7 @@ export default function CertificateVerify() {
               )}
             </div>
 
-            <div className="border-t border-gray-100 pt-4">
+            <div className="border-t border-border/40 pt-4">
               <p className="text-xs text-gray-400">
                 Código de verificación:{' '}
                 <span className="font-mono text-gray-600">{code}</span>
@@ -111,7 +111,7 @@ export default function CertificateVerify() {
 
       <p className="mt-8 text-xs text-gray-400">
         Powered by{' '}
-        <Link to="/" className="hover:text-gray-600 transition-colors">NATO University</Link>
+        <Link to="/" className="hover:text-foreground/70 transition-colors">NATO University</Link>
       </p>
     </div>
   )

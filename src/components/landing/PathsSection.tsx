@@ -30,15 +30,15 @@ const paths = [
 
 const PathsSection = () => {
   return (
-    <section id="paths" className="py-24 bg-gray-50 relative overflow-hidden">
+    <section id="paths" className="py-24 bg-secondary/30 relative overflow-hidden">
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Learning Paths{" "}
             <span className="text-gradient-hero">diseñados para ti</span>
           </h2>
-          <p className="text-gray-500 text-lg">
+          <p className="text-muted-foreground text-lg">
             Recorridos estructurados que te llevan de 0 a experto, con quizzes 
             y certificación al completar.
           </p>
@@ -48,7 +48,7 @@ const PathsSection = () => {
           {paths.map((path) => (
             <div
               key={path.title}
-              className="group relative rounded-xl overflow-hidden bg-white border border-gray-200 hover:border-primary/40 hover:shadow-lg transition-all duration-300"
+              className="group relative rounded-xl overflow-hidden bg-white border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-300"
             >
               {/* Top gradient bar */}
               <div className={`h-1.5 bg-gradient-to-r ${path.color}`} />
@@ -60,7 +60,7 @@ const PathsSection = () => {
                 <h3 className="font-heading text-xl font-semibold text-gray-900">
                   {path.title}
                 </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {path.description}
                 </p>
                 

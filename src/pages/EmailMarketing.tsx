@@ -250,8 +250,8 @@ export default function EmailMarketing() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-secondary/30">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
@@ -275,7 +275,7 @@ export default function EmailMarketing() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-heading text-3xl font-bold text-gray-900">Email Marketing</h1>
-            <p className="text-gray-500 mt-1">Creá y enviá campañas a tus estudiantes</p>
+            <p className="text-muted-foreground mt-1">Creá y enviá campañas a tus estudiantes</p>
           </div>
           <Button variant="hero" onClick={openCreate}>
             <Plus className="w-4 h-4" />
@@ -286,24 +286,24 @@ export default function EmailMarketing() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2].map(i => (
-              <div key={i} className="bg-white border border-gray-200 rounded-xl h-20 animate-pulse" />
+              <div key={i} className="bg-white border border-border/60 rounded-xl h-20 animate-pulse" />
             ))}
           </div>
         ) : campaigns && campaigns.length > 0 ? (
           <div className="space-y-3">
             {campaigns.map(campaign => (
-              <div key={campaign.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div key={campaign.id} className="bg-white border border-border/60 rounded-xl overflow-hidden">
                 <div
-                  className="p-5 flex items-center gap-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                  className="p-5 flex items-center gap-4 cursor-pointer hover:bg-secondary/30 transition-colors"
                   onClick={() => setExpandedId(expandedId === campaign.id ? null : campaign.id)}
                 >
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-gray-900 truncate">{campaign.subject}</span>
+                      <span className="font-semibold text-foreground truncate">{campaign.subject}</span>
                       <Badge variant={STATUS_COLORS[campaign.status]} className="text-xs shrink-0">
                         {STATUS_LABELS[campaign.status]}
                       </Badge>
-                      <span className="text-xs text-gray-400 shrink-0">
+                      <span className="text-xs text-muted-foreground/80 shrink-0">
                         {campaign.target_type === 'all' ? 'Todos los estudiantes' : `Curso: ${campaign.course?.title ?? '—'}`}
                       </span>
                     </div>
@@ -350,11 +350,11 @@ export default function EmailMarketing() {
                   </div>
                 </div>
                 {expandedId === campaign.id && campaign.body_html && (
-                  <div className="border-t border-gray-100 px-5 py-4 bg-gray-50">
-                    <p className="text-xs text-gray-500 mb-2 font-medium">Vista previa del contenido:</p>
+                  <div className="border-t border-border/40 px-5 py-4 bg-secondary/30">
+                    <p className="text-xs text-muted-foreground mb-2 font-medium">Vista previa del contenido:</p>
                     <SanitizedHtml
                       html={campaign.body_html}
-                      className="text-sm text-gray-700 whitespace-pre-wrap bg-white border border-gray-200 rounded-lg p-4 max-h-48 overflow-y-auto"
+                      className="text-sm text-foreground/85 whitespace-pre-wrap bg-white border border-border/60 rounded-lg p-4 max-h-48 overflow-y-auto"
                     />
                   </div>
                 )}
@@ -362,7 +362,7 @@ export default function EmailMarketing() {
             ))}
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
+          <div className="bg-white border border-border/60 rounded-2xl p-12 text-center space-y-4">
             <Mail className="w-12 h-12 text-gray-300 mx-auto" />
             <p className="text-gray-500">No hay campañas todavía.</p>
             <Button variant="hero" onClick={openCreate}>
@@ -375,7 +375,7 @@ export default function EmailMarketing() {
 
       {/* Campaign editor dialog */}
       <Dialog open={showEditor} onOpenChange={open => { if (!open) { setShowEditor(false); setEditingCampaign(null); setFormData(defaultFormData) } }}>
-        <DialogContent className="bg-white border-gray-200 max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-white border-border/60 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading text-gray-900">
               {editingCampaign ? 'Editar campaña' : 'Nueva campaña'}
@@ -408,14 +408,14 @@ export default function EmailMarketing() {
                       <button
                         key={i}
                         type="button"
-                        className="text-left px-3 py-2 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 text-sm transition-all"
+                        className="text-left px-3 py-2 rounded-lg border border-border/60 hover:border-primary hover:bg-primary/5 text-sm transition-all"
                         onClick={() => {
                           setFormData(f => ({ ...f, subject: t.subject, preview_text: t.preview_text, body_html: t.body_html }))
                           setShowTemplates(false)
                         }}
                       >
-                        <p className="font-medium text-gray-900 text-xs">{t.label}</p>
-                        <p className="text-gray-400 text-xs mt-0.5 truncate">{t.subject}</p>
+                        <p className="font-medium text-foreground text-xs">{t.label}</p>
+                        <p className="text-muted-foreground/80 text-xs mt-0.5 truncate">{t.subject}</p>
                       </button>
                     ))}
                   </div>
@@ -444,7 +444,7 @@ export default function EmailMarketing() {
                 <Label>Cuerpo del email</Label>
                 <textarea
                   placeholder="Escribí en HTML o texto plano..."
-                  className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm resize-y h-48 focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                  className="w-full border border-border/60 rounded-md px-3 py-2 text-sm resize-y h-48 focus:outline-none focus:ring-1 focus:ring-primary font-mono"
                   value={formData.body_html}
                   onChange={e => setFormData(f => ({ ...f, body_html: e.target.value }))}
                 />
@@ -455,7 +455,7 @@ export default function EmailMarketing() {
               <div className="space-y-3">
                 <Label>Destinatarios</Label>
                 <div className="space-y-2">
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                  <label className="flex items-center gap-3 p-3 border border-border/60 rounded-lg cursor-pointer hover:bg-secondary/30 transition-colors">
                     <input
                       type="radio"
                       name="target_type"
@@ -470,7 +470,7 @@ export default function EmailMarketing() {
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                  <label className="flex items-center gap-3 p-3 border border-border/60 rounded-lg cursor-pointer hover:bg-secondary/30 transition-colors">
                     <input
                       type="radio"
                       name="target_type"
@@ -490,7 +490,7 @@ export default function EmailMarketing() {
                   <div className="space-y-1.5 pl-2">
                     <Label>Seleccioná el curso</Label>
                     <select
-                      className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+                      className="w-full border border-border/60 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
                       value={formData.target_course_id}
                       onChange={e => setFormData(f => ({ ...f, target_course_id: e.target.value }))}
                     >
@@ -533,7 +533,7 @@ export default function EmailMarketing() {
 
       {/* Confirm send dialog */}
       <Dialog open={!!confirmSendCampaign} onOpenChange={open => !open && setConfirmSendCampaign(null)}>
-        <DialogContent className="bg-white border-gray-200 max-w-sm">
+        <DialogContent className="bg-white border-border/60 max-w-sm">
           <DialogHeader>
             <DialogTitle className="font-heading text-gray-900">¿Enviar campaña?</DialogTitle>
             <DialogDescription className="text-gray-600">

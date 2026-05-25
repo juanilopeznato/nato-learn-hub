@@ -107,8 +107,8 @@ export default function Community() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-secondary/30">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/">
@@ -122,7 +122,7 @@ export default function Community() {
               {activeCourse && (
                 <button
                   onClick={() => setActiveCourseId(null)}
-                  className="ml-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                  className="ml-1 text-xs text-muted-foreground/80 hover:text-foreground/70 transition-colors"
                 >
                   (ver todo)
                 </button>
@@ -133,7 +133,7 @@ export default function Community() {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/dashboard">Mi aprendizaje</Link>
             </Button>
-            <div className="hidden sm:flex items-center gap-1 text-sm text-gray-500 mr-1">
+            <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground mr-1">
               <span className="text-xs font-semibold text-primary">{profileExtras?.points ?? 0} pts</span>
               <span className="text-xs text-gray-400">· Nv.{profileExtras?.level ?? 1}</span>
             </div>
@@ -155,7 +155,7 @@ export default function Community() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   !activeCourseId
                     ? 'bg-gray-900 text-white'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'
+                    : 'bg-white border border-border/60 text-foreground/70 hover:border-gray-400'
                 }`}
               >
                 <Users className="w-3 h-3" />
@@ -168,7 +168,7 @@ export default function Community() {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     activeCourseId === course.id
                       ? 'bg-primary text-white'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:border-primary hover:text-primary'
+                      : 'bg-white border border-border/60 text-foreground/70 hover:border-primary hover:text-primary'
                   }`}
                 >
                   <BookOpen className="w-3 h-3" />
@@ -188,7 +188,7 @@ export default function Community() {
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     filter === f.value
                       ? 'bg-primary text-white'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:border-primary hover:text-primary'
+                      : 'bg-white border border-border/60 text-foreground/70 hover:border-primary hover:text-primary'
                   }`}
                 >
                   {f.label}
@@ -205,18 +205,18 @@ export default function Community() {
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="bg-white border border-gray-200 rounded-xl h-32 animate-pulse" />
+                <div key={i} className="bg-white border border-border/60 rounded-xl h-32 animate-pulse" />
               ))}
             </div>
           ) : posts.length === 0 ? (
-            <div className="bg-white border border-gray-200 rounded-xl p-12 text-center space-y-3">
+            <div className="bg-white border border-border/60 rounded-xl p-12 text-center space-y-3">
               <Users className="w-12 h-12 text-gray-300 mx-auto" />
-              <p className="text-gray-700 font-medium">
+              <p className="text-foreground/85 font-medium">
                 {activeCourse
                   ? `Todavía no hay posts en el foro de ${activeCourse.title}`
                   : 'Sé el primero en publicar algo.'}
               </p>
-              <p className="text-gray-400 text-sm">Preguntá, compartí un logro o subí un recurso.</p>
+              <p className="text-muted-foreground/80 text-sm">Preguntá, compartí un logro o subí un recurso.</p>
               <Button variant="hero" size="sm" onClick={() => setShowPostForm(true)}>
                 <Plus className="w-4 h-4" />
                 Nueva publicación
@@ -238,7 +238,7 @@ export default function Community() {
       </main>
 
       <Dialog open={showPostForm} onOpenChange={setShowPostForm}>
-        <DialogContent className="bg-white border-gray-200 max-w-lg">
+        <DialogContent className="bg-white border-border/60 max-w-lg">
           <DialogHeader>
             <DialogTitle className="font-heading text-gray-900">Nueva publicación</DialogTitle>
           </DialogHeader>

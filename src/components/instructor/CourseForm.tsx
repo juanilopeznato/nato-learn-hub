@@ -211,17 +211,17 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     className={`flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all ${
                       isSelected
                         ? 'border-primary bg-primary/5'
-                        : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                        : 'border-border/60 bg-secondary/30 hover:border-gray-300'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                      isSelected ? 'bg-primary/10' : 'bg-white border border-gray-200'
+                      isSelected ? 'bg-primary/10' : 'bg-white border border-border/60'
                     }`}>
                       <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-gray-400'}`} />
                     </div>
                     <div className="min-w-0">
                       <p className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-gray-700'}`}>{opt.label}</p>
-                      <p className="text-xs text-gray-400 leading-tight">{opt.description}</p>
+                      <p className="text-xs text-muted-foreground/80 leading-tight">{opt.description}</p>
                     </div>
                   </button>
                 )
@@ -231,13 +231,13 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
 
           {/* Precio — solo si no es gratis */}
           {isPaid && (
-            <div className="space-y-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="space-y-3 p-3 bg-secondary/30 rounded-xl border border-border/60">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-foreground text-sm">
                     Precio ARS
-                    {billingType === 'monthly' && <span className="text-gray-400 font-normal"> / mes</span>}
-                    {billingType === 'annual' && <span className="text-gray-400 font-normal"> / año</span>}
+                    {billingType === 'monthly' && <span className="text-muted-foreground/80 font-normal"> / mes</span>}
+                    {billingType === 'annual' && <span className="text-muted-foreground/80 font-normal"> / año</span>}
                   </Label>
                   <Input type="number" min={0} className="bg-white border-border/50 text-foreground" {...register('price')} />
                 </div>
@@ -281,7 +281,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                     className="bg-gray-100 border-border/50 text-foreground text-sm flex-1"
                   />
                   {outcomes.length > 1 && (
-                    <Button type="button" variant="ghost" size="icon" className="shrink-0 text-gray-400 hover:text-destructive" onClick={() => removeOutcome(i)}>
+                    <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground/80 hover:text-destructive" onClick={() => removeOutcome(i)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   )}
@@ -308,9 +308,9 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
             <Label className="text-foreground font-semibold">Preguntas frecuentes</Label>
             <div className="space-y-3">
               {faqItems.map((item, i) => (
-                <div key={i} className="space-y-1.5 bg-gray-50 rounded-lg p-3 border border-border/20">
+                <div key={i} className="space-y-1.5 bg-secondary/30 rounded-lg p-3 border border-border/20">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400 font-medium w-4">{i + 1}</span>
+                    <span className="text-xs text-muted-foreground/80 font-medium w-4">{i + 1}</span>
                     <Input
                       value={item.q}
                       onChange={e => updateFaq(i, 'q', e.target.value)}
@@ -318,7 +318,7 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
                       className="bg-white border-border/50 text-foreground text-sm flex-1"
                     />
                     {faqItems.length > 1 && (
-                      <Button type="button" variant="ghost" size="icon" className="shrink-0 text-gray-400 hover:text-destructive w-7 h-7" onClick={() => removeFaq(i)}>
+                      <Button type="button" variant="ghost" size="icon" className="shrink-0 text-muted-foreground/80 hover:text-destructive w-7 h-7" onClick={() => removeFaq(i)}>
                         <Trash2 className="w-3 h-3" />
                       </Button>
                     )}

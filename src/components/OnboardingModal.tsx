@@ -62,7 +62,7 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
             <h2 className="font-heading text-2xl font-bold text-gray-900">
               ¡Bienvenido/a!
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p className="text-muted-foreground text-sm">
               Antes de empezar, contanos qué querés lograr para recomendarte el mejor camino.
             </p>
           </div>
@@ -76,7 +76,7 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all ${
                   selected === goal.value
                     ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                    : 'border-border/60 hover:border-gray-300 text-gray-700'
                 }`}
               >
                 {goal.label}

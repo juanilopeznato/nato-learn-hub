@@ -71,7 +71,7 @@ export function EnrolledCourseCard({
   })
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-md transition-all duration-200 group flex flex-col overflow-hidden">
+    <div className="bg-white rounded-xl border border-border/60 hover:border-primary/30 hover:shadow-md transition-all duration-200 group flex flex-col overflow-hidden">
 
       {/* Thumbnail */}
       {thumbnailUrl ? (
@@ -102,8 +102,8 @@ export function EnrolledCourseCard({
       {/* Content */}
       <div className="p-4 flex flex-col gap-3 flex-1">
         <div>
-          <h3 className="font-heading font-semibold text-gray-900 leading-snug text-sm">{courseTitle}</h3>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <h3 className="font-heading font-semibold text-foreground leading-snug text-sm">{courseTitle}</h3>
+          <p className="text-xs text-muted-foreground/80 mt-0.5">
             {completedLessons}/{totalLessons} lecciones completadas
           </p>
         </div>

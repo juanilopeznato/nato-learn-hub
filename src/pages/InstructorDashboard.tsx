@@ -214,10 +214,10 @@ export default function InstructorDashboard() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary/30">
 
       {/* Header simplificado */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
 
           {/* Logo + school switcher */}
@@ -230,16 +230,16 @@ export default function InstructorDashboard() {
             {allProfiles.length > 1 ? (
               <div className="relative">
                 <button
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 max-w-[180px]"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border/60 bg-white hover:bg-secondary/30 transition-colors text-sm font-medium text-foreground/85 max-w-[180px]"
                   onClick={() => setSchoolMenuOpen(o => !o)}
                   disabled={switching}
                 >
                   <span className="truncate">{tenant?.name}</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/80 shrink-0" />
                 </button>
                 {schoolMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50">
-                    <p className="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wide">Mis escuelas</p>
+                  <div className="absolute left-0 top-full mt-1 w-56 bg-white border border-border/60 rounded-xl shadow-lg py-1 z-50">
+                    <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">Mis escuelas</p>
                     {allProfiles.map(p => (
                       <button
                         key={p.id}
@@ -255,7 +255,7 @@ export default function InstructorDashboard() {
                             setSwitching(false)
                           }
                         }}
-                        className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between gap-2 disabled:opacity-50"
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-secondary/30 flex items-center justify-between gap-2 disabled:opacity-50"
                       >
                         <span className="truncate">{(p as unknown as ProfileWithTenant).tenant?.name ?? 'Escuela'}</span>
                         {p.tenant_id === profile?.tenant_id && (
@@ -263,7 +263,7 @@ export default function InstructorDashboard() {
                         )}
                       </button>
                     ))}
-                    <div className="border-t border-gray-100 mt-1 pt-1">
+                    <div className="border-t border-border/40 mt-1 pt-1">
                       <Link
                         to="/create-school"
                         className="block px-3 py-2 text-sm text-primary hover:bg-primary/5 font-medium"
@@ -276,28 +276,28 @@ export default function InstructorDashboard() {
                 )}
               </div>
             ) : (
-              <span className="text-sm font-medium text-gray-700 truncate hidden sm:block">{tenant?.name}</span>
+              <span className="text-sm font-medium text-foreground/85 truncate hidden sm:block">{tenant?.name}</span>
             )}
           </div>
 
           {/* Nav — solo íconos con tooltip */}
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="sm" asChild title="Vista de alumno">
-              <Link to="/dashboard" className="text-gray-500 hover:text-gray-700 text-xs gap-1.5">
+              <Link to="/dashboard" className="text-muted-foreground hover:text-foreground/85 text-xs gap-1.5">
                 Vista alumno
               </Link>
             </Button>
             <Button variant="ghost" size="icon" asChild title="Email marketing">
-              <Link to="/instructor/email" className="text-gray-500 hover:text-gray-700">
+              <Link to="/instructor/email" className="text-muted-foreground hover:text-gray-700">
                 <Mail className="w-4 h-4" />
               </Link>
             </Button>
             <Button variant="ghost" size="icon" asChild title="Configuración">
-              <Link to="/settings" className="text-gray-500 hover:text-gray-700">
+              <Link to="/settings" className="text-muted-foreground hover:text-gray-700">
                 <Settings className="w-4 h-4" />
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" onClick={signOut} title="Cerrar sesión" className="text-gray-400 hover:text-gray-600">
+            <Button variant="ghost" size="icon" onClick={signOut} title="Cerrar sesión" className="text-muted-foreground/80 hover:text-gray-600">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -312,7 +312,7 @@ export default function InstructorDashboard() {
             <h1 className="font-heading text-2xl font-bold text-gray-900">
               Hola, {firstName}
             </h1>
-            <p className="text-gray-500 text-sm mt-0.5">
+            <p className="text-muted-foreground text-sm mt-0.5">
               {courses && courses.length > 0
                 ? `${publishedCount} curso${publishedCount !== 1 ? 's' : ''} publicado${publishedCount !== 1 ? 's' : ''} · ${totalStudents} alumno${totalStudents !== 1 ? 's' : ''} inscripto${totalStudents !== 1 ? 's' : ''}`
                 : 'Seguí estos pasos para lanzar tu primera escuela.'
@@ -352,7 +352,7 @@ export default function InstructorDashboard() {
           <TabsContent value="courses" className="mt-6">
             {isLoading ? (
               <div className="space-y-3">
-                {[1, 2].map(i => <div key={i} className="bg-white border border-gray-200 rounded-xl h-20 animate-pulse" />)}
+                {[1, 2].map(i => <div key={i} className="bg-white border border-border/60 rounded-xl h-20 animate-pulse" />)}
               </div>
             ) : courses && courses.length > 0 ? (
               <div className="space-y-3">
@@ -361,7 +361,7 @@ export default function InstructorDashboard() {
                   return (
                     <div
                       key={course.id}
-                      className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4 hover:border-gray-300 transition-colors"
+                      className="bg-white border border-border/60 rounded-xl p-4 flex items-center gap-4 hover:border-gray-300 transition-colors"
                     >
                       {/* Thumbnail */}
                       {course.thumbnail_url ? (
@@ -375,7 +375,7 @@ export default function InstructorDashboard() {
                       {/* Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold text-gray-900 text-sm truncate">{course.title}</h3>
+                          <h3 className="font-semibold text-foreground text-sm truncate">{course.title}</h3>
                           {course.is_free && (
                             <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full font-medium shrink-0">Gratis</span>
                           )}
@@ -401,7 +401,7 @@ export default function InstructorDashboard() {
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                             course.is_published
                               ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                              : 'bg-gray-100 text-muted-foreground hover:bg-gray-200'
                           }`}
                         >
                           <span className={`w-1.5 h-1.5 rounded-full ${course.is_published ? 'bg-green-500' : 'bg-gray-400'}`} />
@@ -465,8 +465,8 @@ export default function InstructorDashboard() {
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-0.5">Listo</p>
-                      <h3 className="font-semibold text-gray-900 text-sm">Tu escuela está creada</h3>
-                      <p className="text-xs text-gray-400 mt-0.5">Ya tenés tu espacio propio.</p>
+                      <h3 className="font-semibold text-foreground text-sm">Tu escuela está creada</h3>
+                      <p className="text-xs text-muted-foreground/80 mt-0.5">Ya tenés tu espacio propio.</p>
                     </div>
                   </div>
 
@@ -477,8 +477,8 @@ export default function InstructorDashboard() {
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-0.5">Siguiente paso</p>
-                      <h3 className="font-semibold text-gray-900 text-sm">Creá tu primer curso</h3>
-                      <p className="text-xs text-gray-400 mt-0.5">Subí tus lecciones y configurá el precio.</p>
+                      <h3 className="font-semibold text-foreground text-sm">Creá tu primer curso</h3>
+                      <p className="text-xs text-muted-foreground/80 mt-0.5">Subí tus lecciones y configurá el precio.</p>
                     </div>
                     <Button variant="hero" size="sm" className="mt-auto" onClick={() => setShowCreateDialog(true)}>
                       <Plus className="w-3.5 h-3.5" />
@@ -487,14 +487,14 @@ export default function InstructorDashboard() {
                   </div>
 
                   {/* Paso 3 */}
-                  <div className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
+                  <div className="bg-white border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
                     <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
                       <CreditCard className="w-5 h-5 text-gray-400" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Después</p>
-                      <h3 className="font-semibold text-gray-700 text-sm">Conectá Mercado Pago</h3>
-                      <p className="text-xs text-gray-400 mt-0.5">Para cobrar tus inscripciones automáticamente.</p>
+                      <p className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide mb-0.5">Después</p>
+                      <h3 className="font-semibold text-foreground/85 text-sm">Conectá Mercado Pago</h3>
+                      <p className="text-xs text-muted-foreground/80 mt-0.5">Para cobrar tus inscripciones automáticamente.</p>
                     </div>
                     <Button variant="hero-outline" size="sm" asChild className="mt-auto">
                       <Link to="/settings">Conectar MP</Link>
@@ -502,14 +502,14 @@ export default function InstructorDashboard() {
                   </div>
 
                   {/* Paso 4 */}
-                  <div className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
+                  <div className="bg-white border border-border/60 rounded-2xl p-5 flex flex-col gap-3 opacity-60">
                     <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
                       <TrendingUp className="w-5 h-5 text-gray-400" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Al final</p>
-                      <h3 className="font-semibold text-gray-700 text-sm">Publicá y compartí</h3>
-                      <p className="text-xs text-gray-400 mt-0.5">Tu primer alumno puede pagar ese mismo día.</p>
+                      <p className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide mb-0.5">Al final</p>
+                      <h3 className="font-semibold text-foreground/85 text-sm">Publicá y compartí</h3>
+                      <p className="text-xs text-muted-foreground/80 mt-0.5">Tu primer alumno puede pagar ese mismo día.</p>
                     </div>
                   </div>
                 </div>
@@ -522,10 +522,10 @@ export default function InstructorDashboard() {
             {courses && courses.length > 0 ? (
               <Suspense fallback={<div className="text-sm text-gray-500">Cargando métricas…</div>}><KpiDashboard courseIds={courses.map(c => c.id)} /></Suspense>
             ) : (
-              <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+              <div className="bg-white border border-border/60 rounded-2xl p-12 text-center">
                 <BarChart3 className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-                <p className="text-gray-500 font-medium">Nada que mostrar todavía</p>
-                <p className="text-sm text-gray-400 mt-1">Cuando tengas inscriptos, acá vas a ver las métricas de tu escuela.</p>
+                <p className="text-muted-foreground font-medium">Nada que mostrar todavía</p>
+                <p className="text-sm text-muted-foreground/80 mt-1">Cuando tengas inscriptos, acá vas a ver las métricas de tu escuela.</p>
               </div>
             )}
           </TabsContent>
@@ -535,7 +535,7 @@ export default function InstructorDashboard() {
             <div className="max-w-2xl space-y-6">
               <div>
                 <h2 className="font-heading text-lg font-bold text-gray-900">Programa de afiliados</h2>
-                <p className="text-sm text-gray-500 mt-0.5">
+                <p className="text-sm text-muted-foreground mt-0.5">
                   Recomendá NATO University y ganás comisiones automáticas cada vez que alguien se suscribe con tu link.
                 </p>
               </div>
@@ -544,7 +544,7 @@ export default function InstructorDashboard() {
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 space-y-3">
                 <p className="text-sm font-semibold text-gray-700">Tu link único</p>
                 <div className="flex gap-2">
-                  <div className="flex-1 bg-white border border-amber-200 rounded-lg px-3 py-2 text-sm font-mono text-gray-600 truncate">
+                  <div className="flex-1 bg-white border border-amber-200 rounded-lg px-3 py-2 text-sm font-mono text-foreground/70 truncate">
                     {affiliateUrl}
                   </div>
                   <button
@@ -566,43 +566,43 @@ export default function InstructorDashboard() {
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+                <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-gray-900">{referredCount}</p>
-                  <p className="text-xs text-gray-400 mt-1">Escuelas referidas</p>
+                  <p className="text-xs text-muted-foreground/80 mt-1">Escuelas referidas</p>
                 </div>
-                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+                <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-green-600">
                     {totalEarned > 0 ? `ARS ${totalEarned.toLocaleString('es-AR')}` : '—'}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">Total cobrado</p>
+                  <p className="text-xs text-muted-foreground/80 mt-1">Total cobrado</p>
                 </div>
-                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+                <div className="bg-white border border-border/60 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-amber-500">
                     {totalPending > 0 ? `ARS ${totalPending.toLocaleString('es-AR')}` : '—'}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">Pendiente</p>
+                  <p className="text-xs text-muted-foreground/80 mt-1">Pendiente</p>
                 </div>
               </div>
 
               {/* Historial */}
               {affiliateCommissions && affiliateCommissions.length > 0 ? (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-gray-100">
+                <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-border/40">
                     <h3 className="text-sm font-semibold text-gray-700">Historial</h3>
                   </div>
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b border-gray-200">
+                    <thead className="bg-secondary/30 border-b border-border/60">
                       <tr>
                         {['Escuela', 'Monto', 'Estado', 'Fecha'].map(h => (
-                          <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">{h}</th>
+                          <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {commissions.map(c => (
-                        <tr key={c.id} className="hover:bg-gray-50">
+                        <tr key={c.id} className="hover:bg-secondary/30">
                           <td className="px-4 py-3 font-medium text-gray-900">{c.referred_tenant?.name ?? '—'}</td>
-                          <td className="px-4 py-3 text-gray-700 font-semibold">ARS {Number(c.amount_ars ?? 0).toLocaleString('es-AR')}</td>
+                          <td className="px-4 py-3 text-foreground/85 font-semibold">ARS {Number(c.amount_ars ?? 0).toLocaleString('es-AR')}</td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                               c.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
@@ -610,7 +610,7 @@ export default function InstructorDashboard() {
                               {c.status === 'paid' ? 'Cobrado' : 'Pendiente'}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs">
+                          <td className="px-4 py-3 text-muted-foreground/80 text-xs">
                             {c.created_at ? new Date(c.created_at).toLocaleDateString('es-AR') : '—'}
                           </td>
                         </tr>
@@ -619,10 +619,10 @@ export default function InstructorDashboard() {
                   </table>
                 </div>
               ) : (
-                <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
+                <div className="bg-white border border-border/60 rounded-xl p-10 text-center">
                   <Gift className="w-8 h-8 text-gray-200 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm font-medium">Todavía no tenés comisiones</p>
-                  <p className="text-xs text-gray-400 mt-1">Compartí tu link y empezá a ganar.</p>
+                  <p className="text-muted-foreground text-sm font-medium">Todavía no tenés comisiones</p>
+                  <p className="text-xs text-muted-foreground/80 mt-1">Compartí tu link y empezá a ganar.</p>
                 </div>
               )}
             </div>
@@ -632,7 +632,7 @@ export default function InstructorDashboard() {
 
       {/* Dialog crear curso */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="bg-gray-100 border-gray-200">
+        <DialogContent className="bg-gray-100 border-border/60">
           <DialogHeader>
             <DialogTitle className="font-heading text-gray-900">Crear nuevo curso</DialogTitle>
           </DialogHeader>

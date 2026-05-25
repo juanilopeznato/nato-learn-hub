@@ -127,8 +127,8 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
     if (upcoming.length === 0) return null
 
     return (
-      <div className="border-t border-gray-100 pt-3 px-4 pb-3 space-y-2">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+      <div className="border-t border-border/40 pt-3 px-4 pb-3 space-y-2">
+        <p className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider flex items-center gap-1.5">
           <CalendarDays className="w-3.5 h-3.5" />
           Próximas clases
         </p>
@@ -166,7 +166,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-heading text-xl font-bold text-gray-900">Clases en vivo</h2>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Programá sesiones en vivo, webinars o entregas para los alumnos de este curso.
           </p>
         </div>
@@ -183,9 +183,9 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
           {[1, 2].map(i => <div key={i} className="h-16 bg-gray-100 rounded-xl animate-pulse" />)}
         </div>
       ) : displayed.length === 0 && !showPast ? (
-        <div className="bg-white border border-gray-200 rounded-xl p-10 text-center space-y-3">
+        <div className="bg-white border border-border/60 rounded-xl p-10 text-center space-y-3">
           <CalendarDays className="w-10 h-10 text-gray-300 mx-auto" />
-          <p className="text-gray-500 text-sm">No hay clases programadas próximamente.</p>
+          <p className="text-muted-foreground text-sm">No hay clases programadas próximamente.</p>
           {canManage && (
             <Button variant="hero-outline" size="sm" onClick={() => setShowDialog(true)}>
               <Plus className="w-4 h-4" />
@@ -200,7 +200,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
             return (
               <div
                 key={event.id}
-                className={`bg-white border border-gray-200 rounded-xl p-4 flex items-start gap-4 border-l-4 ${TYPE_COLORS[event.event_type]} ${inPast ? 'opacity-60' : ''}`}
+                className={`bg-white border border-border/60 rounded-xl p-4 flex items-start gap-4 border-l-4 ${TYPE_COLORS[event.event_type]} ${inPast ? 'opacity-60' : ''}`}
               >
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -233,7 +233,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="shrink-0 text-gray-400 hover:text-destructive"
+                    className="shrink-0 text-muted-foreground/80 hover:text-destructive"
                     onClick={() => deleteEvent.mutate(event.id)}
                   >
                     <X className="w-4 h-4" />
@@ -247,7 +247,7 @@ export function CourseCalendar({ courseId, canManage = false, compact = false }:
 
       {past.length > 0 && !showPast && (
         <button
-          className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          className="text-sm text-muted-foreground/80 hover:text-foreground/70 transition-colors"
           onClick={() => setShowPast(true)}
         >
           Ver {past.length} clase{past.length !== 1 ? 's' : ''} pasada{past.length !== 1 ? 's' : ''}

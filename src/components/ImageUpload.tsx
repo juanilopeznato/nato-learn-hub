@@ -107,7 +107,7 @@ export function ImageUpload({
             ? 'border-primary bg-primary/5'
             : value
             ? 'border-transparent'
-            : 'border-border/50 bg-gray-50 hover:border-primary/50 hover:bg-primary/5'
+            : 'border-border/50 bg-secondary/30 hover:border-primary/50 hover:bg-primary/5'
         }`}
         onClick={() => !uploading && inputRef.current?.click()}
         onDragOver={e => { e.preventDefault(); setDragOver(true) }}
@@ -156,7 +156,7 @@ export function ImageUpload({
                     <p className="text-xs font-medium text-gray-500">
                       {dragOver ? 'Soltá la imagen' : 'Arrastrá o hacé click'}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">{hint ?? defaultHint}</p>
+                    <p className="text-xs text-muted-foreground/80 mt-0.5">{hint ?? defaultHint}</p>
                   </div>
                 )}
               </>

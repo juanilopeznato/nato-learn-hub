@@ -65,20 +65,20 @@ export default function Status() {
   const anyFail = checks.some(c => c.status === 'fail')
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-secondary/30 flex items-center justify-center p-6">
       <Helmet>
         <title>Status — NATO University</title>
         <meta name="robots" content="noindex" />
         <link rel="canonical" href={canonicalUrl('/status')} />
       </Helmet>
-      <div className="max-w-md w-full bg-white rounded-2xl border border-gray-200 p-8 space-y-5">
+      <div className="max-w-md w-full bg-white rounded-2xl border border-border/60 p-8 space-y-5">
         <div className="flex items-center gap-3">
           {anyFail ? (
             <AlertTriangle className="w-7 h-7 text-red-500" aria-hidden />
           ) : allOk ? (
             <CheckCircle2 className="w-7 h-7 text-green-500" aria-hidden />
           ) : (
-            <Loader2 className="w-7 h-7 text-gray-400 animate-spin" aria-hidden />
+            <Loader2 className="w-7 h-7 text-muted-foreground/80 animate-spin" aria-hidden />
           )}
           <div>
             <h1 className="font-heading text-xl font-semibold text-gray-900">
@@ -90,14 +90,14 @@ export default function Status() {
           </div>
         </div>
 
-        <ul className="divide-y divide-gray-100 border-t border-gray-100">
+        <ul className="divide-y divide-gray-100 border-t border-border/40">
           {checks.map(c => (
             <li key={c.name} className="py-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 min-w-0">
                 {c.status === 'ok' && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" aria-hidden />}
                 {c.status === 'fail' && <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" aria-hidden />}
-                {c.status === 'pending' && <Loader2 className="w-4 h-4 text-gray-400 animate-spin shrink-0" aria-hidden />}
-                <span className="text-sm font-medium text-gray-900 truncate">{c.name}</span>
+                {c.status === 'pending' && <Loader2 className="w-4 h-4 text-muted-foreground/80 animate-spin shrink-0" aria-hidden />}
+                <span className="text-sm font-medium text-foreground truncate">{c.name}</span>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 {c.latencyMs !== undefined && (
@@ -121,7 +121,7 @@ export default function Status() {
           </div>
         )}
 
-        <p className="text-xs text-gray-400 pt-2 border-t border-gray-100">
+        <p className="text-xs text-muted-foreground/80 pt-2 border-t border-border/40">
           Última verificación: {new Date().toLocaleString('es-AR')}
         </p>
       </div>

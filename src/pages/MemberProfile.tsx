@@ -103,7 +103,7 @@ export default function MemberProfile() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary/30 flex items-center justify-center">
         <div className="flex items-center gap-3 text-gray-500">
           <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <span className="text-sm">Cargando perfil...</span>
@@ -114,9 +114,9 @@ export default function MemberProfile() {
 
   if (!member) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary/30 flex items-center justify-center">
         <div className="text-center space-y-2">
-          <p className="text-gray-900 font-medium">Perfil no encontrado</p>
+          <p className="text-foreground font-medium">Perfil no encontrado</p>
           <Link to="/dashboard" className="text-primary text-sm hover:underline">Volver al dashboard</Link>
         </div>
       </div>
@@ -126,10 +126,10 @@ export default function MemberProfile() {
   const initials = member.full_name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-secondary/30">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-14 flex items-center gap-3">
-          <Link to="/dashboard" className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 transition-colors">
+          <Link to="/dashboard" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:block">Volver</span>
           </Link>
@@ -141,7 +141,7 @@ export default function MemberProfile() {
 
       <main className="container mx-auto px-4 py-8 max-w-2xl space-y-5">
         {/* Profile card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-white border border-border/60 rounded-2xl p-6 space-y-4">
           <div className="flex items-start gap-4">
             <SmartAvatar
               src={member.avatar_url}
@@ -172,7 +172,7 @@ export default function MemberProfile() {
                   value={bioValue}
                   onChange={e => setBioValue(e.target.value)}
                   placeholder="Contá algo sobre vos..."
-                  className="resize-none text-sm border-gray-200 focus:border-primary"
+                  className="resize-none text-sm border-border/60 focus:border-primary"
                   maxLength={500}
                   autoFocus
                 />
@@ -188,12 +188,12 @@ export default function MemberProfile() {
               </div>
             ) : (
               <div className="flex items-start gap-2">
-                <p className="flex-1 text-sm text-gray-600 leading-relaxed">
+                <p className="flex-1 text-sm text-foreground/70 leading-relaxed">
                   {member.bio ?? (isOwnProfile ? 'Agregá una bio para que te conozcan mejor.' : '')}
                 </p>
                 {isOwnProfile && (
                   <button
-                    className="text-gray-400 hover:text-primary transition-colors shrink-0 mt-0.5"
+                    className="text-muted-foreground/80 hover:text-primary transition-colors shrink-0 mt-0.5"
                     onClick={() => { setBioValue(member.bio ?? ''); setEditingBio(true) }}
                   >
                     <Edit2 className="w-3.5 h-3.5" />
@@ -206,7 +206,7 @@ export default function MemberProfile() {
 
         {/* Enrolled courses */}
         {enrollments.length > 0 && (
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+          <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
               <BookOpen className="w-4 h-4 text-primary" />
               Cursos inscriptos
@@ -227,7 +227,7 @@ export default function MemberProfile() {
 
         {/* Recent activity */}
         {activity.length > 0 && (
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+          <div className="bg-white border border-border/60 rounded-xl p-4 space-y-3">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
               <Zap className="w-4 h-4 text-yellow-500" />
               Actividad reciente

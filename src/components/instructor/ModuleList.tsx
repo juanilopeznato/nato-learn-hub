@@ -55,7 +55,7 @@ function SortableModule({ id, children }: { id: string; children: React.ReactNod
     <div ref={setNodeRef} style={style} {...attributes} className="relative">
       <div
         {...listeners}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1 touch-none"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 cursor-grab active:cursor-grabbing text-muted-foreground/80 hover:text-foreground/70 p-1 touch-none"
         style={{ top: '20px', transform: 'none' }}
       >
         <GripVertical className="w-4 h-4" />
@@ -77,7 +77,7 @@ function SortableLesson({ id, children }: { id: string; children: React.ReactNod
     <div ref={setNodeRef} style={style} {...attributes} className="flex items-start gap-1">
       <div
         {...listeners}
-        className="shrink-0 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 mt-2 touch-none"
+        className="shrink-0 cursor-grab active:cursor-grabbing text-gray-300 hover:text-muted-foreground mt-2 touch-none"
       >
         <GripVertical className="w-3.5 h-3.5" />
       </div>
@@ -143,11 +143,11 @@ function LessonResources({ lessonId }: { lessonId: string }) {
         <div className="space-y-1">
           {resources.map(r => (
             <div key={r.id} className="flex items-center gap-2 bg-white rounded px-2 py-1">
-              <FileText className="w-3 h-3 text-gray-400 shrink-0" />
-              <span className="text-xs text-gray-700 flex-1 truncate">{r.title}</span>
+              <FileText className="w-3 h-3 text-muted-foreground/80 shrink-0" />
+              <span className="text-xs text-foreground/85 flex-1 truncate">{r.title}</span>
               <button
                 type="button"
-                className="text-gray-400 hover:text-destructive shrink-0"
+                className="text-muted-foreground/80 hover:text-destructive shrink-0"
                 onClick={() => deleteResource.mutate(r.id)}
               >
                 <X className="w-3 h-3" />
@@ -375,20 +375,20 @@ export function ModuleList({ courseId }: Props) {
         <SortableContext items={modules?.map(m => m.id) ?? []} strategy={verticalListSortingStrategy}>
           {modules?.map(module => (
             <SortableModule key={module.id} id={module.id}>
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden ml-6">
+              <div className="bg-white border border-border/60 rounded-xl overflow-hidden ml-6">
                 <div className="flex items-center justify-between p-4">
                   <button
                     className="flex items-center gap-2 flex-1 text-left"
                     onClick={() => toggleModule(module.id)}
                   >
-                    <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${expandedModules.has(module.id) ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expandedModules.has(module.id) ? 'rotate-180' : ''}`} />
                     <span className="font-medium text-gray-900">{module.title}</span>
                     <span className="text-xs text-gray-500">({module.lessons?.length ?? 0} lecciones)</span>
                   </button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gray-500 hover:text-destructive shrink-0"
+                    className="text-muted-foreground hover:text-destructive shrink-0"
                     aria-label={`Eliminar módulo ${module.title}`}
                     onClick={() => {
                       const lessonCount = module.lessons?.length ?? 0
@@ -407,7 +407,7 @@ export function ModuleList({ courseId }: Props) {
                 </div>
 
                 {expandedModules.has(module.id) && (
-                  <div className="border-t border-gray-200 p-4 space-y-3">
+                  <div className="border-t border-border/60 p-4 space-y-3">
                     {/* Lecciones existentes */}
                     <DndContext
                       sensors={sensors}
@@ -450,7 +450,7 @@ export function ModuleList({ courseId }: Props) {
                                     className="flex-1 h-8 text-sm"
                                   />
                                 </div>
-                                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
+                                <label className="flex items-center gap-2 text-sm text-foreground/85 cursor-pointer select-none">
                                   <input
                                     type="checkbox"
                                     checked={editValues.isFreePreview}
@@ -489,8 +489,8 @@ export function ModuleList({ courseId }: Props) {
                               /* Display row */
                               <SortableLesson id={lesson.id}>
                                 <div className="flex items-center gap-3 bg-gray-100/50 rounded-lg px-3 py-2 group">
-                                  <Video className="w-3.5 h-3.5 text-gray-500 shrink-0" />
-                                  <span className="text-sm text-gray-700 flex-1 truncate">{lesson.title}</span>
+                                  <Video className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                  <span className="text-sm text-foreground/85 flex-1 truncate">{lesson.title}</span>
                                   {lesson.is_free_preview && (
                                     <span className="text-xs text-primary font-medium shrink-0">Preview</span>
                                   )}
@@ -498,7 +498,7 @@ export function ModuleList({ courseId }: Props) {
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="w-7 h-7 text-gray-400 hover:text-gray-700"
+                                      className="w-7 h-7 text-muted-foreground/80 hover:text-gray-700"
                                       onClick={() => startEdit(lesson)}
                                     >
                                       <Pencil className="w-3.5 h-3.5" />
@@ -506,7 +506,7 @@ export function ModuleList({ courseId }: Props) {
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="w-7 h-7 text-gray-400 hover:text-destructive"
+                                      className="w-7 h-7 text-muted-foreground/80 hover:text-destructive"
                                       aria-label={`Eliminar lección ${lesson.title}`}
                                       onClick={() => setConfirmState({
                                         open: true,

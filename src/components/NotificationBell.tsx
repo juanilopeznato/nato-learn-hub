@@ -123,7 +123,7 @@ export function NotificationBell({ profileId }: Props) {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-0">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
           <span className="font-heading text-sm font-semibold text-gray-900">Notificaciones</span>
           {unreadCount > 0 && (
             <button
@@ -144,7 +144,7 @@ export function NotificationBell({ profileId }: Props) {
             allNotifications.map(notif => {
               const inner = (
                 <div
-                  className={`flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${!notif.read ? 'bg-primary/5' : ''}`}
+                  className={`flex items-start gap-3 px-4 py-3 hover:bg-secondary/30 transition-colors ${!notif.read ? 'bg-primary/5' : ''}`}
                 >
                   <div className="mt-0.5">
                     <NotifIcon type={notif.type} />
@@ -154,9 +154,9 @@ export function NotificationBell({ profileId }: Props) {
                       {notif.title}
                     </p>
                     {notif.body && (
-                      <p className="text-xs text-gray-400 mt-0.5 truncate">{notif.body}</p>
+                      <p className="text-xs text-muted-foreground/80 mt-0.5 truncate">{notif.body}</p>
                     )}
-                    <p className="text-[11px] text-gray-400 mt-1">{timeAgo(notif.created_at)}</p>
+                    <p className="text-[11px] text-muted-foreground/80 mt-1">{timeAgo(notif.created_at)}</p>
                   </div>
                   {!notif.read && (
                     <span className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
@@ -174,7 +174,7 @@ export function NotificationBell({ profileId }: Props) {
         </div>
 
         {allNotifications.length > 0 && unreadCount === 0 && (
-          <div className="px-4 py-2 border-t border-gray-100 text-center text-xs text-gray-400">
+          <div className="px-4 py-2 border-t border-border/40 text-center text-xs text-gray-400">
             Todo al día
           </div>
         )}

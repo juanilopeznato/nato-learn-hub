@@ -69,19 +69,19 @@ const NotFound = () => {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-secondary/30 flex items-center justify-center p-6">
       <Helmet>
         <title>Página no encontrada — {tenant?.name ?? "NATO University"}</title>
         <meta name="robots" content="noindex" />
       </Helmet>
-      <div className="max-w-md w-full bg-white rounded-2xl border border-gray-200 p-8 space-y-6">
+      <div className="max-w-md w-full bg-white rounded-2xl border border-border/60 p-8 space-y-6">
         <div>
           <div className="text-6xl font-heading font-bold text-primary/20 mb-2" aria-hidden>404</div>
           <h1 className="font-heading text-2xl font-semibold text-gray-900">Esta página no existe</h1>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             El link puede estar mal o el contenido ya no está disponible.
             {location.pathname && (
-              <span className="block mt-1 font-mono text-xs text-gray-400 truncate">{location.pathname}</span>
+              <span className="block mt-1 font-mono text-xs text-muted-foreground/80 truncate">{location.pathname}</span>
             )}
           </p>
         </div>
@@ -93,7 +93,7 @@ const NotFound = () => {
               <p className="text-sm font-medium text-gray-900">
                 ¿Quisiste decir <Link to={`/courses/${suggestion.slug}`} className="text-primary underline underline-offset-2 hover:opacity-80">{suggestion.title}</Link>?
               </p>
-              <p className="text-xs text-gray-500 mt-0.5 font-mono truncate">/courses/{suggestion.slug}</p>
+              <p className="text-xs text-muted-foreground mt-0.5 font-mono truncate">/courses/{suggestion.slug}</p>
             </div>
           </div>
         )}
@@ -105,9 +105,9 @@ const NotFound = () => {
               <li key={s.to}>
                 <Link
                   to={s.to}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-secondary/30 transition-colors group"
                 >
-                  <s.icon className="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" aria-hidden />
+                  <s.icon className="w-4 h-4 text-muted-foreground/80 group-hover:text-primary transition-colors" aria-hidden />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900">{s.label}</p>
                     <p className="text-xs text-gray-500">{s.desc}</p>
@@ -119,9 +119,9 @@ const NotFound = () => {
               <li>
                 <Link
                   to="/dashboard"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-secondary/30 transition-colors group"
                 >
-                  <Home className="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" aria-hidden />
+                  <Home className="w-4 h-4 text-muted-foreground/80 group-hover:text-primary transition-colors" aria-hidden />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900">Mi dashboard</p>
                     <p className="text-xs text-gray-500">Volver a tus cursos</p>
@@ -132,7 +132,7 @@ const NotFound = () => {
           </ul>
         </div>
 
-        <div className="flex gap-2 pt-2 border-t border-gray-100">
+        <div className="flex gap-2 pt-2 border-t border-border/40">
           <Button asChild variant="hero" className="flex-1">
             <Link to="/">Ir al inicio</Link>
           </Button>

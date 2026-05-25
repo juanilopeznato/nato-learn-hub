@@ -34,7 +34,7 @@ export default function CoursesSection() {
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-xl h-64 animate-pulse border border-gray-100" />
+              <div key={i} className="bg-white rounded-xl h-64 animate-pulse border border-border/40" />
             ))}
           </div>
         </div>
@@ -56,10 +56,10 @@ export default function CoursesSection() {
     <section id="courses" className="py-24 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Nuestros <span className="text-gradient-hero">cursos</span>
           </h2>
-          <p className="text-gray-500 text-lg">
+          <p className="text-muted-foreground text-lg">
             Formación práctica para resultados reales.
           </p>
         </div>
@@ -74,7 +74,7 @@ export default function CoursesSection() {
               <Link
                 key={course.id}
                 to={`/courses/${course.slug}`}
-                className="group bg-white rounded-xl border border-gray-200 hover:border-primary/40 hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col"
+                className="group bg-white rounded-xl border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col"
               >
                 {/* Thumbnail o placeholder */}
                 {course.thumbnail_url ? (
@@ -106,17 +106,17 @@ export default function CoursesSection() {
                     </span>
                   </div>
 
-                  <h3 className="font-heading font-semibold text-gray-900 leading-snug group-hover:text-primary transition-colors">
+                  <h3 className="font-heading font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">
                     {course.title}
                   </h3>
 
                   {course.description && (
-                    <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed flex-1">
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed flex-1">
                       {course.description}
                     </p>
                   )}
 
-                  <div className="flex items-center gap-1 text-sm text-primary font-medium mt-auto pt-2 border-t border-gray-100">
+                  <div className="flex items-center gap-1 text-sm text-primary font-medium mt-auto pt-2 border-t border-border/40">
                     Ver curso
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>

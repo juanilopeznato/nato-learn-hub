@@ -11,13 +11,13 @@ function Bar({ className }: { className?: string }) {
 }
 
 function Card({ className }: { className?: string }) {
-  return <div className={`bg-white border border-gray-100 rounded-2xl ${className ?? ''}`} />
+  return <div className={`bg-white border border-border/40 rounded-2xl ${className ?? ''}`} />
 }
 
 export function DashboardSkeleton() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+      <header className="glass-light">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Bar className="h-8 w-32" />
           <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export function DashboardSkeleton() {
 export function LessonViewSkeleton() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 h-14 flex items-center px-4 gap-3">
+      <header className="glass-light h-14 flex items-center px-4 gap-3">
         <Bar className="h-6 w-6 rounded" />
         <Bar className="h-4 w-64 max-w-[50%]" />
       </header>
@@ -85,7 +85,7 @@ export function LessonViewSkeleton() {
 export function InstructorPageSkeleton() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4">
+      <header className="glass-light h-16 flex items-center justify-between px-4">
         <Bar className="h-7 w-40" />
         <div className="flex gap-2">
           <Bar className="h-9 w-24 rounded-md" />

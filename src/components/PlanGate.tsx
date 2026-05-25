@@ -20,12 +20,12 @@ export function PlanGate({ feature, currentPlan, children, exceeded }: Props) {
   if (!exceeded) return <>{children}</>
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
+    <div className="bg-white border border-border/60 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
       <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
         <Lock className="w-6 h-6 text-gray-400" />
       </div>
       <div className="space-y-1">
-        <h3 className="font-heading font-bold text-gray-900 text-lg">{TITLES[feature]}</h3>
+        <h3 className="font-heading font-bold text-foreground text-lg">{TITLES[feature]}</h3>
         <p className="text-sm text-gray-500">
           Tu plan <span className="font-semibold capitalize">{currentPlan}</span> no incluye esta función. Mejorá para desbloquearla.
         </p>

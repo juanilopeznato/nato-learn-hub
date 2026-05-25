@@ -143,8 +143,8 @@ export default function ProfileSettings() {
   const nextLevelPts = (level) * 100
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-secondary/30">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild className="text-gray-500">
@@ -166,11 +166,11 @@ export default function ProfileSettings() {
       <main className="container mx-auto px-4 py-10 max-w-2xl space-y-8">
         <div>
           <h1 className="font-heading text-3xl font-bold text-gray-900">Mi perfil</h1>
-          <p className="text-gray-500 mt-1">Tus logros y configuración personal</p>
+          <p className="text-muted-foreground mt-1">Tus logros y configuración personal</p>
         </div>
 
         {/* Stats de logros */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-border/60 p-6">
           <div className="flex items-center gap-4 mb-6">
             {/* Avatar grande */}
             <div className="relative shrink-0">
@@ -186,7 +186,7 @@ export default function ProfileSettings() {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="font-heading font-semibold text-gray-900 text-lg truncate">{profile?.full_name}</h2>
+              <h2 className="font-heading font-semibold text-foreground text-lg truncate">{profile?.full_name}</h2>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-sm text-primary font-semibold">{points} pts</span>
                 <span className="text-gray-300">·</span>
@@ -231,7 +231,7 @@ export default function ProfileSettings() {
 
         {/* Certificados */}
         {certificates && certificates.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Award className="w-4 h-4 text-primary" />
               <h2 className="font-heading font-semibold text-gray-900">Mis certificados</h2>
@@ -247,7 +247,7 @@ export default function ProfileSettings() {
                         <Star className="w-4 h-4 text-yellow-600" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{courseTitle}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{courseTitle}</p>
                         <p className="text-xs text-gray-500">{issuedAt}</p>
                       </div>
                     </div>
@@ -265,7 +265,7 @@ export default function ProfileSettings() {
         )}
 
         {/* Insignias de nivel */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-primary" />
             <h2 className="font-heading font-semibold text-gray-900">Insignias</h2>
@@ -282,7 +282,7 @@ export default function ProfileSettings() {
                 className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-center transition-all ${
                   badge.earned
                     ? 'bg-primary/5 border-primary/20'
-                    : 'bg-gray-50 border-gray-100 opacity-40 grayscale'
+                    : 'bg-secondary/30 border-border/40 opacity-40 grayscale'
                 }`}
               >
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
@@ -290,7 +290,7 @@ export default function ProfileSettings() {
                 }`}>
                   <badge.icon className={`w-4 h-4 ${badge.earned ? 'text-primary' : 'text-gray-400'}`} />
                 </div>
-                <span className="text-xs text-gray-600 leading-tight">{badge.label}</span>
+                <span className="text-xs text-foreground/70 leading-tight">{badge.label}</span>
               </div>
             ))}
           </div>
@@ -298,7 +298,7 @@ export default function ProfileSettings() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Avatar */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
             <h2 className="font-heading font-semibold text-gray-900">Foto de perfil</h2>
             <div className="flex items-center gap-6">
               <Controller
@@ -315,7 +315,7 @@ export default function ProfileSettings() {
                   />
                 )}
               />
-              <div className="text-sm text-gray-500 space-y-1">
+              <div className="text-sm text-muted-foreground space-y-1">
                 <p className="font-medium text-gray-700">Subí una foto de perfil</p>
                 <p>JPG o PNG con fondo claro. Máximo 2MB.</p>
               </div>
@@ -323,7 +323,7 @@ export default function ProfileSettings() {
           </div>
 
           {/* Info personal */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
             <h2 className="font-heading font-semibold text-gray-900">Información personal</h2>
 
             <div className="space-y-1.5">
@@ -350,7 +350,7 @@ export default function ProfileSettings() {
           </div>
 
           {/* Redes sociales */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+          <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
             <h2 className="font-heading font-semibold text-gray-900">Redes sociales</h2>
 
             <div className="grid sm:grid-cols-2 gap-4">

@@ -165,8 +165,8 @@ export default function Calendar() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-secondary/30">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
@@ -190,7 +190,7 @@ export default function Calendar() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-heading text-3xl font-bold text-gray-900">Calendario</h1>
-            <p className="text-gray-500 mt-1">Próximos eventos y sesiones</p>
+            <p className="text-muted-foreground mt-1">Próximos eventos y sesiones</p>
           </div>
           {isInstructor && (
             <Button variant="hero" onClick={() => setShowDialog(true)}>
@@ -203,21 +203,21 @@ export default function Calendar() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white border border-gray-200 rounded-xl h-20 animate-pulse" />
+              <div key={i} className="bg-white border border-border/60 rounded-xl h-20 animate-pulse" />
             ))}
           </div>
         ) : events && events.length > 0 ? (
           <div className="space-y-8">
             {Object.entries(groupedEvents).map(([month, monthEvents]) => (
               <div key={month} className="space-y-3">
-                <h2 className="font-heading font-semibold text-gray-700 text-sm uppercase tracking-wide capitalize">
+                <h2 className="font-heading font-semibold text-foreground/85 text-sm uppercase tracking-wide capitalize">
                   {month}
                 </h2>
                 <div className="space-y-2">
                   {monthEvents.map(event => (
                     <div
                       key={event.id}
-                      className={`bg-white border border-gray-200 border-l-4 ${EVENT_COLORS[event.event_type]} rounded-xl p-4 flex items-start gap-4`}
+                      className={`bg-white border border-border/60 border-l-4 ${EVENT_COLORS[event.event_type]} rounded-xl p-4 flex items-start gap-4`}
                     >
                       <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -233,7 +233,7 @@ export default function Calendar() {
                           <p className="text-xs text-gray-400">{event.course.title}</p>
                         )}
                         {event.description && (
-                          <p className="text-sm text-gray-600 mt-1">{event.description}</p>
+                          <p className="text-sm text-foreground/70 mt-1">{event.description}</p>
                         )}
                         {event.meeting_url && (
                           <a
@@ -263,7 +263,7 @@ export default function Calendar() {
             ))}
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
+          <div className="bg-white border border-border/60 rounded-2xl p-12 text-center space-y-4">
             <CalendarDays className="w-12 h-12 text-gray-300 mx-auto" />
             <p className="text-gray-500">No hay eventos próximos.</p>
             {isInstructor && (
@@ -277,7 +277,7 @@ export default function Calendar() {
       </main>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="bg-white border-gray-200">
+        <DialogContent className="bg-white border-border/60">
           <DialogHeader>
             <DialogTitle className="font-heading text-gray-900">Nuevo evento</DialogTitle>
           </DialogHeader>
@@ -294,7 +294,7 @@ export default function Calendar() {
             <div className="space-y-1.5">
               <Label>Tipo de evento</Label>
               <select
-                className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+                className="w-full border border-border/60 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
                 value={form.event_type}
                 onChange={e => setForm(f => ({ ...f, event_type: e.target.value as EventType }))}
               >
@@ -328,7 +328,7 @@ export default function Calendar() {
               <Label>Descripción</Label>
               <textarea
                 placeholder="Descripción del evento..."
-                className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm resize-none h-20 focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full border border-border/60 rounded-md px-3 py-2 text-sm resize-none h-20 focus:outline-none focus:ring-1 focus:ring-primary"
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
               />
@@ -347,7 +347,7 @@ export default function Calendar() {
               <div className="space-y-1.5">
                 <Label>Curso relacionado (opcional)</Label>
                 <select
-                  className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+                  className="w-full border border-border/60 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
                   value={form.course_id}
                   onChange={e => setForm(f => ({ ...f, course_id: e.target.value }))}
                 >

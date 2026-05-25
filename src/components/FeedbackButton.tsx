@@ -96,9 +96,9 @@ export function FeedbackButton({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="font-heading font-semibold text-gray-900">{label}</h2>
-                <p className="text-xs text-gray-500 mt-0.5">Contanos qué pasó. Sumamos contexto técnico automáticamente.</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Contanos qué pasó. Sumamos contexto técnico automáticamente.</p>
               </div>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar" className="text-gray-400 hover:text-gray-700">
+              <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar" className="text-muted-foreground/80 hover:text-gray-700">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -112,7 +112,7 @@ export function FeedbackButton({
                   onChange={e => setMessage(e.target.value)}
                   placeholder="Describí qué pasó (o qué te gustaría que mejoremos)"
                   rows={4}
-                  className="w-full text-sm border border-gray-200 rounded-lg p-3 focus:border-primary focus:outline-none resize-none"
+                  className="w-full text-sm border border-border/60 rounded-lg p-3 focus:border-primary focus:outline-none resize-none"
                   autoFocus
                 />
                 <button

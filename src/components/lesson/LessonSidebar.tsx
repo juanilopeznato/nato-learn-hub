@@ -33,9 +33,9 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
   const completedCount = completedLessonIds.size
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden h-full flex flex-col shadow-sm">
+    <div className="bg-white border border-border/60 rounded-xl overflow-hidden h-full flex flex-col shadow-sm">
       {/* Header con progress ring */}
-      <div className="p-4 border-b border-gray-100">
+      <div className="p-4 border-b border-border/40">
         <div className="flex items-center gap-3">
           {/* Anillo de progreso SVG */}
           <div className="relative shrink-0 w-11 h-11">
@@ -57,8 +57,8 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
             </span>
           </div>
           <div className="min-w-0">
-            <h3 className="font-heading font-semibold text-gray-900 text-sm leading-snug line-clamp-2">{courseTitle}</h3>
-            <p className="text-xs text-gray-400 mt-0.5">{completedCount}/{totalLessons} lecciones</p>
+            <h3 className="font-heading font-semibold text-foreground text-sm leading-snug line-clamp-2">{courseTitle}</h3>
+            <p className="text-xs text-muted-foreground/80 mt-0.5">{completedCount}/{totalLessons} lecciones</p>
           </div>
         </div>
       </div>
@@ -75,7 +75,7 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
                 <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
                   <span className="text-[10px] font-bold text-gray-500">{moduleIdx + 1}</span>
                 </div>
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider truncate">
                   {module.title}
                 </span>
               </div>
@@ -98,7 +98,7 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
                               ? 'bg-green-500 shadow-sm shadow-green-200'
                               : isCurrent
                               ? 'bg-primary ring-4 ring-primary/20 shadow-md shadow-primary/20'
-                              : 'bg-white border-2 border-gray-200 hover:border-primary/50'
+                              : 'bg-white border-2 border-border/60 hover:border-primary/50'
                           }`}
                           title={lesson.title}
                         >
@@ -126,7 +126,7 @@ export function LessonSidebar({ courseId, courseTitle, courseSlug, modules, curr
                             ? 'text-primary font-semibold'
                             : isCompleted
                             ? 'text-green-700 text-xs hover:text-green-800'
-                            : 'text-gray-600 hover:text-gray-900'
+                            : 'text-foreground/70 hover:text-gray-900'
                         } text-xs leading-snug`}
                       >
                         {lesson.title}

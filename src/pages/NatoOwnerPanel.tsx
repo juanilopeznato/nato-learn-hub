@@ -75,7 +75,7 @@ function CommissionCell({ tenantId, value, onSaved }: { tenantId: string; value:
         onClick={() => { setInput(String(value)); setEditing(true) }}
       >
         <span>{value}%</span>
-        <Pencil className="w-3 h-3 opacity-0 group-hover:opacity-100 text-gray-500 transition-opacity" />
+        <Pencil className="w-3 h-3 opacity-0 group-hover:opacity-100 text-muted-foreground transition-opacity" />
       </button>
     )
   }
@@ -89,11 +89,11 @@ function CommissionCell({ tenantId, value, onSaved }: { tenantId: string; value:
         className="w-16 h-7 text-xs bg-gray-800 border-gray-600 text-white"
         onKeyDown={e => { if (e.key === 'Enter') save.mutate(); if (e.key === 'Escape') setEditing(false) }}
       />
-      <span className="text-gray-500 text-xs">%</span>
+      <span className="text-muted-foreground text-xs">%</span>
       <button onClick={() => save.mutate()} className="text-green-400 hover:text-green-300">
         <Check className="w-4 h-4" />
       </button>
-      <button onClick={() => setEditing(false)} className="text-gray-500 hover:text-gray-300">
+      <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-gray-300">
         <X className="w-4 h-4" />
       </button>
     </div>
@@ -261,7 +261,7 @@ export default function NatoOwnerPanel() {
               <TabsTrigger
                 key={t.value}
                 value={t.value}
-                className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white text-sm"
+                className="data-[state=active]:bg-gray-700 text-muted-foreground/80 data-[state=active]:text-white text-sm"
               >
                 {t.label}
               </TabsTrigger>
@@ -275,7 +275,7 @@ export default function NatoOwnerPanel() {
               <div className="lg:col-span-2 bg-gray-900 rounded-2xl border border-gray-800 p-6">
                 <h2 className="text-base font-semibold text-white mb-6">Revenue mensual — últimos 12 meses</h2>
                 {revenueTrend.length === 0 ? (
-                  <div className="h-52 flex items-center justify-center text-gray-600 text-sm">Sin datos aún</div>
+                  <div className="h-52 flex items-center justify-center text-foreground/70 text-sm">Sin datos aún</div>
                 ) : (
                   <ResponsiveContainer width="100%" height={240}>
                     <AreaChart data={revenueTrend} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
@@ -310,7 +310,7 @@ export default function NatoOwnerPanel() {
               <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6">
                 <h2 className="text-base font-semibold text-white mb-4">Top escuelas por revenue</h2>
                 {leaderboard.length === 0 ? (
-                  <div className="text-center text-gray-600 text-sm py-8">Sin datos</div>
+                  <div className="text-center text-foreground/70 text-sm py-8">Sin datos</div>
                 ) : (
                   <div className="space-y-3">
                     {leaderboard.map((t, i) => (
@@ -371,14 +371,14 @@ export default function NatoOwnerPanel() {
                 </div>
               </div>
               {loadingTenants ? (
-                <div className="p-8 text-center text-gray-600 text-sm">Cargando...</div>
+                <div className="p-8 text-center text-foreground/70 text-sm">Cargando...</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-gray-800">
                         {['Escuela', 'Plan', 'MP', 'Comisión %', 'Cursos', 'Alumnos', '30d alumnos', 'Revenue total', 'Revenue 30d', 'Última actividad', 'Estado', ''].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide whitespace-nowrap">{h}</th>
+                          <th key={h} className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -421,7 +421,7 @@ export default function NatoOwnerPanel() {
                           <td className="px-4 py-3.5 text-gray-300 whitespace-nowrap">
                             {t.revenue_30d > 0 ? fmtK(t.revenue_30d) : '—'}
                           </td>
-                          <td className="px-4 py-3.5 text-gray-500 text-xs whitespace-nowrap">
+                          <td className="px-4 py-3.5 text-muted-foreground text-xs whitespace-nowrap">
                             {t.last_activity ? new Date(t.last_activity).toLocaleDateString('es-AR') : 'Sin actividad'}
                           </td>
                           <td className="px-4 py-3.5">
@@ -432,7 +432,7 @@ export default function NatoOwnerPanel() {
                           <td className="px-4 py-3.5">
                             <button
                               onClick={() => toggleActive.mutate({ id: t.tenant_id, active: t.active })}
-                              className="text-gray-500 hover:text-gray-300 transition-colors"
+                              className="text-muted-foreground hover:text-gray-300 transition-colors"
                               title={t.active ? 'Desactivar' : 'Activar'}
                             >
                               {t.active
@@ -454,15 +454,15 @@ export default function NatoOwnerPanel() {
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                <p className="text-xs text-gray-500 mb-1">Total recaudado</p>
+                <p className="text-xs text-muted-foreground mb-1">Total recaudado</p>
                 <p className="text-2xl font-bold text-yellow-400">{fmtK(totalSubscriptionRevenue)}</p>
               </div>
               <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                <p className="text-xs text-gray-500 mb-1">Pagos totales</p>
+                <p className="text-xs text-muted-foreground mb-1">Pagos totales</p>
                 <p className="text-2xl font-bold text-white">{subscriptions.filter(s => s.status === 'approved').length}</p>
               </div>
               <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                <p className="text-xs text-gray-500 mb-1">Pendientes</p>
+                <p className="text-xs text-muted-foreground mb-1">Pendientes</p>
                 <p className={`text-2xl font-bold ${pendingSubscriptions > 0 ? 'text-yellow-400' : 'text-gray-600'}`}>
                   {pendingSubscriptions}
                 </p>
@@ -474,11 +474,11 @@ export default function NatoOwnerPanel() {
                 <h2 className="text-base font-semibold text-white">Historial de suscripciones</h2>
               </div>
               {loadingSubscriptions ? (
-                <div className="p-8 text-center text-gray-600 text-sm">Cargando...</div>
+                <div className="p-8 text-center text-foreground/70 text-sm">Cargando...</div>
               ) : subscriptions.length === 0 ? (
                 <div className="p-12 text-center">
-                  <Receipt className="w-8 h-8 text-gray-700 mx-auto mb-3" />
-                  <p className="text-gray-600 text-sm">Sin pagos de suscripción aún</p>
+                  <Receipt className="w-8 h-8 text-foreground/85 mx-auto mb-3" />
+                  <p className="text-foreground/70 text-sm">Sin pagos de suscripción aún</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -486,7 +486,7 @@ export default function NatoOwnerPanel() {
                     <thead>
                       <tr className="border-b border-gray-800">
                         {['Escuela', 'Plan', 'Monto ARS', 'Estado', 'Período', 'Fecha'].map(h => (
-                          <th key={h} className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                          <th key={h} className="px-5 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -508,12 +508,12 @@ export default function NatoOwnerPanel() {
                               {p.status === 'approved' ? 'Pagado' : p.status === 'pending' ? 'Pendiente' : 'Fallido'}
                             </Badge>
                           </td>
-                          <td className="px-5 py-3.5 text-gray-400 text-xs">
+                          <td className="px-5 py-3.5 text-muted-foreground/80 text-xs">
                             {p.period_start && p.period_end
                               ? `${new Date(p.period_start).toLocaleDateString('es-AR')} → ${new Date(p.period_end).toLocaleDateString('es-AR')}`
                               : '—'}
                           </td>
-                          <td className="px-5 py-3.5 text-gray-500 text-xs">
+                          <td className="px-5 py-3.5 text-muted-foreground text-xs">
                             {new Date(p.created_at).toLocaleDateString('es-AR')}
                           </td>
                         </tr>
@@ -528,35 +528,35 @@ export default function NatoOwnerPanel() {
           {/* ── Producción NATO ── */}
           <TabsContent value="produccion" className="mt-6 space-y-4">
             {loadingProduction ? (
-              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-8 text-center text-gray-600 text-sm">Cargando...</div>
+              <div className="bg-gray-900 rounded-2xl border border-gray-800 p-8 text-center text-foreground/70 text-sm">Cargando...</div>
             ) : productionCourses.length === 0 ? (
               <div className="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center space-y-3">
-                <Clapperboard className="w-10 h-10 text-gray-700 mx-auto" />
-                <p className="text-gray-500 text-sm">No hay cursos marcados como producidos por NATO.</p>
-                <p className="text-gray-600 text-xs">Activá "Producido por NATO Creative" al editar un curso.</p>
+                <Clapperboard className="w-10 h-10 text-foreground/85 mx-auto" />
+                <p className="text-muted-foreground text-sm">No hay cursos marcados como producidos por NATO.</p>
+                <p className="text-foreground/70 text-xs">Activá "Producido por NATO Creative" al editar un curso.</p>
               </div>
             ) : (
               <>
                 {/* Summary strip */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs text-gray-500 mb-1">Cursos producidos</p>
+                    <p className="text-xs text-muted-foreground mb-1">Cursos producidos</p>
                     <p className="text-2xl font-bold text-white">{productionCourses.length}</p>
                   </div>
                   <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs text-gray-500 mb-1">En recupero</p>
+                    <p className="text-xs text-muted-foreground mb-1">En recupero</p>
                     <p className="text-2xl font-bold text-yellow-400">
                       {productionCourses.filter(c => !c.is_recovered).length}
                     </p>
                   </div>
                   <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs text-gray-500 mb-1">Sin ventas este mes</p>
+                    <p className="text-xs text-muted-foreground mb-1">Sin ventas este mes</p>
                     <p className="text-xl font-bold text-red-400">
                       {productionCourses.filter(c => !c.is_recovered && c.sales_last_30d === 0).length}
                     </p>
                   </div>
                   <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs text-gray-500 mb-1">Ventas este mes</p>
+                    <p className="text-xs text-muted-foreground mb-1">Ventas este mes</p>
                     <p className="text-xl font-bold text-green-400">
                       {productionCourses.reduce((s, c) => s + (c.sales_last_30d ?? 0), 0)}
                     </p>
@@ -572,7 +572,7 @@ export default function NatoOwnerPanel() {
                         <div className="flex items-start justify-between gap-4 mb-4">
                           <div>
                             <p className="font-semibold text-white">{c.course_title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{c.tenant_name}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{c.tenant_name}</p>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             {c.is_recovered ? (
@@ -588,7 +588,7 @@ export default function NatoOwnerPanel() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="text-xs text-gray-500 hover:text-white h-7 px-2"
+                                className="text-xs text-muted-foreground hover:text-white h-7 px-2"
                                 onClick={() => markRecovered.mutate(c.course_id)}
                               >
                                 Marcar recuperado

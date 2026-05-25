@@ -110,11 +110,11 @@ function CommentSection({ postId, tenantId, profileId }: { postId: string; tenan
   })
 
   return (
-    <div className="border-t border-gray-100 pt-4 space-y-3">
+    <div className="border-t border-border/40 pt-4 space-y-3">
       {comments.map(c => (
         <div key={c.id} className="flex gap-2.5">
           <Avatar name={c.author?.full_name ?? 'Usuario'} url={c.author?.avatar_url ?? null} />
-          <div className="flex-1 bg-gray-50 rounded-xl px-3 py-2">
+          <div className="flex-1 bg-secondary/30 rounded-xl px-3 py-2">
             <div className="flex items-center gap-2 mb-0.5">
               <span className="text-sm font-semibold text-gray-900">{c.author?.full_name ?? 'Usuario'}</span>
               <span className="text-xs text-gray-400">
@@ -131,7 +131,7 @@ function CommentSection({ postId, tenantId, profileId }: { postId: string; tenan
           value={body}
           onChange={e => setBody(e.target.value)}
           placeholder="Escribí un comentario..."
-          className="resize-none text-sm min-h-[60px] border-gray-200 focus:border-primary"
+          className="resize-none text-sm min-h-[60px] border-border/60 focus:border-primary"
           onKeyDown={e => { if (e.key === 'Enter' && e.metaKey && body.trim()) insertComment.mutate() }}
         />
         <Button
@@ -198,7 +198,7 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
   })
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-xl p-4 space-y-3 ${post.is_pinned ? 'ring-1 ring-primary/20' : ''}`}>
+    <div className={`bg-white border border-border/60 rounded-xl p-4 space-y-3 ${post.is_pinned ? 'ring-1 ring-primary/20' : ''}`}>
       {/* Header */}
       <div className="flex items-start gap-3">
         <Link to={`/members/${post.author?.id}`}>
@@ -206,10 +206,10 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
         </Link>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <Link to={`/members/${post.author?.id}`} className="text-sm font-semibold text-gray-900 hover:text-primary transition-colors">
+            <Link to={`/members/${post.author?.id}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
               {post.author?.full_name ?? 'Usuario'}
             </Link>
-            <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">
+            <span className="text-xs text-muted-foreground/80 bg-gray-100 px-1.5 py-0.5 rounded-full">
               Nv. {post.author?.level ?? 1}
             </span>
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cat.class}`}>{cat.label}</span>
@@ -223,8 +223,8 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
 
       {/* Content */}
       <div>
-        <h3 className="font-heading font-semibold text-gray-900 mb-1">{post.title}</h3>
-        <p className={`text-sm text-gray-600 leading-relaxed whitespace-pre-wrap ${!expanded ? 'line-clamp-3' : ''}`}>
+        <h3 className="font-heading font-semibold text-foreground mb-1">{post.title}</h3>
+        <p className={`text-sm text-foreground/70 leading-relaxed whitespace-pre-wrap ${!expanded ? 'line-clamp-3' : ''}`}>
           <AutoLinkText>{post.body}</AutoLinkText>
         </p>
         {post.body.length > 200 && (
@@ -240,14 +240,14 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
       {/* Actions */}
       <div className="flex items-center gap-4 pt-1">
         <button
-          className={`flex items-center gap-1.5 text-sm transition-colors ${hasLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+          className={`flex items-center gap-1.5 text-sm transition-colors ${hasLiked ? 'text-red-500' : 'text-muted-foreground/80 hover:text-red-500'}`}
           onClick={() => toggleLike.mutate()}
         >
           <Heart className={`w-4 h-4 ${hasLiked ? 'fill-current' : ''}`} />
           {likeCount > 0 && <span>{likeCount}</span>}
         </button>
         <button
-          className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-primary transition-colors"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground/80 hover:text-primary transition-colors"
           onClick={() => setExpanded(v => !v)}
         >
           <MessageCircle className="w-4 h-4" />

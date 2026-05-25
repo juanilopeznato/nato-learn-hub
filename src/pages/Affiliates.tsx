@@ -54,7 +54,7 @@ export default function Affiliates() {
                 NATO University
               </span>
             </h1>
-            <p className="text-gray-400 text-lg max-w-xl mx-auto">
+            <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto">
               Compartí tu enlace único. Cada escuela que creen con tu código te genera comisiones automáticas, todos los meses.
             </p>
             <Button variant="hero" size="xl" asChild>
@@ -78,7 +78,7 @@ export default function Affiliates() {
                     <span className="text-xs font-bold text-primary bg-primary/10 w-6 h-6 rounded-full flex items-center justify-center">{i + 1}</span>
                     <h3 className="font-semibold text-white">{step.title}</h3>
                   </div>
-                  <p className="text-gray-400 text-sm">{step.desc}</p>
+                  <p className="text-muted-foreground/80 text-sm">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -107,7 +107,7 @@ export default function Affiliates() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
-            <p className="text-gray-500 text-sm">Ya tenés una cuenta? <Link to="/login" className="text-primary hover:underline">Iniciá sesión</Link></p>
+            <p className="text-muted-foreground text-sm">Ya tenés una cuenta? <Link to="/login" className="text-primary hover:underline">Iniciá sesión</Link></p>
           </div>
 
         </div>

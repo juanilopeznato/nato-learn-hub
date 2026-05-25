@@ -52,7 +52,7 @@ export function UpsellModal({ open, onClose, tenantId, completedCourseId }: Prop
         <div className="p-5 space-y-3">
           {courses.length > 0 ? (
             <>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 Cursos que te pueden interesar
               </p>
               <div className="space-y-2">
@@ -61,7 +61,7 @@ export function UpsellModal({ open, onClose, tenantId, completedCourseId }: Prop
                     key={course.id}
                     to={`/courses/${course.slug}`}
                     onClick={onClose}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-primary/40 hover:bg-primary/5 transition-all group"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all group"
                   >
                     {course.thumbnail_url ? (
                       <SmartImage
@@ -76,20 +76,20 @@ export function UpsellModal({ open, onClose, tenantId, completedCourseId }: Prop
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-primary transition-colors">
+                      <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                         {course.title}
                       </p>
                       <p className="text-xs text-gray-500">
                         {course.is_free ? 'Gratis' : `ARS ${Number(course.price).toLocaleString('es-AR')}`}
                       </p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
+                    <ArrowRight className="w-4 h-4 text-muted-foreground/80 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                   </Link>
                 ))}
               </div>
             </>
           ) : (
-            <p className="text-sm text-gray-500 text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-4">
               Explorá todos los cursos disponibles
             </p>
           )}

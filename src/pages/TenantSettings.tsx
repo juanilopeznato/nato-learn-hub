@@ -267,8 +267,8 @@ export default function TenantSettings() {
   const planExpiresAt = tenantExtras?.plan_expires_at ?? null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-secondary/30">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-8 w-auto object-contain" loading="lazy" decoding="async" />
@@ -288,7 +288,7 @@ export default function TenantSettings() {
       <main className="container mx-auto px-4 py-10 max-w-3xl space-y-8">
         <div>
           <h1 className="font-heading text-3xl font-bold text-gray-900">Configuración de la escuela</h1>
-          <p className="text-gray-500 mt-1">Personalizá tu plataforma y conectá tus herramientas de venta</p>
+          <p className="text-muted-foreground mt-1">Personalizá tu plataforma y conectá tus herramientas de venta</p>
         </div>
 
         <Tabs defaultValue="brand">
@@ -317,7 +317,7 @@ export default function TenantSettings() {
 
           {/* Branding */}
           <TabsContent value="brand" className="mt-6">
-            <form onSubmit={brandForm.handleSubmit(d => saveBrand.mutate(d))} className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+            <form onSubmit={brandForm.handleSubmit(d => saveBrand.mutate(d))} className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
               <h2 className="font-heading font-semibold text-gray-900">Identidad de tu escuela</h2>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -380,13 +380,13 @@ export default function TenantSettings() {
           <TabsContent value="payments" className="mt-6 space-y-4">
             {/* Connection status */}
             {fullTenant?.mp_collector_id ? (
-              <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500" />
                     <div>
                       <h2 className="font-heading font-semibold text-gray-900">Mercado Pago conectado</h2>
-                      <p className="text-xs text-gray-400 mt-0.5">ID: {fullTenant.mp_collector_id}</p>
+                      <p className="text-xs text-muted-foreground/80 mt-0.5">ID: {fullTenant.mp_collector_id}</p>
                     </div>
                   </div>
                   <Button
@@ -407,7 +407,7 @@ export default function TenantSettings() {
                 </p>
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+              <div className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
                 <h2 className="font-heading font-semibold text-gray-900">Conectá tu cuenta de Mercado Pago</h2>
                 <p className="text-sm text-gray-500">
                   Para recibir pagos, necesitás conectar tu cuenta de Mercado Pago. El proceso tarda menos de un minuto y es completamente seguro — nunca vemos tu contraseña.
@@ -447,7 +447,7 @@ export default function TenantSettings() {
 
           {/* Integrations */}
           <TabsContent value="integrations" className="mt-6">
-            <form onSubmit={integrationsForm.handleSubmit(d => saveIntegrations.mutate(d))} className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+            <form onSubmit={integrationsForm.handleSubmit(d => saveIntegrations.mutate(d))} className="bg-white rounded-xl border border-border/60 p-6 space-y-5">
               <h2 className="font-heading font-semibold text-gray-900">Integraciones</h2>
 
               <div className="space-y-1.5">
@@ -494,11 +494,11 @@ export default function TenantSettings() {
               const isExpired = daysLeft !== null && daysLeft <= 0
               const expiringSoon = daysLeft !== null && daysLeft > 0 && daysLeft <= 7
               return (
-                <div className={`bg-white rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-red-300' : expiringSoon ? 'border-orange-300' : 'border-gray-200'}`}>
+                <div className={`bg-white rounded-xl border-2 p-6 space-y-4 ${isExpired ? 'border-red-300' : expiringSoon ? 'border-orange-300' : 'border-border/60'}`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="font-heading font-semibold text-gray-900">Tu plan actual</h2>
-                      <p className="text-sm text-gray-500 mt-0.5">
+                      <p className="text-sm text-muted-foreground mt-0.5">
                         {isExpired
                           ? '⚠️ Tu plan venció — renovalo para seguir usando todas las funciones'
                           : expiringSoon
@@ -525,7 +525,7 @@ export default function TenantSettings() {
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setBillingAnnual(false)}
-                className={`text-sm font-medium transition-colors ${!billingAnnual ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`text-sm font-medium transition-colors ${!billingAnnual ? 'text-gray-900' : 'text-muted-foreground/80 hover:text-gray-600'}`}
               >
                 Mensual
               </button>
@@ -537,7 +537,7 @@ export default function TenantSettings() {
               </button>
               <button
                 onClick={() => setBillingAnnual(true)}
-                className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${billingAnnual ? 'text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${billingAnnual ? 'text-primary' : 'text-muted-foreground/80 hover:text-gray-600'}`}
               >
                 Anual
                 <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">−17%</span>
@@ -556,7 +556,7 @@ export default function TenantSettings() {
                 return (
                   <div
                     key={plan.id}
-                    className={`bg-white rounded-xl border-2 p-5 space-y-4 ${isCurrent ? 'border-primary' : 'border-gray-200'}`}
+                    className={`bg-white rounded-xl border-2 p-5 space-y-4 ${isCurrent ? 'border-primary' : 'border-border/60'}`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -607,14 +607,14 @@ export default function TenantSettings() {
 
             {/* Payment history */}
             {payments && payments.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
                 <h2 className="font-heading font-semibold text-gray-900">Historial de pagos</h2>
                 <div className="divide-y divide-gray-100">
                   {payments.map(p => (
                     <div key={p.id} className="flex items-center justify-between py-3 text-sm">
                       <div>
                         <span className="font-medium capitalize text-gray-900">{p.plan_name}</span>
-                        <span className="text-gray-400 ml-2">
+                        <span className="text-muted-foreground/80 ml-2">
                           {new Date(p.created_at).toLocaleDateString('es-AR')}
                         </span>
                       </div>
@@ -635,7 +635,7 @@ export default function TenantSettings() {
 
           {/* Domain */}
           <TabsContent value="domain" className="mt-6">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+            <div className="bg-white rounded-xl border border-border/60 p-6 space-y-4">
               <h2 className="font-heading font-semibold text-gray-900">Dominio personalizado</h2>
               <p className="text-sm text-gray-500">
                 Conectá tu propio dominio para que tus estudiantes accedan a tu escuela en <code className="bg-gray-100 px-1 rounded">tuescuela.com</code>.
@@ -643,11 +643,11 @@ export default function TenantSettings() {
               <div className="space-y-1.5">
                 <Label>Dominio actual</Label>
                 <div className="flex items-center gap-2">
-                  <Input value={fullTenant?.custom_domain ?? `${tenant?.slug}.nato-university.com`} readOnly className="bg-gray-50 text-gray-500" />
+                  <Input value={fullTenant?.custom_domain ?? `${tenant?.slug}.nato-university.com`} readOnly className="bg-secondary/30 text-gray-500" />
                   <Badge variant="secondary">{fullTenant?.custom_domain ? 'Configurado' : 'Default'}</Badge>
                 </div>
               </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600 space-y-2">
+              <div className="bg-secondary/30 border border-border/60 rounded-lg p-4 text-sm text-foreground/70 space-y-2">
                 <p className="font-medium">Para configurar tu dominio:</p>
                 <ol className="list-decimal list-inside space-y-1">
                   <li>Agregá un registro CNAME en tu DNS apuntando a <code className="bg-gray-100 px-1 rounded">app.nato-university.com</code></li>

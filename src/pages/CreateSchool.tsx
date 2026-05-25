@@ -187,7 +187,7 @@ export default function CreateSchool() {
                   <User className="w-6 h-6 text-primary" />
                 </div>
                 <h1 className="font-heading text-2xl font-bold text-white">Creá tu cuenta</h1>
-                <p className="text-gray-400 text-sm">Con esto accedés a tu panel de instructor</p>
+                <p className="text-muted-foreground/80 text-sm">Con esto accedés a tu panel de instructor</p>
               </div>
 
               <form onSubmit={accountForm.handleSubmit(d => { setAccountData(d); setStep(2) })} className="space-y-4">
@@ -195,7 +195,7 @@ export default function CreateSchool() {
                   <Label className="text-gray-300">Tu nombre completo</Label>
                   <Input
                     placeholder="Juan López"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-primary"
+                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('fullName')}
                   />
                   {accountForm.formState.errors.fullName && (
@@ -208,7 +208,7 @@ export default function CreateSchool() {
                   <Input
                     type="email"
                     placeholder="vos@tuescuela.com"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-primary"
+                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('email')}
                   />
                   {accountForm.formState.errors.email && (
@@ -221,7 +221,7 @@ export default function CreateSchool() {
                   <Input
                     type="password"
                     placeholder="Mínimo 6 caracteres"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-primary"
+                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('password')}
                   />
                   {accountForm.formState.errors.password && (
@@ -234,7 +234,7 @@ export default function CreateSchool() {
                   <Input
                     type="password"
                     placeholder="Repetí la contraseña"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-primary"
+                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
                     {...accountForm.register('confirmPassword')}
                   />
                   {accountForm.formState.errors.confirmPassword && (
@@ -261,7 +261,7 @@ export default function CreateSchool() {
                   <School className="w-6 h-6 text-primary" />
                 </div>
                 <h1 className="font-heading text-2xl font-bold text-white">Nombrá tu escuela</h1>
-                <p className="text-gray-400 text-sm">Este será el nombre que ven tus estudiantes</p>
+                <p className="text-muted-foreground/80 text-sm">Este será el nombre que ven tus estudiantes</p>
               </div>
 
               <form onSubmit={schoolForm.handleSubmit(handleCreateSchool)} className="space-y-4">
@@ -269,7 +269,7 @@ export default function CreateSchool() {
                   <Label className="text-gray-300">Nombre de la escuela</Label>
                   <Input
                     placeholder="Ej: Academia de Marketing Digital"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-primary"
+                    className="bg-gray-800 border-gray-700 text-white placeholder:text-muted-foreground focus:border-primary"
                     value={schoolName}
                     onChange={e => {
                       handleSchoolNameChange(e.target.value)
@@ -284,10 +284,10 @@ export default function CreateSchool() {
                 <div className="space-y-1.5">
                   <Label className="text-gray-300">
                     URL de tu escuela
-                    <span className="text-gray-500 font-normal ml-2">(editable)</span>
+                    <span className="text-muted-foreground font-normal ml-2">(editable)</span>
                   </Label>
                   <div className="flex items-center bg-gray-800 border border-gray-700 rounded-md overflow-hidden focus-within:border-primary transition-colors">
-                    <span className="px-3 text-gray-500 text-sm border-r border-gray-700 bg-gray-900 h-10 flex items-center shrink-0">
+                    <span className="px-3 text-muted-foreground text-sm border-r border-gray-700 bg-gray-900 h-10 flex items-center shrink-0">
                       tu-escuela.com/
                     </span>
                     <input
@@ -339,7 +339,7 @@ export default function CreateSchool() {
                   <h1 className="font-heading text-2xl font-bold text-white">
                     ¡{schoolName || 'Tu escuela'} está lista!
                   </h1>
-                  <p className="text-gray-400 text-sm mt-1">
+                  <p className="text-muted-foreground/80 text-sm mt-1">
                     Estás a minutos de tu primera venta.
                   </p>
                 </div>
@@ -359,7 +359,7 @@ export default function CreateSchool() {
                     </div>
                     <div>
                       <span className="text-white text-sm font-medium">{item.action}</span>
-                      <span className="text-gray-400 text-sm"> → {item.outcome}</span>
+                      <span className="text-muted-foreground/80 text-sm"> → {item.outcome}</span>
                     </div>
                   </div>
                 ))}

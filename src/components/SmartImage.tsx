@@ -77,7 +77,7 @@ export function SmartAvatar({ src, size = 40, alt = '', className, fallbackIniti
 
   return (
     <div
-      className={`rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-medium ${className ?? ''}`}
+      className={`rounded-full bg-gray-200 flex items-center justify-center text-muted-foreground font-medium ${className ?? ''}`}
       style={{ width: size, height: size, fontSize: size * 0.4 }}
       aria-label={alt || 'Avatar'}
       role="img"

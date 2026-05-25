@@ -64,7 +64,7 @@ export function StorageMetrics() {
   }
 
   if (isLoading) {
-    return <div className="text-gray-400 text-sm">Cargando uso de storage…</div>
+    return <div className="text-muted-foreground/80 text-sm">Cargando uso de storage…</div>
   }
 
   const buckets = data ?? []
@@ -80,12 +80,12 @@ export function StorageMetrics() {
       {/* Totales */}
       <div className="grid sm:grid-cols-3 gap-4">
         <div className={`rounded-2xl border p-5 ${alarm ? 'bg-red-950/40 border-red-900/60' : 'bg-gray-900 border-gray-800'}`}>
-          <div className="flex items-center gap-2 text-gray-400 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground/80 text-sm">
             <HardDrive className="w-4 h-4" />
             Total storage
           </div>
           <div className={`mt-2 text-2xl font-semibold ${alarm ? 'text-red-200' : 'text-white'}`}>{fmtBytes(totalBytes)}</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-muted-foreground mt-1">
             {pctFree.toFixed(1)}% del Free tier · {pctPro.toFixed(2)}% del Pro
           </div>
           <div className="mt-3 h-1.5 bg-gray-800 rounded-full overflow-hidden">
@@ -96,22 +96,22 @@ export function StorageMetrics() {
           </div>
         </div>
         <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-          <div className="flex items-center gap-2 text-gray-400 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground/80 text-sm">
             <ImageIcon className="w-4 h-4" />
             Archivos
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">{totalFiles.toLocaleString('es-AR')}</div>
-          <div className="text-xs text-gray-500 mt-1">en {buckets.length} bucket{buckets.length === 1 ? '' : 's'}</div>
+          <div className="text-xs text-muted-foreground mt-1">en {buckets.length} bucket{buckets.length === 1 ? '' : 's'}</div>
         </div>
         <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-          <div className="flex items-center gap-2 text-gray-400 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground/80 text-sm">
             <FileText className="w-4 h-4" />
             Promedio / archivo
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
             {totalFiles ? fmtBytes(totalBytes / totalFiles) : '—'}
           </div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-muted-foreground mt-1">
             Target post-pipeline: &lt; 200 KB
           </div>
         </div>
@@ -204,7 +204,7 @@ function TopFilesTable({ bucket }: { bucket: string }) {
               <td className={`px-5 py-2 text-right ${f.size_kb > 500 ? 'text-yellow-300' : 'text-gray-400'}`}>
                 {f.size_kb > 1024 ? `${(f.size_kb / 1024).toFixed(1)} MB` : `${Math.round(f.size_kb)} KB`}
               </td>
-              <td className="px-5 py-2 text-right text-gray-500 text-xs">
+              <td className="px-5 py-2 text-right text-muted-foreground text-xs">
                 {new Date(f.created_at).toLocaleDateString('es-AR')}
               </td>
             </tr>

@@ -63,7 +63,7 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
       <DialogContent className="max-w-3xl p-0 overflow-hidden bg-transparent border-0 shadow-none">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-50 p-1.5 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors"
+          className="absolute top-3 right-3 z-50 p-1.5 rounded-full bg-white/80 hover:bg-white text-foreground/85 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
@@ -96,17 +96,17 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
             </div>
 
             <div>
-              <p className="text-xs font-sans tracking-[0.4em] uppercase text-gray-400 mb-1">Certificado de finalización</p>
+              <p className="text-xs font-sans tracking-[0.4em] uppercase text-muted-foreground/80 mb-1">Certificado de finalización</p>
               <div className="w-24 h-px bg-yellow-400 mx-auto" />
             </div>
 
             <div>
-              <p className="text-sm font-sans text-gray-500 mb-2">Se certifica que</p>
+              <p className="text-sm font-sans text-muted-foreground mb-2">Se certifica que</p>
               <h2 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Georgia, serif' }}>{studentName}</h2>
             </div>
 
             <div>
-              <p className="text-sm font-sans text-gray-500 mb-2">completó satisfactoriamente el curso</p>
+              <p className="text-sm font-sans text-muted-foreground mb-2">completó satisfactoriamente el curso</p>
               <h3 className="text-2xl font-semibold text-gray-800 leading-tight">{courseTitle}</h3>
             </div>
 
@@ -115,7 +115,7 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
             <div className="flex items-end justify-between pt-2">
               <div className="text-left">
                 <p className="text-xs font-sans text-gray-400">Fecha de emisión</p>
-                <p className="text-sm font-sans text-gray-600 font-medium">{dateStr}</p>
+                <p className="text-sm font-sans text-foreground/70 font-medium">{dateStr}</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center mx-auto mb-1 shadow-lg">
@@ -125,7 +125,7 @@ export function CertificateModal({ open, onClose, studentName, courseTitle, tena
               </div>
               <div className="text-right">
                 <p className="text-xs font-sans text-gray-400">Código de verificación</p>
-                <p className="text-sm font-sans text-gray-600 font-medium tracking-widest">{verificationCode}</p>
+                <p className="text-sm font-sans text-foreground/70 font-medium tracking-widest">{verificationCode}</p>
               </div>
             </div>
           </div>

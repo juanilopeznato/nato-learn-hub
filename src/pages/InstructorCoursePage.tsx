@@ -267,16 +267,16 @@ export default function InstructorCoursePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary/30">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="glass-light sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center gap-3">
-          <Link to="/instructor" className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 transition-colors shrink-0">
+          <Link to="/instructor" className="flex items-center gap-1.5 text-muted-foreground/80 hover:text-foreground/85 transition-colors shrink-0">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:block">Mis cursos</span>
           </Link>
           <span className="text-gray-200">/</span>
-          <span className="text-sm font-semibold text-gray-900 truncate flex-1">{course.title}</span>
+          <span className="text-sm font-semibold text-foreground truncate flex-1">{course.title}</span>
 
           <div className="flex items-center gap-2 shrink-0">
             {/* Toggle publicar — igual al dashboard */}
@@ -286,14 +286,14 @@ export default function InstructorCoursePage() {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                 course.is_published
                   ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  : 'bg-gray-100 text-muted-foreground hover:bg-gray-200'
               }`}
             >
               {course.is_published ? <Globe className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
               {course.is_published ? 'Publicado' : 'Borrador'}
             </button>
 
-            <Button variant="ghost" size="sm" asChild className="text-gray-400 hover:text-gray-700">
+            <Button variant="ghost" size="sm" asChild className="text-muted-foreground/80 hover:text-gray-700">
               <Link to={`/courses/${course.slug}`} target="_blank" rel="noopener noreferrer" title="Ver página pública">
                 <ExternalLink className="w-4 h-4" />
                 <span className="hidden sm:block ml-1 text-xs">Ver landing</span>
@@ -330,7 +330,7 @@ export default function InstructorCoursePage() {
             <div className="max-w-3xl space-y-4">
               <div>
                 <h2 className="font-heading text-lg font-bold text-gray-900">Módulos y lecciones</h2>
-                <p className="text-sm text-gray-400 mt-0.5">
+                <p className="text-sm text-muted-foreground/80 mt-0.5">
                   Agregá módulos para organizar el contenido y lecciones dentro de cada módulo.
                 </p>
               </div>
@@ -343,11 +343,11 @@ export default function InstructorCoursePage() {
             <div className="max-w-2xl">
               <div className="mb-5">
                 <h2 className="font-heading text-lg font-bold text-gray-900">Página del curso</h2>
-                <p className="text-sm text-gray-400 mt-0.5">
+                <p className="text-sm text-muted-foreground/80 mt-0.5">
                   Todo lo que completés acá aparece en la landing del curso. Un buen copy vende solo.
                 </p>
               </div>
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-white rounded-xl border border-border/60 p-6">
                 <CourseForm
                   isEditing
                   defaultValues={{
@@ -384,7 +384,7 @@ export default function InstructorCoursePage() {
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div>
                   <h2 className="font-heading text-lg font-bold text-gray-900">Alumnos</h2>
-                  <p className="text-sm text-gray-400 mt-0.5">
+                  <p className="text-sm text-muted-foreground/80 mt-0.5">
                     {enrollments?.length ?? 0} inscripto{(enrollments?.length ?? 0) !== 1 ? 's' : ''}
                     {inactiveEnrollments.length > 0 && ` · ${inactiveEnrollments.length} inactivo${inactiveEnrollments.length !== 1 ? 's' : ''}`}
                   </p>
@@ -395,7 +395,7 @@ export default function InstructorCoursePage() {
                       <button
                         onClick={() => setShowInactive(false)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                          !showInactive ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
+                          !showInactive ? 'bg-white text-foreground shadow-sm' : 'text-gray-500'
                         }`}
                       >
                         <Users className="w-3.5 h-3.5" />
@@ -447,24 +447,24 @@ export default function InstructorCoursePage() {
 
               {/* Tabla */}
               {displayedEnrollments.length === 0 ? (
-                <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+                <div className="bg-white border border-border/60 rounded-2xl p-12 text-center">
                   {showInactive ? (
                     <p className="text-green-600 font-medium">Todos los estudiantes están activos</p>
                   ) : (
-                    <p className="text-gray-400 text-sm">Aún no hay estudiantes inscriptos</p>
+                    <p className="text-muted-foreground/80 text-sm">Aún no hay estudiantes inscriptos</p>
                   )}
                 </div>
               ) : (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="bg-white rounded-xl border border-border/60 overflow-hidden">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b border-gray-200">
+                    <thead className="bg-secondary/30 border-b border-border/60">
                       <tr>
                         {showInactive
                           ? ['Estudiante', 'Progreso', 'Última actividad', 'Inactividad'].map(h => (
-                              <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">{h}</th>
+                              <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">{h}</th>
                             ))
                           : ['Estudiante', 'Estado', 'Progreso', 'Inscripto'].map(h => (
-                              <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">{h}</th>
+                              <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">{h}</th>
                             ))
                         }
                       </tr>
@@ -475,7 +475,7 @@ export default function InstructorCoursePage() {
                         const progress = progressData?.[enrollment.id] ?? 0
                         const days = 'daysSince' in enrollment ? (enrollment as InactiveEnrollment).daysSince : null
                         return (
-                          <tr key={enrollment.id} className="hover:bg-gray-50 transition-colors">
+                          <tr key={enrollment.id} className="hover:bg-secondary/30 transition-colors">
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
                                 <SmartAvatar
@@ -486,8 +486,8 @@ export default function InstructorCoursePage() {
                                   className="shrink-0 bg-gray-200 text-gray-500"
                                 />
                                 <div className="min-w-0">
-                                  <p className="font-medium text-gray-900 truncate max-w-[140px]">{student?.full_name ?? '—'}</p>
-                                  <p className="text-xs text-gray-400 truncate max-w-[140px]">{student?.email ?? ''}</p>
+                                  <p className="font-medium text-foreground truncate max-w-[140px]">{student?.full_name ?? '—'}</p>
+                                  <p className="text-xs text-muted-foreground/80 truncate max-w-[140px]">{student?.email ?? ''}</p>
                                 </div>
                               </div>
                             </td>
@@ -499,10 +499,10 @@ export default function InstructorCoursePage() {
                                     <div className="flex-1 bg-gray-200 rounded-full h-1.5">
                                       <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.min(100, progress)}%` }} />
                                     </div>
-                                    <span className="text-xs text-gray-500 shrink-0">{Math.round(progress)}%</span>
+                                    <span className="text-xs text-muted-foreground shrink-0">{Math.round(progress)}%</span>
                                   </div>
                                 </td>
-                                <td className="px-4 py-3 text-gray-400 text-xs">
+                                <td className="px-4 py-3 text-muted-foreground/80 text-xs">
                                   {enrollment.last_accessed_at
                                     ? new Date(enrollment.last_accessed_at).toLocaleDateString('es-AR')
                                     : 'Nunca'}
@@ -532,10 +532,10 @@ export default function InstructorCoursePage() {
                                     <div className="flex-1 bg-gray-200 rounded-full h-1.5">
                                       <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.min(100, progress)}%` }} />
                                     </div>
-                                    <span className="text-xs text-gray-500 shrink-0">{Math.round(progress)}%</span>
+                                    <span className="text-xs text-muted-foreground shrink-0">{Math.round(progress)}%</span>
                                   </div>
                                 </td>
-                                <td className="px-4 py-3 text-gray-400 text-xs">
+                                <td className="px-4 py-3 text-muted-foreground/80 text-xs">
                                   {enrollment.enrolled_at ? new Date(enrollment.enrolled_at).toLocaleDateString('es-AR') : '—'}
                                 </td>
                               </>
@@ -555,9 +555,9 @@ export default function InstructorCoursePage() {
             <div className="max-w-3xl space-y-3">
 
               {/* Cupones */}
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
                 <button
-                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-secondary/30 transition-colors"
                   onClick={() => setOpenSection(openSection === 'coupons' ? null : 'coupons')}
                 >
                   <div className="flex items-center gap-3">
@@ -565,7 +565,7 @@ export default function InstructorCoursePage() {
                       <Tag className="w-4 h-4 text-primary" />
                     </div>
                     <div className="text-left">
-                      <p className="font-semibold text-gray-900 text-sm">Cupones de descuento</p>
+                      <p className="font-semibold text-foreground text-sm">Cupones de descuento</p>
                       <p className="text-xs text-gray-400">
                         {coupons?.length ? `${coupons.length} cupón${coupons.length !== 1 ? 'es' : ''} creado${coupons.length !== 1 ? 's' : ''}` : 'Creá códigos para tu audiencia'}
                       </p>
@@ -575,7 +575,7 @@ export default function InstructorCoursePage() {
                 </button>
 
                 {openSection === 'coupons' && (
-                  <div className="border-t border-gray-100 p-5 space-y-4">
+                  <div className="border-t border-border/40 p-5 space-y-4">
                     <div className="flex justify-end">
                       <Button size="sm" className="gap-2" onClick={() => setShowCouponForm(v => !v)}>
                         <Plus className="w-4 h-4" />
@@ -584,8 +584,8 @@ export default function InstructorCoursePage() {
                     </div>
 
                     {showCouponForm && (
-                      <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 space-y-4">
-                        <h3 className="font-semibold text-gray-900 text-sm">Crear cupón</h3>
+                      <div className="bg-secondary/30 border border-border/60 rounded-xl p-5 space-y-4">
+                        <h3 className="font-semibold text-foreground text-sm">Crear cupón</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
                             <Label>Código *</Label>
@@ -653,27 +653,27 @@ export default function InstructorCoursePage() {
                     )}
 
                     {!coupons || coupons.length === 0 ? (
-                      <div className="text-center py-8 text-gray-400 text-sm">
+                      <div className="text-center py-8 text-muted-foreground/80 text-sm">
                         Aún no creaste ningún cupón
                       </div>
                     ) : (
-                      <div className="rounded-xl border border-gray-200 overflow-hidden">
+                      <div className="rounded-xl border border-border/60 overflow-hidden">
                         <table className="w-full text-sm">
-                          <thead className="bg-gray-50 border-b border-gray-200">
+                          <thead className="bg-secondary/30 border-b border-border/60">
                             <tr>
                               {['Código', 'Descuento', 'Usos', 'Estado', ''].map(h => (
-                                <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">{h}</th>
+                                <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">{h}</th>
                               ))}
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-100">
                             {coupons.map(c => (
-                              <tr key={c.id} className="hover:bg-gray-50">
-                                <td className="px-4 py-3 font-mono font-semibold text-gray-900 text-xs">{c.code}</td>
-                                <td className="px-4 py-3 text-gray-700 text-xs">
+                              <tr key={c.id} className="hover:bg-secondary/30">
+                                <td className="px-4 py-3 font-mono font-semibold text-foreground text-xs">{c.code}</td>
+                                <td className="px-4 py-3 text-foreground/85 text-xs">
                                   {c.discount_type === 'percent' ? `${c.discount_value}%` : `ARS ${Number(c.discount_value).toLocaleString('es-AR')}`}
                                 </td>
-                                <td className="px-4 py-3 text-gray-500 text-xs">
+                                <td className="px-4 py-3 text-muted-foreground text-xs">
                                   {c.used_count ?? 0}{c.max_uses !== null ? ` / ${c.max_uses}` : ''}
                                 </td>
                                 <td className="px-4 py-3">
@@ -684,7 +684,7 @@ export default function InstructorCoursePage() {
                                 <td className="px-4 py-3">
                                   <button
                                     onClick={() => toggleCoupon.mutate({ id: c.id, is_active: c.is_active })}
-                                    className="text-xs text-gray-400 hover:text-gray-700 underline"
+                                    className="text-xs text-muted-foreground/80 hover:text-foreground/85 underline"
                                   >
                                     {c.is_active ? 'Desactivar' : 'Activar'}
                                   </button>
@@ -700,9 +700,9 @@ export default function InstructorCoursePage() {
               </div>
 
               {/* Clases en vivo */}
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
                 <button
-                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-secondary/30 transition-colors"
                   onClick={() => setOpenSection(openSection === 'calendar' ? null : 'calendar')}
                 >
                   <div className="flex items-center gap-3">
@@ -710,23 +710,23 @@ export default function InstructorCoursePage() {
                       <Calendar className="w-4 h-4 text-blue-500" />
                     </div>
                     <div className="text-left">
-                      <p className="font-semibold text-gray-900 text-sm">Clases en vivo</p>
+                      <p className="font-semibold text-foreground text-sm">Clases en vivo</p>
                       <p className="text-xs text-gray-400">Programá sesiones en vivo para tus alumnos</p>
                     </div>
                   </div>
                   {openSection === 'calendar' ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
                 </button>
                 {openSection === 'calendar' && (
-                  <div className="border-t border-gray-100 p-5">
+                  <div className="border-t border-border/40 p-5">
                     <CourseCalendar courseId={courseId!} canManage />
                   </div>
                 )}
               </div>
 
               {/* Métricas */}
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
                 <button
-                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-secondary/30 transition-colors"
                   onClick={() => setOpenSection(openSection === 'metrics' ? null : 'metrics')}
                 >
                   <div className="flex items-center gap-3">
@@ -734,14 +734,14 @@ export default function InstructorCoursePage() {
                       <BarChart3 className="w-4 h-4 text-purple-500" />
                     </div>
                     <div className="text-left">
-                      <p className="font-semibold text-gray-900 text-sm">Métricas del curso</p>
+                      <p className="font-semibold text-foreground text-sm">Métricas del curso</p>
                       <p className="text-xs text-gray-400">Funnel de conversión y tasa de abandono por lección</p>
                     </div>
                   </div>
                   {openSection === 'metrics' ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
                 </button>
                 {openSection === 'metrics' && (
-                  <div className="border-t border-gray-100 p-5">
+                  <div className="border-t border-border/40 p-5">
                     <Suspense fallback={<div className="text-sm text-gray-500">Cargando métricas…</div>}><KpiDashboard courseIds={[courseId!]} /></Suspense>
                   </div>
                 )}

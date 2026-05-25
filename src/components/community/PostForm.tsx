@@ -43,10 +43,10 @@ export function PostForm({ onSubmit, onCancel, enrolledCourses = [], defaultCour
       {/* Curso opcional */}
       {enrolledCourses.length > 0 && (
         <div className="space-y-1.5">
-          <Label className="text-gray-700 font-medium">¿A qué curso pertenece? <span className="text-gray-400 font-normal">(opcional)</span></Label>
+          <Label className="text-foreground/85 font-medium">¿A qué curso pertenece? <span className="text-muted-foreground/80 font-normal">(opcional)</span></Label>
           <select
             {...register('course_id')}
-            className="w-full h-10 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full h-10 rounded-md border border-border/60 bg-white px-3 text-sm text-foreground/85 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
             <option value="">Toda la escuela</option>
             {enrolledCourses.map(c => (
@@ -57,12 +57,12 @@ export function PostForm({ onSubmit, onCancel, enrolledCourses = [], defaultCour
       )}
 
       <div className="space-y-1.5">
-        <Label className="text-gray-700 font-medium">Categoría</Label>
+        <Label className="text-foreground/85 font-medium">Categoría</Label>
         <div className="flex gap-2 flex-wrap">
           {CATEGORIES.map(cat => (
             <label key={cat.value} className="cursor-pointer">
               <input type="radio" value={cat.value} {...register('category')} className="sr-only peer" />
-              <span className="px-3 py-1.5 rounded-full text-xs border border-gray-200 text-gray-600 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary transition-colors">
+              <span className="px-3 py-1.5 rounded-full text-xs border border-border/60 text-foreground/70 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary transition-colors">
                 {cat.label}
               </span>
             </label>
@@ -71,17 +71,17 @@ export function PostForm({ onSubmit, onCancel, enrolledCourses = [], defaultCour
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="title" className="text-gray-700 font-medium">Título</Label>
-        <Input id="title" placeholder="¿Qué querés compartir?" {...register('title')} className="border-gray-200 focus:border-primary" />
+        <Label htmlFor="title" className="text-foreground/85 font-medium">Título</Label>
+        <Input id="title" placeholder="¿Qué querés compartir?" {...register('title')} className="border-border/60 focus:border-primary" />
         {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="body" className="text-gray-700 font-medium">Descripción</Label>
+        <Label htmlFor="body" className="text-foreground/85 font-medium">Descripción</Label>
         <Textarea
           id="body"
           placeholder="Contá más detalles..."
-          className="resize-none min-h-[120px] border-gray-200 focus:border-primary"
+          className="resize-none min-h-[120px] border-border/60 focus:border-primary"
           {...register('body')}
         />
         {errors.body && <p className="text-xs text-red-500">{errors.body.message}</p>}

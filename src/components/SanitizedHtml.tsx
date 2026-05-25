@@ -32,7 +32,7 @@ export function SanitizedHtml({ html, className }: Props) {
   }, [html])
 
   if (sanitized === null) {
-    return <div className={className}><span className="text-gray-400 text-sm">Cargando vista previa…</span></div>
+    return <div className={className}><span className="text-muted-foreground/80 text-sm">Cargando vista previa…</span></div>
   }
   return <div className={className} dangerouslySetInnerHTML={{ __html: sanitized }} />
 }

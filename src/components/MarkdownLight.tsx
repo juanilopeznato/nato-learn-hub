@@ -160,7 +160,7 @@ export function MarkdownLight({ children, className }: Props) {
           )
         }
         return (
-          <p key={i} className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+          <p key={i} className="text-foreground/85 whitespace-pre-wrap leading-relaxed">
             {renderInline(b.content, `p-${i}`)}
           </p>
         )

@@ -31,7 +31,7 @@ interface KpiRow {
 
 function StatCard({ icon: Icon, label, value, sub }: { icon: LucideIcon; label: string; value: string | number; sub?: string }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-1">
+    <div className="bg-white border border-border/60 rounded-xl p-4 space-y-1">
       <div className="flex items-center gap-2 text-gray-500">
         <Icon className="w-4 h-4" />
         <span className="text-xs font-medium">{label}</span>
@@ -184,8 +184,8 @@ export function KpiDashboard({ courseIds }: Props) {
       {singleCourseId && (
         <div className="space-y-4">
           {/* Funnel steps */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <h4 className="text-sm font-semibold text-gray-900 mb-4">Embudo de conversión</h4>
+          <div className="bg-white border border-border/60 rounded-xl p-4">
+            <h4 className="text-sm font-semibold text-foreground mb-4">Embudo de conversión</h4>
             {funnelData ? (() => {
               const steps = [
                 { icon: Eye, label: 'Visitas a la landing', value: funnelData.page_views ?? 0, color: 'bg-blue-500' },
@@ -212,7 +212,7 @@ export function KpiDashboard({ courseIds }: Props) {
                             {convFromPrev !== null && (
                               <span className="text-xs text-gray-400">{convFromPrev}% del paso anterior</span>
                             )}
-                            <span className="font-semibold text-gray-900 tabular-nums w-10 text-right">{step.value.toLocaleString()}</span>
+                            <span className="font-semibold text-foreground tabular-nums w-10 text-right">{step.value.toLocaleString()}</span>
                           </div>
                         </div>
                         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -226,7 +226,7 @@ export function KpiDashboard({ courseIds }: Props) {
                   })}
                   {/* Overall conversion rate */}
                   {funnelData.page_views > 0 && (
-                    <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-sm">
+                    <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-sm">
                       <span className="text-gray-500">Conversión total (visita → inscripción)</span>
                       <span className="font-bold text-primary">
                         {((funnelData.enrollments / funnelData.page_views) * 100).toFixed(1)}%
@@ -243,8 +243,8 @@ export function KpiDashboard({ courseIds }: Props) {
           </div>
 
           {/* Daily events chart */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <h4 className="text-sm font-semibold text-gray-900 mb-4">Actividad diaria — últimos 30 días</h4>
+          <div className="bg-white border border-border/60 rounded-xl p-4">
+            <h4 className="text-sm font-semibold text-foreground mb-4">Actividad diaria — últimos 30 días</h4>
             {dailyEventsData.length > 0 ? (
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={dailyEventsData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -268,8 +268,8 @@ export function KpiDashboard({ courseIds }: Props) {
       )}
 
       {/* Enrollment trend chart */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
-        <h4 className="text-sm font-semibold text-gray-900 mb-4">Inscripciones — últimos 30 días</h4>
+      <div className="bg-white border border-border/60 rounded-xl p-4">
+        <h4 className="text-sm font-semibold text-foreground mb-4">Inscripciones — últimos 30 días</h4>
         {trendData.length > 0 ? (
           <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={trendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -297,18 +297,18 @@ export function KpiDashboard({ courseIds }: Props) {
 
       {/* Top lessons */}
       {topLessons.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-3">
+        <div className="bg-white border border-border/60 rounded-xl p-4">
+          <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
             <Award className="w-4 h-4 text-yellow-500" />
             Lecciones más completadas
           </h4>
           <div className="space-y-2">
             {topLessons.map((lesson, i) => (
               <div key={i} className="flex items-center gap-3">
-                <span className="text-xs text-gray-400 w-4 text-right shrink-0">{i + 1}</span>
+                <span className="text-xs text-muted-foreground/80 w-4 text-right shrink-0">{i + 1}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm text-gray-700 truncate">{lesson.title}</span>
+                    <span className="text-sm text-foreground/85 truncate">{lesson.title}</span>
                     <span className="text-xs font-semibold text-primary shrink-0">{lesson.count}</span>
                   </div>
                   <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
@@ -350,7 +350,7 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
 
   return (
     <div className="bg-white border border-red-100 rounded-xl p-4">
-      <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-3">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
         <span className="w-4 h-4 text-red-400">⚠️</span>
         Lecciones con más abandono
       </h4>
@@ -360,12 +360,12 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <span className="text-sm text-gray-700 truncate block">{row.lesson_title}</span>
+                  <span className="text-sm text-foreground/85 truncate block">{row.lesson_title}</span>
                   <span className="text-xs text-gray-400">{row.module_title}</span>
                 </div>
                 <div className="text-right shrink-0">
                   <span className="text-xs font-semibold text-red-500">{row.abandoned_count} abandonaron</span>
-                  <span className="text-xs text-gray-400 block">{row.abandon_rate}% tasa</span>
+                  <span className="text-xs text-muted-foreground/80 block">{row.abandon_rate}% tasa</span>
                 </div>
               </div>
               <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
@@ -378,7 +378,7 @@ function AbandonedLessons({ courseId }: { courseId: string }) {
           </div>
         ))}
       </div>
-      <p className="text-xs text-gray-400 mt-3">Estas lecciones tienen alumnos que las empezaron pero no las terminaron. Revisá el contenido.</p>
+      <p className="text-xs text-muted-foreground/80 mt-3">Estas lecciones tienen alumnos que las empezaron pero no las terminaron. Revisá el contenido.</p>
     </div>
   )
 }

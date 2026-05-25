@@ -27,10 +27,10 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
   })
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
+    <div className="bg-white border border-border/60 rounded-xl overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40">
         <Trophy className="w-4 h-4 text-yellow-500" />
-        <h3 className="font-heading font-semibold text-gray-900 text-sm">Top del mes</h3>
+        <h3 className="font-heading font-semibold text-foreground text-sm">Top del mes</h3>
       </div>
 
       {isLoading ? (
@@ -52,7 +52,7 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
               <Link
                 key={row.profile_id}
                 to={`/members/${row.profile_id}`}
-                className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors ${isMe ? 'bg-primary/5' : ''}`}
+                className={`flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/30 transition-colors ${isMe ? 'bg-primary/5' : ''}`}
               >
                 <span className={`text-sm font-bold w-5 text-center shrink-0 ${RANK_STYLES[i] ?? 'text-gray-400'}`}>
                   {i + 1}
@@ -65,7 +65,7 @@ export function Leaderboard({ tenantId, currentProfileId }: Props) {
                   className="shrink-0 bg-primary/10 text-primary"
                 />
 
-                <span className="flex-1 text-sm text-gray-900 truncate">
+                <span className="flex-1 text-sm text-foreground truncate">
                   {row.full_name ?? 'Usuario'}
                   {isMe && <span className="ml-1 text-xs text-primary">(vos)</span>}
                 </span>
