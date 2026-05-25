@@ -12,6 +12,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { SmartImage, SmartAvatar } from '@/components/SmartImage'
+import { CourseDetailSkeleton } from '@/components/skeletons'
 import { toast } from 'sonner'
 import { useState, useEffect, useRef } from 'react'
 import { MetaPixel, fbTrack } from '@/components/MetaPixel'
@@ -346,11 +347,7 @@ export default function CourseDetail() {
     educationalLevel: 'Beginner',
   }) : null
 
-  if (isLoading) return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
+  if (isLoading) return <CourseDetailSkeleton />
 
   if (!course) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
