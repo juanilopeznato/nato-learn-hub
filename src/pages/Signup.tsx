@@ -39,6 +39,7 @@ export default function Signup() {
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
+    mode: 'onBlur',
   })
 
   const formLoadedAt = useRef<number>(0)

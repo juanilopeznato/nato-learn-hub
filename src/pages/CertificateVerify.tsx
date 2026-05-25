@@ -49,7 +49,7 @@ export default function CertificateVerify() {
         )}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 text-center space-y-6">
+      <div className="certificate bg-white rounded-2xl shadow-lg max-w-md w-full p-8 text-center space-y-6">
         {isLoading ? (
           <div className="flex flex-col items-center gap-3 py-6">
             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />

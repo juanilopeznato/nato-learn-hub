@@ -47,6 +47,7 @@ export default function Login() {
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
+    mode: 'onBlur', // valida al perder foco en cada campo (no solo en submit)
   })
 
   const formLoadedAt = useRef<number>(0)

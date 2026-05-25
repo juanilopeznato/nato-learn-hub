@@ -150,4 +150,68 @@
     backdrop-filter: blur(20px);
     border: 1px solid hsl(var(--primary) / 0.15);
   }
+
+  /* Marca un nodo que se va a imprimir solo cuando el usuario haga print */
+  .print-only {
+    display: none !important;
+  }
+  /* Marca cosas que se ocultan al imprimir */
+  .no-print {
+    /* default visible */
+  }
+}
+
+/* ─── Print stylesheet ─────────────────────────────────────────────────
+   Optimiza el render para imprimir o guardar como PDF, especialmente para
+   certificados. Mantiene los colores impresos (Chrome respeta -webkit-print-color-adjust).
+   ───────────────────────────────────────────────────────────────────── */
+@media print {
+  /* Reset general */
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ocultar lo que no debe imprimirse */
+  .no-print,
+  nav,
+  header.sticky,
+  footer,
+  button:not(.print-include),
+  [role="banner"],
+  [role="navigation"],
+  [role="status"]:not(.print-include) {
+    display: none !important;
+  }
+
+  /* Mostrar lo que es solo de print */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Forzar landscape para certificados */
+  @page {
+    margin: 1cm;
+  }
+
+  /* Evitar quiebres feos */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+  img, .certificate {
+    page-break-inside: avoid;
+  }
+
+  /* Links: mostrar el href para validar el QR/código en papel */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+  /* No mostrar el href para enlaces internos / mailto / etc dentro del certificado */
+  .certificate a[href]::after {
+    content: none;
+  }
 }

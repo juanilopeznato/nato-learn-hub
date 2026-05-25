@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { MessageCircle, Trash2, CornerDownRight } from 'lucide-react'
 import { SmartAvatar } from '@/components/SmartImage'
+import { AutoLinkText } from '@/components/AutoLinkText'
 import { toast } from 'sonner'
 
 interface Props {
@@ -96,7 +97,7 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: es })}
               </span>
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed">{comment.body}</p>
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"><AutoLinkText>{comment.body}</AutoLinkText></p>
           </div>
           <div className="flex items-center gap-3 mt-1 ml-1">
             <button
@@ -146,7 +147,7 @@ function CommentItem({ comment, replies, canDelete, onReply, onDelete }: {
                       {formatDistanceToNow(new Date(reply.created_at), { addSuffix: true, locale: es })}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">{reply.body}</p>
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"><AutoLinkText>{reply.body}</AutoLinkText></p>
                 </div>
                 {canDelete(reply.author?.id ?? '') && (
                   <button

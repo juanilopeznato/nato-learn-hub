@@ -52,11 +52,21 @@ const App = () => (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
+          {/* Skip-to-content para usuarios de teclado / lectores de pantalla.
+              Invisible hasta que recibe foco (tab desde la barra de URL). */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            Saltar al contenido
+          </a>
           <Toaster />
+          {/* Sonner expone aria-live="polite" internamente — está OK para a11y */}
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
               <React.Suspense fallback={<PageLoading />}>
+                <main id="main-content" tabIndex={-1}>
                 <Routes>
                 {/* Públicas */}
                   <Route path="/" element={<Index />} />
@@ -95,6 +105,7 @@ const App = () => (
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                </main>
               </React.Suspense>
             </AuthProvider>
           </BrowserRouter>

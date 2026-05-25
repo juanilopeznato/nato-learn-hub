@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { SmartAvatar } from '@/components/SmartImage'
 import { toast } from 'sonner'
 import { toastError } from '@/lib/toast-helpers'
+import { AutoLinkText } from '@/components/AutoLinkText'
 
 type Category = 'question' | 'win' | 'resource' | 'general'
 
@@ -201,8 +202,8 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
       {/* Content */}
       <div>
         <h3 className="font-heading font-semibold text-gray-900 mb-1">{post.title}</h3>
-        <p className={`text-sm text-gray-600 leading-relaxed ${!expanded ? 'line-clamp-3' : ''}`}>
-          {post.body}
+        <p className={`text-sm text-gray-600 leading-relaxed whitespace-pre-wrap ${!expanded ? 'line-clamp-3' : ''}`}>
+          <AutoLinkText>{post.body}</AutoLinkText>
         </p>
         {post.body.length > 200 && (
           <button

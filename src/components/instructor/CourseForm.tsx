@@ -1,5 +1,6 @@
 import { useForm, Controller } from 'react-hook-form'
 import { ImageUpload } from '@/components/ImageUpload'
+import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Plus, Trash2, Gift, ShoppingBag, RefreshCw, Calendar } from 'lucide-react'
@@ -97,7 +98,7 @@ interface Props {
 }
 
 export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Props) {
-  const { register, handleSubmit, watch, setValue, control, formState: { errors, isSubmitting } } = useForm<CourseFormData>({
+  const { register, handleSubmit, watch, setValue, control, formState: { errors, isSubmitting, isDirty } } = useForm<CourseFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       price: 0,
@@ -111,6 +112,9 @@ export function CourseForm({ defaultValues, onSubmit, onCancel, isEditing }: Pro
 
   const billingType = watch('billing_type')
   const isPaid = billingType !== 'free'
+
+  // Avisar si el user intenta cerrar la pestaña con cambios sin guardar
+  useUnsavedChangesWarning(isDirty && !isSubmitting)
   const outcomes = watch('learning_outcomes') ?? ['']
   const faqItems = watch('faq') ?? [{ q: '', a: '' }]
 
