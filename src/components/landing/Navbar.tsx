@@ -1,71 +1,86 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { GraduationCap, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 
+/**
+ * Navbar rediseñado: glass-light header con border sutil al scrollear.
+ * Tipografía más liviana, espacios generosos, hover states refinados.
+ */
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const { user, profile, tenant } = useAuth()
 
   const tenantName = tenant?.name ?? 'NATO University'
   const logoUrl = tenant?.logo_url
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const dashHref = ['instructor', 'admin', 'nato_owner'].includes(profile?.role ?? '') ? '/instructor' : '/dashboard'
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-      <div className="container mx-auto flex items-center justify-between h-16 px-4">
+    <nav
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ease-apple ${
+        scrolled ? 'glass-light shadow-xs' : 'bg-transparent'
+      }`}
+    >
+      <div className="container flex items-center justify-between h-16">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2.5 group">
           <img
             src={logoUrl ?? '/nato-logo.png'}
             alt={tenantName}
-            className="h-8 w-auto object-contain"
+            className="h-7 w-auto object-contain transition-transform duration-200 ease-apple group-hover:scale-105"
+            loading="eager"
+            decoding="async"
           />
           {!logoUrl && (
-            <span className="font-heading text-lg font-bold text-gray-900">
+            <span className="font-heading text-base font-semibold text-foreground tracking-tight">
               {tenantName}
             </span>
           )}
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#courses" className="text-sm text-gray-600 hover:text-primary transition-colors">
-            Cursos
-          </a>
-          <Link to="/courses" className="text-sm text-gray-600 hover:text-primary transition-colors">
-            Ver todos
-          </Link>
-          <Link to="/pricing" className="text-sm text-gray-600 hover:text-primary transition-colors">
-            Precios
-          </Link>
-          {user && (
-            <>
-              <Link to="/dashboard" className="text-sm text-gray-600 hover:text-primary transition-colors">
-                Mi aprendizaje
+        <div className="hidden md:flex items-center gap-1">
+          {[
+            { href: '#courses', label: 'Cursos' },
+            { to: '/courses', label: 'Catálogo' },
+            { to: '/pricing', label: 'Planes' },
+            ...(user ? [
+              { to: '/dashboard', label: 'Mi aprendizaje' },
+              { to: '/community', label: 'Comunidad' },
+            ] : []),
+          ].map((item) => (
+            'href' in item ? (
+              <a key={item.label} href={item.href} className="px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors">
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.label} to={item.to} className="px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors">
+                {item.label}
               </Link>
-              <Link to="/community" className="text-sm text-gray-600 hover:text-primary transition-colors">
-                Comunidad
-              </Link>
-            </>
-          )}
+            )
+          ))}
         </div>
 
         {/* Desktop actions */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2">
           {user ? (
             <Button variant="hero" size="sm" asChild>
-              <Link to={['instructor', 'admin', 'nato_owner'].includes(profile?.role ?? '') ? '/instructor' : '/dashboard'}>
-                Mi panel
-              </Link>
+              <Link to={dashHref}>Mi panel</Link>
             </Button>
           ) : (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/login">Iniciar Sesión</Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild className="border-primary/40 text-primary hover:bg-primary/10">
-                <Link to="/create-school">Crear escuela</Link>
+                <Link to="/login">Ingresar</Link>
               </Button>
               <Button variant="hero" size="sm" asChild>
                 <Link to="/signup">Comenzar gratis</Link>
@@ -76,44 +91,46 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-gray-700"
+          type="button"
+          className="md:hidden w-10 h-10 flex items-center justify-center rounded-md text-foreground hover:bg-secondary/60 transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? 'Cerrar menú' : 'Abrir menú'}
+          aria-expanded={mobileOpen}
         >
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-3">
-          <a href="#courses" className="block text-sm text-gray-600 hover:text-primary" onClick={() => setMobileOpen(false)}>
-            Cursos
-          </a>
-          <Link to="/courses" className="block text-sm text-gray-600 hover:text-primary" onClick={() => setMobileOpen(false)}>
-            Ver todos
-          </Link>
-          <Link to="/pricing" className="block text-sm text-gray-600 hover:text-primary" onClick={() => setMobileOpen(false)}>
-            Precios
-          </Link>
-          {user && (
-            <Link to="/dashboard" className="block text-sm text-gray-600 hover:text-primary" onClick={() => setMobileOpen(false)}>
-              Mi aprendizaje
-            </Link>
-          )}
-          <div className="flex gap-2 pt-2">
+        <div className="md:hidden glass-light border-t border-border/40 px-6 py-4 space-y-1 animate-fade-in">
+          {[
+            { href: '#courses', label: 'Cursos' },
+            { to: '/courses', label: 'Catálogo' },
+            { to: '/pricing', label: 'Planes' },
+            ...(user ? [{ to: '/dashboard', label: 'Mi aprendizaje' }] : []),
+          ].map((item) => (
+            'href' in item ? (
+              <a key={item.label} href={item.href} className="block px-3 py-2.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/60" onClick={() => setMobileOpen(false)}>
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.label} to={item.to} className="block px-3 py-2.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/60" onClick={() => setMobileOpen(false)}>
+                {item.label}
+              </Link>
+            )
+          ))}
+          <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-border/40">
             {user ? (
-              <Button variant="hero" size="sm" className="flex-1" asChild>
-                <Link to={['instructor', 'admin', 'nato_owner'].includes(profile?.role ?? '') ? '/instructor' : '/dashboard'}>Mi panel</Link>
+              <Button variant="hero" asChild>
+                <Link to={dashHref}>Mi panel</Link>
               </Button>
             ) : (
               <>
-                <Button variant="ghost" size="sm" className="flex-1" asChild>
-                  <Link to="/login">Iniciar Sesión</Link>
+                <Button variant="outline" asChild>
+                  <Link to="/login">Ingresar</Link>
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1 border-primary/40 text-primary" asChild>
-                  <Link to="/create-school">Crear escuela</Link>
-                </Button>
-                <Button variant="hero" size="sm" className="flex-1" asChild>
+                <Button variant="hero" asChild>
                   <Link to="/signup">Comenzar gratis</Link>
                 </Button>
               </>

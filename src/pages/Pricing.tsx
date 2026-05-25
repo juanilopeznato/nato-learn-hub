@@ -49,7 +49,7 @@ export default function Pricing() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Helmet>
         <title>Planes y precios — NATO University</title>
         <meta name="description" content="Elegí el plan que mejor se adapta a tu escuela online. Empezá gratis y escalá cuando estés listo. Planes para creadores en Argentina." />
@@ -64,30 +64,33 @@ export default function Pricing() {
       </Helmet>
       <Navbar />
 
-      <div className="pt-24 pb-20 px-4">
-        <div className="container mx-auto max-w-5xl">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="font-heading text-4xl md:text-5xl font-bold text-white mb-4">
+      {/* Hero pricing — fondo light con mesh sutil */}
+      <div className="relative isolate bg-mesh-purple border-b border-border/40">
+        <div className="absolute inset-0 bg-grid-light opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)] pointer-events-none" />
+        <div className="container max-w-6xl relative z-10 pt-32 pb-12">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-eyebrow uppercase text-primary block mb-4">Planes y precios</span>
+            <h1 className="font-heading text-display-lg md:text-display-xl text-foreground mb-4">
               Elegí tu plan
             </h1>
-            <p className="text-gray-400 text-lg mb-4">
+            <p className="text-body-lg text-muted-foreground mb-6">
               Empezá gratis. Escalá cuando estés listo.
             </p>
-            <div className="inline-flex items-center gap-2 text-sm text-amber-400 bg-amber-400/10 border border-amber-400/20 rounded-full px-4 py-2">
+            <div className="inline-flex items-center gap-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5">
               <Clock className="w-3.5 h-3.5 shrink-0" />
               Precio early adopter garantizado hasta el 31 de mayo
             </div>
           </div>
 
-            {/* Toggle mensual/anual */}
-            <div role="group" aria-label="Período de facturación" className="inline-flex items-center gap-3 bg-gray-800 rounded-full p-1">
+          {/* Toggle mensual/anual */}
+          <div className="flex flex-col items-center gap-2 mb-10">
+            <div role="group" aria-label="Período de facturación" className="inline-flex items-center gap-1 bg-secondary rounded-full p-1 border border-border/60">
               <button
                 type="button"
                 aria-pressed={!annual}
                 onClick={() => setAnnual(false)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                  !annual ? 'bg-white text-gray-900' : 'text-gray-400 hover:text-white'
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ease-apple ${
+                  !annual ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Mensual
@@ -96,27 +99,31 @@ export default function Pricing() {
                 type="button"
                 aria-pressed={annual}
                 onClick={() => setAnnual(true)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
-                  annual ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ease-apple flex items-center gap-1.5 ${
+                  annual ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Anual
-                <span className="text-xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full font-semibold">
+                <span className="text-[10px] bg-accent/12 text-accent px-1.5 py-0.5 rounded-full font-semibold">
                   −17%
                 </span>
               </button>
             </div>
             {annual && (
-              <p className="text-sm text-green-400 mt-2">2 meses gratis incluidos</p>
+              <p className="text-xs text-accent font-medium">2 meses gratis incluidos</p>
             )}
+          </div>
+        </div>
+      </div>
 
-          {/* Banner 14 días */}
-          <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-2xl p-4 mb-8 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-              <Zap className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-white text-sm">14 días gratis en Creator o Pro</p>
+      <div className="container max-w-6xl pb-24 pt-12">
+        {/* Banner 14 días */}
+        <div className="rounded-2xl border border-primary/15 bg-primary/[0.04] p-4 mb-10 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Zap className="w-5 h-5 text-primary" aria-hidden />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-foreground text-sm">14 días gratis en Creator o Pro</p>
               <p className="text-gray-400 text-xs mt-0.5">Sin tarjeta de crédito. Cancelá cuando quieras.</p>
             </div>
             <Button variant="hero" size="sm" asChild className="shrink-0">
@@ -124,151 +131,150 @@ export default function Pricing() {
             </Button>
           </div>
 
-          {/* Plan cards */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="bg-gray-800 rounded-2xl p-6 h-96 animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {plans?.map(plan => {
-                const isPopular = plan.name === 'creador'
-                const isFree = plan.name === 'gratis'
-                const features = Array.isArray(plan.features) ? plan.features : []
-                const monthlyPrice = plan.price_ars
-                const annualMonthlyPrice = Math.round(monthlyPrice * 10 / 12)
-                const displayPrice = annual ? annualMonthlyPrice : monthlyPrice
-                const annualSaving = monthlyPrice * 12 - monthlyPrice * 10
+        {/* Plan cards */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-secondary rounded-2xl p-6 h-96 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
+            {plans?.map(plan => {
+              const isPopular = plan.name === 'creador'
+              const isFree = plan.name === 'gratis'
+              const features = Array.isArray(plan.features) ? plan.features : []
+              const monthlyPrice = plan.price_ars
+              const annualMonthlyPrice = Math.round(monthlyPrice * 10 / 12)
+              const displayPrice = annual ? annualMonthlyPrice : monthlyPrice
+              const annualSaving = monthlyPrice * 12 - monthlyPrice * 10
 
-                return (
-                  <div
-                    key={plan.id}
-                    className={`relative bg-gray-800 rounded-2xl p-7 flex flex-col border ${
-                      isPopular
-                        ? 'border-primary shadow-lg shadow-primary/10'
-                        : 'border-gray-700'
-                    }`}
-                  >
-                    {isPopular && (
-                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                        <Badge className="bg-primary text-primary-foreground px-3 py-0.5 text-xs font-semibold shadow">
-                          Más popular
-                        </Badge>
+              return (
+                <div
+                  key={plan.id}
+                  className={`relative rounded-2xl flex flex-col bg-card transition-all duration-200 ease-apple ${
+                    isPopular
+                      ? 'border-2 border-primary shadow-primary-md p-8 -mt-2 md:-mb-2'
+                      : 'border border-border/60 shadow-xs p-7 hover:shadow-md'
+                  }`}
+                >
+                  {isPopular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <Badge size="lg" className="bg-primary text-primary-foreground shadow-primary-md">
+                        Más popular
+                      </Badge>
+                    </div>
+                  )}
+
+                  {/* Plan name */}
+                  <h2 className="font-heading text-display-sm text-foreground mb-1">
+                    {plan.display_name}
+                  </h2>
+                  <p className="text-body-xs text-muted-foreground mb-6 min-h-[1.5em]">
+                    {isFree ? 'Para empezar tu primera escuela' : isPopular ? 'Para creadores que ya facturan' : 'Para escalar a partir de cierto volumen'}
+                  </p>
+
+                  {/* Price */}
+                  <div className="mb-6 pb-6 border-b border-border/40">
+                    {isFree ? (
+                      <span className="font-heading text-display-md text-foreground">Gratis</span>
+                    ) : (
+                      <div className="space-y-1">
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-heading text-display-md text-foreground tracking-tight">
+                            ARS {displayPrice.toLocaleString('es-AR')}
+                          </span>
+                          <span className="text-muted-foreground text-sm">/mes</span>
+                        </div>
+                        {annual ? (
+                          <div className="space-y-0.5">
+                            <p className="text-xs text-muted-foreground">
+                              Facturado ARS {(monthlyPrice * 10).toLocaleString('es-AR')} al año
+                            </p>
+                            <p className="text-xs text-accent font-medium">
+                              Ahorrás ARS {annualSaving.toLocaleString('es-AR')}/año
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-muted-foreground">
+                            Facturado mensualmente
+                          </p>
+                        )}
                       </div>
                     )}
-
-                    {/* Plan name */}
-                    <h2 className="font-heading text-2xl font-bold text-white mb-2">
-                      {plan.display_name}
-                    </h2>
-
-                    {/* Price */}
-                    <div className="mb-6">
-                      {isFree ? (
-                        <span className="text-4xl font-bold text-white">Gratis</span>
-                      ) : (
-                        <div className="space-y-1">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-4xl font-bold text-white">
-                              ARS {displayPrice.toLocaleString('es-AR')}
-                            </span>
-                            <span className="text-gray-400 text-sm">/mes</span>
-                          </div>
-                          {annual ? (
-                            <div className="space-y-0.5">
-                              <p className="text-xs text-gray-400">
-                                Facturado ARS {(monthlyPrice * 10).toLocaleString('es-AR')} al año
-                              </p>
-                              <p className="text-xs text-green-400 font-medium">
-                                Ahorrás ARS {annualSaving.toLocaleString('es-AR')}/año
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="text-xs text-gray-500">
-                              Facturado mensualmente
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Features */}
-                    <ul className="space-y-3 flex-1 mb-8">
-                      {features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-sm text-gray-300">
-                          <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* CTA */}
-                    {isFree ? (
-                      <Button
-                        variant={isPopular ? 'hero' : 'hero-outline'}
-                        className="w-full"
-                        asChild
-                      >
-                        <Link to="/create-school">Crear mi escuela gratis</Link>
-                      </Button>
-                    ) : (
-                      <Button
-                        variant={isPopular ? 'hero' : 'hero-outline'}
-                        className="w-full"
-                        asChild
-                      >
-                        <Link to={`/create-school?plan=${plan.name}&billing=${annual ? 'annual' : 'monthly'}`}>Crear mi escuela</Link>
-                      </Button>
-                    )}
                   </div>
-                )
-              })}
-            </div>
-          )}
 
-          {/* Garantía */}
-          <div className="mt-10 bg-green-500/10 border border-green-500/20 rounded-2xl p-7 text-center">
-            <Shield className="w-9 h-9 text-green-400 mx-auto mb-3" />
-            <h3 className="font-heading text-xl font-bold text-white mb-2">Garantía de 30 días</h3>
-            <p className="text-gray-400 text-sm max-w-md mx-auto">
-              Si en los primeros 30 días no vendés tu primer curso, te devolvemos el dinero. Sin preguntas, sin burocracia.
-            </p>
-          </div>
+                  {/* Features */}
+                  <ul className="space-y-3 flex-1 mb-8">
+                    {features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm text-foreground/80 leading-relaxed">
+                        <span className="mt-0.5 shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent/10">
+                          <Check className="w-3 h-3 text-accent" aria-hidden />
+                        </span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-          {/* Value stack — cuánto costaría hacerlo solo */}
-          <div className="mt-8 bg-gray-800 border border-gray-700 rounded-2xl p-7">
-            <h3 className="font-heading text-lg font-bold text-white mb-1">¿Cuánto costaría armar esto vos solo?</h3>
-            <p className="text-gray-400 text-sm mb-6">Todo lo que incluye NATO University, desglosado.</p>
-            <div className="space-y-3">
-              {COST_COMPARISON.map((row, i) => (
-                <div key={i} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <X className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                    {row.item}
-                  </div>
-                  <span className="text-red-400 font-semibold shrink-0 ml-4">{row.price}/mes</span>
+                  {/* CTA */}
+                  <Button
+                    variant={isPopular ? 'hero' : 'outline'}
+                    size="lg"
+                    className="w-full"
+                    asChild
+                  >
+                    <Link to={isFree ? '/create-school' : `/create-school?plan=${plan.name}&billing=${annual ? 'annual' : 'monthly'}`}>
+                      {isFree ? 'Crear mi escuela gratis' : 'Crear mi escuela'}
+                    </Link>
+                  </Button>
                 </div>
-              ))}
-            </div>
-            <div className="border-t border-gray-700 mt-5 pt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Si lo armás por tu cuenta</span>
-                <span className="text-red-400 font-bold">ARS 90,000+/mes</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-200 font-semibold">Con NATO University Creator</span>
-                <span className="text-green-400 font-bold">Desde ARS 15,000/mes</span>
-              </div>
-            </div>
+              )
+            })}
           </div>
+        )}
 
-          {/* Footer note */}
-          <p className="text-center text-gray-500 text-sm mt-8">
-            Sin contratos. Cancelá cuando quieras. Precios en ARS.
+        {/* Garantía */}
+        <div className="mt-12 rounded-2xl border border-accent/20 bg-accent/[0.04] p-7 text-center">
+          <div className="w-12 h-12 rounded-xl bg-accent/10 mx-auto mb-3 flex items-center justify-center">
+            <Shield className="w-6 h-6 text-accent" aria-hidden />
+          </div>
+          <h3 className="font-heading text-display-sm text-foreground mb-2">Garantía de 30 días</h3>
+          <p className="text-body-sm text-muted-foreground max-w-md mx-auto">
+            Si en los primeros 30 días no vendés tu primer curso, te devolvemos el dinero. Sin preguntas, sin burocracia.
           </p>
         </div>
+
+        {/* Value stack — cuánto costaría hacerlo solo */}
+        <div className="mt-8 rounded-2xl border border-border/60 bg-card p-7">
+          <h3 className="font-heading text-display-sm text-foreground mb-1">¿Cuánto costaría armar esto vos solo?</h3>
+          <p className="text-body-sm text-muted-foreground mb-6">Todo lo que incluye NATO University, desglosado.</p>
+          <div className="space-y-3">
+            {COST_COMPARISON.map((row, i) => (
+              <div key={i} className="flex items-center justify-between text-sm py-2 border-b border-border/40 last:border-0">
+                <div className="flex items-center gap-2.5 text-foreground/80">
+                  <X className="w-3.5 h-3.5 text-destructive shrink-0" aria-hidden />
+                  {row.item}
+                </div>
+                <span className="text-destructive font-semibold shrink-0 ml-4 tabular-nums">{row.price}/mes</span>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-border/60 mt-5 pt-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Si lo armás por tu cuenta</span>
+              <span className="text-destructive font-bold tabular-nums">ARS 90.000+/mes</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-foreground font-semibold">Con NATO University Creator</span>
+              <span className="text-accent font-bold tabular-nums">Desde ARS 15.000/mes</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer note */}
+        <p className="text-center text-muted-foreground text-sm mt-8">
+          Sin contratos. Cancelá cuando quieras. Precios en ARS.
+        </p>
       </div>
     </div>
   )

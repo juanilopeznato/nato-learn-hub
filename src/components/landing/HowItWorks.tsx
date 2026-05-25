@@ -3,68 +3,59 @@ import { BookOpen, Play, Award } from 'lucide-react'
 const STEPS = [
   {
     icon: BookOpen,
-    number: '01',
     title: 'Elegí tu curso',
-    description: 'Accedé al catálogo y encontrá el conocimiento que te falta para dar el próximo salto.',
-    color: 'text-primary',
-    bg: 'bg-primary/10',
-    border: 'border-primary/20',
+    description: 'Catálogo de cursos prácticos en marketing, negocios, contenido y más.',
   },
   {
     icon: Play,
-    number: '02',
     title: 'Aplicá desde el día uno',
-    description: 'Contenido 100% práctico. Avanzá cuando quieras y aplicá lo aprendido en tu negocio o carrera.',
-    color: 'text-accent',
-    bg: 'bg-accent/10',
-    border: 'border-accent/20',
+    description: 'Contenido 100% práctico. Avanzá a tu ritmo y aplicá lo aprendido en tu negocio.',
   },
   {
     icon: Award,
-    number: '03',
     title: 'Demostrá tus resultados',
-    description: 'Al terminar obtenés un certificado verificable para compartir en LinkedIn, WhatsApp o tu portfolio.',
-    color: 'text-yellow-600',
-    bg: 'bg-yellow-50',
-    border: 'border-yellow-200',
+    description: 'Al terminar recibís un certificado verificable para compartir en LinkedIn o WhatsApp.',
   },
 ]
 
 export default function HowItWorks() {
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4 max-w-5xl">
-        <div className="text-center mb-14">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">
+    <section className="py-24 lg:py-32 bg-background border-b border-border/40">
+      <div className="container max-w-6xl">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-eyebrow text-primary uppercase block mb-3">
             Simple desde el día uno
           </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-gray-900">
+          <h2 className="font-heading text-display-md md:text-display-lg text-foreground mb-4">
             Así funciona
           </h2>
+          <p className="text-body-md text-muted-foreground">
+            Tres pasos para que tu próximo cambio profesional arranque hoy.
+          </p>
         </div>
 
-        <div className="relative grid md:grid-cols-3 gap-8">
-          {/* Línea conectora entre pasos (solo desktop) */}
-          <div className="hidden md:block absolute top-10 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px border-t-2 border-dashed border-gray-200 z-0" />
-
+        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
           {STEPS.map((step, i) => (
-            <div key={i} className="relative flex flex-col items-center text-center gap-4 z-10">
-              {/* Número + ícono */}
-              <div className={`w-20 h-20 rounded-2xl ${step.bg} border ${step.border} flex flex-col items-center justify-center gap-1 shadow-sm`}>
-                <step.icon className={`w-7 h-7 ${step.color}`} />
+            <div
+              key={i}
+              className="group relative rounded-2xl border border-border/60 bg-card p-8 hover-lift"
+            >
+              {/* Step number */}
+              <div className="absolute -top-3 left-8 inline-flex items-center justify-center h-6 px-2.5 rounded-full bg-foreground text-background text-xs font-mono font-semibold">
+                {String(i + 1).padStart(2, '0')}
               </div>
 
-              {/* Badge de número */}
-              <div className="absolute -top-2 -right-2 md:right-auto md:left-[calc(50%+2rem)] w-6 h-6 rounded-full bg-gray-900 text-white text-xs font-bold flex items-center justify-center shadow">
-                {i + 1}
+              {/* Icon */}
+              <div className="w-12 h-12 rounded-xl bg-primary/[0.08] text-primary flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors duration-200">
+                <step.icon className="w-5 h-5" aria-hidden />
               </div>
 
-              <div className="space-y-1.5">
-                <h3 className="font-heading text-lg font-bold text-gray-900">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed max-w-[220px] mx-auto">
-                  {step.description}
-                </p>
-              </div>
+              <h3 className="font-heading text-display-sm text-foreground mb-2">
+                {step.title}
+              </h3>
+              <p className="text-body-sm text-muted-foreground leading-relaxed">
+                {step.description}
+              </p>
             </div>
           ))}
         </div>
