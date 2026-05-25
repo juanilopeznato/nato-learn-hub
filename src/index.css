@@ -6,35 +6,45 @@
 
 @layer base {
   :root {
+    /* Background: white casi puro. Foreground gray casi negro pero no negro
+       puro (más cálido) para reducir contraste fatigante. */
     --background: 0 0% 100%;
-    --foreground: 240 10% 10%;
+    --foreground: 222 15% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 222 15% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 222 15% 13%;
 
+    /* Primary púrpura NATO. Variantes 50/100/200 para soft backgrounds */
     --primary: 258 91% 55%;
     --primary-foreground: 0 0% 100%;
+    --primary-50:  258 100% 97%;
+    --primary-100: 258 95% 93%;
+    --primary-200: 258 90% 86%;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 10% 10%;
+    /* Secondary: gris cálido casi imperceptible para fondos chip/badge */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 15% 13%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 5% 45%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
+    /* Accent verde NATO */
     --accent: 163 56% 52%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
+    /* Border más sutil que antes (gray-200/60) */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 258 91% 55%;
 
-    --radius: 0.75rem;
+    /* Radius default subido a 14px (lg de tailwind) */
+    --radius: 0.875rem;
 
     /* Custom NATO tokens */
     --nato-dark: 240 20% 8%;
@@ -102,12 +112,64 @@
     @apply border-border;
   }
 
+  html {
+    /* Suaviza el scroll anchor-link */
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11"; /* Inter alternates más legibles */
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    letter-spacing: -0.022em;
+    color: hsl(var(--foreground));
+  }
+
+  /* Focus visible — siempre con el primary, nunca el default azul del browser */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.18);
+    border-radius: inherit;
+  }
+
+  /* Scrollbar fina estilo macOS */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.35);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+
+  /* Selection con primary tinted */
+  ::selection {
+    background: hsl(var(--primary) / 0.18);
+    color: hsl(var(--foreground));
+  }
+
+  /* Reduce motion: respetar preferencia del user */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -213,5 +275,81 @@
   /* No mostrar el href para enlaces internos / mailto / etc dentro del certificado */
   .certificate a[href]::after {
     content: none;
+  }
+}
+
+/* ─── Utilities adicionales del sistema de diseño (rediseño 2026) ────── */
+@layer utilities {
+  /* Mesh gradient backgrounds — alternativa a linear gradient cliché */
+  .bg-mesh-purple {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(at 20% 0%, hsl(var(--primary) / 0.13) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, hsl(var(--accent) / 0.10) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, hsl(var(--primary) / 0.06) 0px, transparent 70%);
+  }
+  .bg-mesh-dark {
+    background-color: hsl(222 47% 6%);
+    background-image:
+      radial-gradient(at 20% 0%, hsl(258 91% 55% / 0.35) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, hsl(166 71% 52% / 0.22) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, hsl(258 91% 55% / 0.18) 0px, transparent 70%);
+  }
+  /* Grid sutil — para heroes con personalidad */
+  .bg-grid-light {
+    background-image:
+      linear-gradient(to right, hsl(220 13% 91% / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(220 13% 91% / 0.5) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .bg-grid-dark {
+    background-image:
+      linear-gradient(to right, hsl(0 0% 100% / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(0 0% 100% / 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Ring sutil para cards interactive */
+  .ring-subtle {
+    box-shadow: 0 0 0 1px hsl(var(--border) / 0.6);
+  }
+
+  /* Hover lift — micro-animación que da vida */
+  .hover-lift {
+    transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgb(0 0 0 / 0.08), 0 4px 8px -2px rgb(0 0 0 / 0.05);
+  }
+
+  /* Glass refinado (light) — usar en sticky headers / overlays */
+  .glass-light {
+    background: hsl(var(--background) / 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Text gradient refinado — más sutil que el original */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(280 80% 60%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Animated dots pattern — para empty states o decoración */
+  .bg-dots {
+    background-image: radial-gradient(circle, hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* Stagger animations — agregá `[--delay:N]` por children */
+  .stagger > * {
+    opacity: 0;
+    animation: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: calc(var(--stagger-delay, 80ms) * var(--stagger-index, 0));
   }
 }
