@@ -302,25 +302,25 @@ export default function LessonView() {
   const isFreePreview = !enrollment && !!currentLesson.is_free_preview
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 z-40 shrink-0">
-        <div className="container mx-auto px-4 h-14 flex items-center gap-3">
-          <Link to={`/courses/${courseSlug}`} className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 transition-colors shrink-0">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:block">{course.title}</span>
+    <div className="min-h-screen bg-secondary/30 flex flex-col">
+      {/* Header glass */}
+      <header className="glass-light z-40 shrink-0">
+        <div className="container h-14 flex items-center gap-3">
+          <Link to={`/courses/${courseSlug}`} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors shrink-0 group">
+            <ArrowLeft className="w-4 h-4 transition-transform duration-200 ease-apple group-hover:-translate-x-0.5" aria-hidden />
+            <span className="text-sm hidden sm:block max-w-[20ch] truncate">{course.title}</span>
           </Link>
-          <span className="text-gray-300 hidden sm:block">/</span>
-          <span className="text-sm text-gray-500 truncate">{currentLesson.title}</span>
+          <span className="text-border hidden sm:block">/</span>
+          <span className="text-sm text-foreground truncate">{currentLesson.title}</span>
           <div className="ml-auto flex items-center gap-2 shrink-0">
-            <span className="text-xs text-gray-400 hidden sm:block">
+            <span className="text-xs text-muted-foreground hidden sm:block tabular-nums">
               {currentIndex + 1} / {allLessons.length}
             </span>
-            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-5 w-auto object-contain" loading="lazy" decoding="async" />
+            <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO University'} className="h-5 w-auto object-contain opacity-80" loading="lazy" decoding="async" />
             {/* Mobile: toggle sidebar (44px min para WCAG AA) */}
             <button
               type="button"
-              className="lg:hidden ml-1 w-11 h-11 flex items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+              className="lg:hidden ml-1 w-11 h-11 flex items-center justify-center rounded-md text-muted-foreground hover:bg-secondary active:bg-secondary/80 transition-colors"
               onClick={() => setMobileSidebarOpen(true)}
               aria-label="Ver lecciones"
             >
@@ -346,23 +346,23 @@ export default function LessonView() {
             {/* Free preview banner */}
             {isFreePreview && (
               <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
-                <p className="text-sm text-amber-800">
-                  Este es un contenido de vista previa gratuita.
+                <p className="text-sm text-amber-900">
+                  Esta es una vista previa gratuita.
                 </p>
                 <Link
                   to={`/courses/${courseSlug}`}
-                  className="text-sm font-semibold text-amber-700 hover:text-amber-900 hover:underline shrink-0 flex items-center gap-1"
+                  className="text-sm font-semibold text-amber-800 hover:underline shrink-0 flex items-center gap-1 underline-offset-4"
                 >
                   Inscribite para acceder al curso completo →
                 </Link>
               </div>
             )}
 
-            <div className="flex items-center gap-3">
-              <h1 className="font-heading text-xl font-semibold text-gray-900">{currentLesson.title}</h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="font-heading text-display-sm text-foreground tracking-tight">{currentLesson.title}</h1>
               {isCompleted && (
-                <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 border border-green-200 rounded-full px-2.5 py-1 shrink-0">
-                  <CheckCircle className="w-3.5 h-3.5" />
+                <span className="flex items-center gap-1.5 text-xs text-accent bg-accent/10 border border-accent/20 rounded-full px-2.5 py-1 shrink-0 font-medium">
+                  <CheckCircle className="w-3.5 h-3.5" aria-hidden />
                   Completada
                 </span>
               )}

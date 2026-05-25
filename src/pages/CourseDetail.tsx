@@ -398,78 +398,77 @@ export default function CourseDetail() {
       </Helmet>
       {pixelId && <MetaPixel pixelId={pixelId} />}
       {/* Sticky CTA bar */}
-      <div className={`fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-700 transition-all duration-300 ${stickyVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <span className="font-heading font-semibold text-white truncate text-sm">{course.title}</span>
+      <div className={`fixed top-0 left-0 right-0 z-50 glass-light shadow-sm transition-all duration-300 ease-apple ${stickyVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+        <div className="container h-14 flex items-center justify-between gap-4">
+          <span className="font-heading font-semibold text-foreground truncate text-sm">{course.title}</span>
           <Button variant="hero" size="sm" onClick={handleCTA} disabled={enrollMutation.isPending || buyMutation.isPending} className="shrink-0">
             {ctaLabel}
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight />
           </Button>
         </div>
       </div>
 
-      {/* HERO */}
-      <div ref={heroRef} className="bg-gray-900 text-white">
-        <div className="container mx-auto px-4 py-4">
+      {/* HERO — light con mesh sutil */}
+      <div ref={heroRef} className="relative isolate bg-mesh-purple border-b border-border/40">
+        <div className="absolute inset-0 bg-grid-light opacity-30 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_70%)] pointer-events-none" />
+        <div className="container relative z-10 py-6">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs text-gray-400 mb-6">
-            <Link to="/" className="hover:text-white transition-colors">
-              <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name} className="h-6 w-auto object-contain brightness-0 invert opacity-70" loading="lazy" decoding="async" />
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground mb-8">
+            <Link to="/" className="hover:text-foreground transition-colors">
+              <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO'} className="h-5 w-auto object-contain opacity-80" loading="lazy" decoding="async" />
             </Link>
-            <span>/</span>
-            <Link to="/courses" className="hover:text-white transition-colors">Cursos</Link>
-            <span>/</span>
-            <span className="text-gray-300">{course.title}</span>
-          </div>
+            <span aria-hidden>/</span>
+            <Link to="/courses" className="hover:text-foreground transition-colors">Cursos</Link>
+            <span aria-hidden>/</span>
+            <span className="text-foreground/60 truncate max-w-[40ch]">{course.title}</span>
+          </nav>
 
-          <div className="grid lg:grid-cols-5 gap-10 pb-12">
+          <div className="grid lg:grid-cols-5 gap-10 lg:gap-12 pb-16">
             {/* Left: text content */}
             <div className="lg:col-span-3 space-y-6">
-              <div className="space-y-4">
-                {course.is_free ? (
-                  <Badge className="bg-accent/20 text-accent border-accent/30 text-xs">Gratis</Badge>
-                ) : (
-                  <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">Premium</Badge>
-                )}
-                <h1 className="font-heading text-3xl md:text-4xl font-bold text-white leading-tight">
+              <div className="space-y-5">
+                <Badge variant={course.is_free ? 'success' : 'soft'} size="default">
+                  {course.is_free ? 'Gratis' : 'Premium'}
+                </Badge>
+                <h1 className="font-heading text-display-lg md:text-display-xl text-foreground tracking-tight leading-tight">
                   {course.title}
                 </h1>
                 {course.description && (
-                  <p className="text-gray-300 text-lg leading-relaxed">{course.description}</p>
+                  <p className="text-body-lg text-muted-foreground leading-relaxed max-w-2xl">{course.description}</p>
                 )}
               </div>
 
-              {/* Stats */}
-              <div className="flex flex-wrap items-center gap-4 text-sm">
+              {/* Stats inline */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm pt-2">
                 {(enrollmentCount ?? 0) > 0 && (
-                  <span className="flex items-center gap-1.5 text-gray-300">
-                    <Users className="w-4 h-4 text-primary" />
-                    {enrollmentCount} estudiantes
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Users className="w-4 h-4 text-primary" aria-hidden />
+                    <span className="text-foreground font-medium">{enrollmentCount}</span> estudiantes
                   </span>
                 )}
-                <span className="flex items-center gap-1.5 text-gray-300">
-                  <BookOpen className="w-4 h-4 text-primary" />
-                  {totalLessons} lecciones
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <BookOpen className="w-4 h-4 text-primary" aria-hidden />
+                  <span className="text-foreground font-medium">{totalLessons}</span> lecciones
                 </span>
-                <span className="flex items-center gap-1.5 text-gray-300">
-                  <Clock className="w-4 h-4 text-primary" />
-                  {sortedModules.length} módulos
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <Clock className="w-4 h-4 text-primary" aria-hidden />
+                  <span className="text-foreground font-medium">{sortedModules.length}</span> módulos
                 </span>
-                <span className="flex items-center gap-1.5 text-yellow-400">
-                  <Award className="w-4 h-4" />
+                <span className="flex items-center gap-1.5 text-accent font-medium">
+                  <Award className="w-4 h-4" aria-hidden />
                   Certificado incluido
                 </span>
               </div>
 
               {/* Trust badges */}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 pt-1">
                 {[
                   { icon: Shield, text: 'Acceso de por vida' },
                   { icon: Star, text: 'Contenido actualizado' },
                   { icon: Award, text: 'Certificado verificable' },
                 ].map(b => (
-                  <span key={b.text} className="flex items-center gap-1.5 text-xs text-gray-400 bg-white/5 rounded-full px-3 py-1">
-                    <b.icon className="w-3.5 h-3.5 text-primary" />
+                  <span key={b.text} className="flex items-center gap-1.5 text-xs text-foreground bg-background border border-border/60 rounded-full px-3 py-1.5">
+                    <b.icon className="w-3.5 h-3.5 text-primary" aria-hidden />
                     {b.text}
                   </span>
                 ))}
@@ -478,73 +477,74 @@ export default function CourseDetail() {
 
             {/* Right: buy card (desktop) / thumbnail */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div className="bg-card rounded-2xl shadow-xl border border-border/40 overflow-hidden sticky top-24">
                 {/* Thumbnail / preview */}
                 {thumbnailUrl ? (
-                  <div className="relative aspect-video bg-gray-100 overflow-hidden">
+                  <div className="relative aspect-video bg-secondary overflow-hidden">
                     <SmartImage src={thumbnailUrl} alt={course.title} size="lg" eager className="w-full h-full object-cover" />
                     {introVideo && (
-                      <button className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition-colors group">
-                        <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <Play className="w-7 h-7 text-gray-900 ml-1" />
+                      <button type="button" aria-label="Ver intro" className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors duration-200 ease-apple group">
+                        <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-200 ease-apple">
+                          <Play className="w-7 h-7 text-foreground ml-1" aria-hidden />
                         </div>
                       </button>
                     )}
                   </div>
                 ) : (
-                  <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                    <span className="font-heading text-6xl font-bold text-white/20">
+                  <div className="aspect-video bg-mesh-purple flex items-center justify-center">
+                    <span className="font-heading text-display-2xl text-primary/20 tracking-tight">
                       {course.title[0]}
                     </span>
                   </div>
                 )}
 
                 {/* Price + CTA */}
-                <div className="p-6 space-y-4">
-                  <div className="space-y-1">
+                <div className="p-6 space-y-5">
+                  <div className="space-y-1.5">
                     {billingType === 'free' ? (
-                      <span className="font-heading text-3xl font-bold text-gray-900">Gratis</span>
+                      <span className="font-heading text-display-md text-foreground tracking-tight">Gratis</span>
                     ) : (
                       <div className="flex items-baseline gap-2 flex-wrap">
-                        <span className="font-heading text-3xl font-bold text-gray-900">
+                        <span className="font-heading text-display-md text-foreground tracking-tight tabular-nums">
                           ARS {Number(course.price).toLocaleString('es-AR')}
                         </span>
                         {billingLabel && (
-                          <span className="text-gray-500 text-base font-medium">{billingLabel}</span>
+                          <span className="text-muted-foreground text-base font-medium">{billingLabel}</span>
                         )}
                         {originalPrice > 0 && (
-                          <span className="text-gray-400 text-lg line-through">
-                            ARS {originalPrice.toLocaleString('es-AR')}
-                          </span>
-                        )}
-                        {originalPrice > 0 && (
-                          <Badge className="bg-green-50 text-green-700 border-green-100 text-xs">
-                            {Math.round((1 - Number(course.price) / originalPrice) * 100)}% OFF
-                          </Badge>
+                          <>
+                            <span className="text-muted-foreground text-lg line-through tabular-nums">
+                              ARS {originalPrice.toLocaleString('es-AR')}
+                            </span>
+                            <Badge variant="success" size="default">
+                              {Math.round((1 - Number(course.price) / originalPrice) * 100)}% OFF
+                            </Badge>
+                          </>
                         )}
                       </div>
                     )}
                     {billingType === 'monthly' && (
-                      <p className="text-xs text-blue-600">Renovación automática mensual · Cancelás cuando quieras</p>
+                      <p className="text-xs text-muted-foreground">Renovación mensual · Cancelás cuando quieras</p>
                     )}
                     {billingType === 'annual' && (
-                      <p className="text-xs text-purple-600">Pago anual · Acceso por 12 meses completos</p>
+                      <p className="text-xs text-muted-foreground">Pago anual · 12 meses de acceso</p>
                     )}
                   </div>
 
                   {/* Selector de cuotas — solo cursos pagos sin enrollment */}
                   {!enrollment && !course.is_free && (
-                    <div className="space-y-1.5">
-                      <p className="text-xs font-medium text-gray-500">Pagá en cuotas</p>
+                    <div className="space-y-2">
+                      <p className="text-eyebrow text-muted-foreground uppercase">Pagá en cuotas</p>
                       <div className="grid grid-cols-4 gap-1.5">
                         {[1, 3, 6, 12].map(n => (
                           <button
+                            type="button"
                             key={n}
                             onClick={() => setInstallments(n)}
-                            className={`rounded-lg border py-2 text-xs font-semibold transition-colors ${
+                            className={`rounded-md border py-2 text-xs font-semibold transition-all duration-200 ease-apple ${
                               installments === n
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-gray-200 text-gray-600 hover:border-primary/40'
+                                ? 'border-primary bg-primary/10 text-primary shadow-xs'
+                                : 'border-border bg-background text-foreground hover:border-primary/40'
                             }`}
                           >
                             {n === 1 ? '1 pago' : `${n}x`}
@@ -552,7 +552,7 @@ export default function CourseDetail() {
                         ))}
                       </div>
                       {installments > 1 && (
-                        <p className="text-xs text-gray-400 text-center">
+                        <p className="text-xs text-muted-foreground text-center tabular-nums">
                           {installments} cuotas de ARS {Math.ceil(discountedPrice / installments).toLocaleString('es-AR')}
                         </p>
                       )}
@@ -562,12 +562,12 @@ export default function CourseDetail() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full text-base h-12"
+                    className="w-full"
                     onClick={handleCTA}
                     disabled={enrollMutation.isPending || buyMutation.isPending}
                   >
                     {ctaLabel}
-                    <ArrowRight className="w-5 h-5" />
+                    {!(enrollMutation.isPending || buyMutation.isPending) && <ArrowRight />}
                   </Button>
 
                   {/* Urgencia social — contador de alumnos */}
