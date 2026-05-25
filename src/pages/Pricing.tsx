@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import Navbar from '@/components/landing/Navbar'
+import { canonicalUrl, absoluteUrl } from '@/lib/seo'
 
 const COST_COMPARISON = [
   { item: 'Plataforma de video (Vimeo Pro)', price: 'ARS 28,000' },
@@ -52,10 +53,14 @@ export default function Pricing() {
       <Helmet>
         <title>Planes y precios — NATO University</title>
         <meta name="description" content="Elegí el plan que mejor se adapta a tu escuela online. Empezá gratis y escalá cuando estés listo. Planes para creadores en Argentina." />
-        <link rel="canonical" href="https://nato-learn-hub.vercel.app/pricing" />
+        <link rel="canonical" href={canonicalUrl('/pricing')} />
         <meta property="og:title" content="Planes y precios — NATO University" />
         <meta property="og:description" content="Empezá gratis. Escalá cuando estés listo. Planes para creadores en Argentina." />
-        <meta property="og:url" content="https://nato-learn-hub.vercel.app/pricing" />
+        <meta property="og:url" content={canonicalUrl('/pricing')} />
+        <meta property="og:image" content={absoluteUrl('/nato-logo.png')} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="NATO University" />
+        <meta property="og:locale" content="es_AR" />
       </Helmet>
       <Navbar />
 

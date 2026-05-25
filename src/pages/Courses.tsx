@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { BookOpen, Search, LogIn, Star } from 'lucide-react'
 import { SmartImage } from '@/components/SmartImage'
+import { canonicalUrl, absoluteUrl } from '@/lib/seo'
 
 type Course = {
   id: string
@@ -151,10 +152,14 @@ export default function Courses() {
       <Helmet>
         <title>Cursos — {tenantName}</title>
         <meta name="description" content={`Explorá todos los cursos disponibles en ${tenantName}. Aprendé marketing digital, negocios, contenido y más.`} />
-        <link rel="canonical" href="https://nato-learn-hub.vercel.app/courses" />
+        <link rel="canonical" href={canonicalUrl('/courses')} />
         <meta property="og:title" content={`Cursos — ${tenantName}`} />
         <meta property="og:description" content={`Explorá todos los cursos disponibles en ${tenantName}.`} />
-        <meta property="og:url" content="https://nato-learn-hub.vercel.app/courses" />
+        <meta property="og:url" content={canonicalUrl('/courses')} />
+        <meta property="og:image" content={absoluteUrl('/nato-logo.png')} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={tenantName} />
+        <meta property="og:locale" content="es_AR" />
       </Helmet>
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
+import { canonicalUrl, absoluteUrl } from '@/lib/seo'
 import { ArrowRight, School, User, CheckCircle2, GraduationCap } from 'lucide-react'
 
 const accountSchema = z.object({
@@ -122,10 +123,14 @@ export default function CreateSchool() {
       <Helmet>
         <title>Crear mi escuela online gratis — NATO University</title>
         <meta name="description" content="Lanzá tu escuela online en minutos. Vendé cursos, gestioná tus alumnos y cobrá con Mercado Pago. Gratis para empezar." />
-        <link rel="canonical" href="https://nato-learn-hub.vercel.app/create-school" />
+        <link rel="canonical" href={canonicalUrl('/create-school')} />
         <meta property="og:title" content="Crear mi escuela online gratis — NATO University" />
         <meta property="og:description" content="Lanzá tu escuela online en minutos. Vendé cursos y cobrá con Mercado Pago. Gratis para empezar." />
-        <meta property="og:url" content="https://nato-learn-hub.vercel.app/create-school" />
+        <meta property="og:url" content={canonicalUrl('/create-school')} />
+        <meta property="og:image" content={absoluteUrl('/nato-logo.png')} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="NATO University" />
+        <meta property="og:locale" content="es_AR" />
       </Helmet>
       {/* Header */}
       <header className="border-b border-gray-800 bg-gray-900">

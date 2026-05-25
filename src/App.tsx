@@ -34,6 +34,7 @@ const NatoOwnerPanel = React.lazy(() => import("./pages/NatoOwnerPanel"));
 const CreateSchool = React.lazy(() => import("./pages/CreateSchool"));
 const MpOAuthCallback = React.lazy(() => import("./pages/MpOAuthCallback"));
 const Affiliates = React.lazy(() => import("./pages/Affiliates"));
+const Status = React.lazy(() => import("./pages/Status"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +71,7 @@ const App = () => (
                   <Route path="/certificates/:code" element={<CertificateVerify />} />
                   <Route path="/create-school" element={<CreateSchool />} />
                   <Route path="/mp-oauth-callback" element={<MpOAuthCallback />} />
+                  <Route path="/status" element={<Status />} />
 
                 {/* Protegidas: estudiantes */}
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

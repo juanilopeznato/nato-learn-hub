@@ -3,32 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#5B21F5" />
     <title>NATO University — Plataforma de cursos online</title>
     <meta name="description" content="Aprendé marketing digital, negocios y creación de contenido con NATO University. Cursos prácticos, certificados verificables y comunidad activa.">
     <meta name="author" content="NATO Creative" />
-    <link rel="canonical" href="https://nato-learn-hub.vercel.app/" />
+    <link rel="canonical" href="https://natouniversity.lovable.app/" />
 
-    
-    
+    <!-- Open Graph default (los pages individuales lo sobrescriben via Helmet) -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nato-learn-hub.vercel.app/" />
-    <meta property="og:image" content="https://nato-learn-hub.vercel.app/nato-logo.png">
+    <meta property="og:url" content="https://natouniversity.lovable.app/" />
+    <meta property="og:image" content="https://natouniversity.lovable.app/nato-logo.png">
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="NATO University" />
     <meta property="og:locale" content="es_AR" />
+    <meta property="og:title" content="NATO University — Plataforma de cursos online">
+    <meta property="og:description" content="Aprendé marketing digital, negocios y creación de contenido con NATO University. Cursos prácticos, certificados verificables y comunidad activa.">
 
     <meta name="twitter:card" content="summary_large_image" />
-    
-    
-    <meta name="twitter:image" content="https://nato-learn-hub.vercel.app/nato-logo.png">
-    <meta property="og:title" content="NATO University — Plataforma de cursos online">
-  <meta name="twitter:title" content="NATO University — Plataforma de cursos online">
-  <meta property="og:description" content="Aprendé marketing digital, negocios y creación de contenido con NATO University. Cursos prácticos, certificados verificables y comunidad activa.">
-  <meta name="twitter:description" content="Aprendé marketing digital, negocios y creación de contenido con NATO University. Cursos prácticos, certificados verificables y comunidad activa.">
+    <meta name="twitter:image" content="https://natouniversity.lovable.app/nato-logo.png">
+    <meta name="twitter:title" content="NATO University — Plataforma de cursos online">
+    <meta name="twitter:description" content="Aprendé marketing digital, negocios y creación de contenido con NATO University. Cursos prácticos, certificados verificables y comunidad activa.">
 
-  <!-- Plausible Analytics (privacy-friendly, sin cookies, sin banner de consent) -->
-  <script defer data-domain="nato-learn-hub.vercel.app" src="https://plausible.io/js/script.hash.outbound-links.tagged-events.js"></script>
-  <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
-</head>
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/nato-logo.png" />
+
+    <!-- Plausible Analytics (privacy-friendly, sin cookies, sin banner de consent) -->
+    <script defer data-domain="natouniversity.lovable.app" src="https://plausible.io/js/script.hash.outbound-links.tagged-events.js"></script>
+    <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+
+    <!-- Sentry: se carga dinámicamente desde main.tsx solo si VITE_SENTRY_DSN está seteado -->
+  </head>
 
   <body>
     <div id="root"></div>

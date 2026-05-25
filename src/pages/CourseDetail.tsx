@@ -289,6 +289,8 @@ export default function CourseDetail() {
   const billingLabel = billingType === 'monthly' ? '/mes' : billingType === 'annual' ? '/año' : ''
 
   function handleCTA() {
+    // Guard contra double-click — si una mutation ya está en curso, no disparar otra
+    if (enrollMutation.isPending || buyMutation.isPending) return
     if (!user) { navigate(`/login?redirect=/courses/${slug}`); return }
     if (enrollment) {
       const first = sortedModules[0]?.lessons?.sort((a, b) => a.order_index - b.order_index)[0]
@@ -311,10 +313,15 @@ export default function CourseDetail() {
     ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — ARS ${discountedPrice.toLocaleString('es-AR')}/año`)
     : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${discountedPrice.toLocaleString('es-AR')}`)
 
-  // SEO — construido antes del return para que Helmet lo procese siempre
+  // SEO — construido antes del return para que Helmet lo procese siempre.
+  // OG image debe ser URL ABSOLUTA o WhatsApp/Telegram/iOS no la cargan.
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://natouniversity.lovable.app'
   const seoTitle = course ? `${course.title} — ${tenant?.name ?? 'NATO University'}` : 'NATO University'
   const seoDescription = course?.description?.slice(0, 160) ?? 'Curso online con certificado verificable.'
-  const seoImage = course?.thumbnail_url ?? 'https://nato-learn-hub.vercel.app/nato-logo.png'
+  // Si hay thumbnail del curso, optimizado a 1200x630 (standard OG). Si no, logo.
+  const rawImage = course?.thumbnail_url ?? `${origin}/nato-logo.png`
+  // Asegurar URL absoluta
+  const seoImage = rawImage.startsWith('http') ? rawImage : `${origin}${rawImage.startsWith('/') ? '' : '/'}${rawImage}`
   const seoUrl = typeof window !== 'undefined' ? window.location.href : ''
   const schemaOrg = course ? JSON.stringify({
     '@context': 'https://schema.org',
@@ -376,8 +383,13 @@ export default function CourseDetail() {
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDescription} />
         <meta property="og:image" content={seoImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={seoTitle} />
         <meta property="og:url" content={seoUrl} />
         <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={tenant?.name ?? 'NATO University'} />
+        <meta property="og:locale" content="es_AR" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={seoTitle} />
         <meta name="twitter:description" content={seoDescription} />

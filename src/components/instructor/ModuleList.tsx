@@ -386,9 +386,16 @@ export function ModuleList({ courseId }: Props) {
                     variant="ghost"
                     size="icon"
                     className="text-gray-500 hover:text-destructive shrink-0"
-                    onClick={() => deleteModule.mutate(module.id)}
+                    aria-label={`Eliminar módulo ${module.title}`}
+                    onClick={() => {
+                      const lessonCount = module.lessons?.length ?? 0
+                      const msg = lessonCount > 0
+                        ? `¿Eliminar el módulo "${module.title}"? Esto borrará también sus ${lessonCount} lección${lessonCount === 1 ? '' : 'es'}. Esta acción no se puede deshacer.`
+                        : `¿Eliminar el módulo "${module.title}"?`
+                      if (window.confirm(msg)) deleteModule.mutate(module.id)
+                    }}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" aria-hidden />
                   </Button>
                 </div>
 
@@ -493,7 +500,12 @@ export function ModuleList({ courseId }: Props) {
                                       variant="ghost"
                                       size="icon"
                                       className="w-7 h-7 text-gray-400 hover:text-destructive"
-                                      onClick={() => deleteLesson.mutate(lesson.id)}
+                                      aria-label={`Eliminar lección ${lesson.title}`}
+                                      onClick={() => {
+                                        if (window.confirm(`¿Eliminar la lección "${lesson.title}"? El progreso de los alumnos en esta lección se perderá. Esta acción no se puede deshacer.`)) {
+                                          deleteLesson.mutate(lesson.id)
+                                        }
+                                      }}
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
                                     </Button>

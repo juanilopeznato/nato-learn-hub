@@ -8,5 +8,15 @@ Disallow: /profile
 Disallow: /settings
 Disallow: /learn/
 Disallow: /mp-oauth-callback
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /community
 
-Sitemap: https://nato-learn-hub.vercel.app/sitemap.xml
+# Crawlers que abusan
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+Sitemap: https://natouniversity.lovable.app/sitemap.xml

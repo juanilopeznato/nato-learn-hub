@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,13 +9,19 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/context/AuthContext'
 import { events } from '@/lib/analytics'
+import { logger } from '@/lib/logger'
 
 const schema = z.object({
   fullName: z.string().min(2, 'Ingresá tu nombre'),
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Mínimo 6 caracteres'),
+  // Honeypot — los bots rellenan todos los campos; humanos no lo ven
+  website: z.string().max(0, 'Bot detectado').optional(),
 })
 type FormData = z.infer<typeof schema>
+
+// Cooldown mínimo entre cargar el form y enviar — los bots envían instantáneo
+const MIN_TIME_TO_SUBMIT_MS = 2000
 
 const benefits = [
   'Acceso a todos los cursos gratuitos',
@@ -35,8 +41,25 @@ export default function Signup() {
     resolver: zodResolver(schema),
   })
 
+  const formLoadedAt = useRef<number>(0)
+  useEffect(() => { formLoadedAt.current = Date.now() }, [])
+
   async function onSubmit(data: FormData) {
     setServerError(null)
+    // Honeypot trigger — si el campo "website" tiene valor, es bot
+    if (data.website && data.website.length > 0) {
+      logger.warn('signup blocked: honeypot triggered', { ip: 'unknown' })
+      // Damos un error genérico pero falso (que parezca real para el bot)
+      setServerError('Algo salió mal. Probá de nuevo.')
+      return
+    }
+    // Cooldown: si llenaron el form en <2s, casi seguro bot
+    const elapsed = Date.now() - formLoadedAt.current
+    if (elapsed < MIN_TIME_TO_SUBMIT_MS) {
+      logger.warn('signup blocked: too fast', { elapsedMs: elapsed })
+      setServerError('Esperá un momento antes de enviar.')
+      return
+    }
     events.signupStarted({ tenant: tenant?.slug })
     const { error } = await signUp(data.email, data.password, data.fullName)
     if (error) { setServerError(error); return }
@@ -88,6 +111,22 @@ export default function Signup() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Honeypot: campo invisible para humanos pero que los bots completan.
+                Posición off-screen, tabIndex -1, autocomplete off, aria-hidden. */}
+            <div
+              aria-hidden="true"
+              style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+            >
+              <label htmlFor="website">No completar este campo</label>
+              <input
+                id="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                {...register('website')}
+              />
+            </div>
+
             <div className="space-y-1.5">
               <Label htmlFor="fullName" className="text-gray-700 font-medium">Nombre completo</Label>
               <Input
