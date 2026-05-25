@@ -152,14 +152,28 @@ export default function LessonView() {
     }, 1500)
   }
 
-  // Registrar última lección visitada al cargar
+  // Registrar última lección visitada al cargar + heartbeat cada 60s mientras
+  // el tab esté visible. Esto alimenta la query de "alumnos inactivos" en el
+  // dashboard del instructor y los emails de retención.
   useEffect(() => {
     if (!enrollment?.id || !lessonId) return
-    supabase
-      .from('enrollments')
-      .update({ last_lesson_id: lessonId, last_accessed_at: new Date().toISOString() })
-      .eq('id', enrollment.id)
-      .then(() => {/* fire-and-forget */})
+    const enrollmentId = enrollment.id
+    const touch = () => {
+      if (document.visibilityState !== 'visible') return
+      void supabase
+        .from('enrollments')
+        .update({ last_lesson_id: lessonId, last_accessed_at: new Date().toISOString() })
+        .eq('id', enrollmentId)
+    }
+    touch() // initial
+    const interval = setInterval(touch, 60_000)
+    // Si el user vuelve al tab después de un rato, también marcar
+    const onVis = () => { if (document.visibilityState === 'visible') touch() }
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVis)
+    }
   }, [enrollment?.id, lessonId])
 
   const completeMutation = useMutation({

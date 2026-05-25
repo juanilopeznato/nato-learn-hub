@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+# Pre-commit hook: typecheck + lint:storage (BLOQUEANTE).
+# El lint general no bloquea (145 violaciones legacy en gradual cleanup).
+#
+# Instalar: agregar `"prepare": "husky install"` en package.json y correr `npm i`
+# o setear manualmente con: git config core.hooksPath .husky
+
+set -e
+
+echo "▶ pre-commit: typecheck"
+npx tsc --noEmit
+
+echo "▶ pre-commit: lint:storage (anti-Ranerzzz)"
+npm run lint:storage
+
+echo "✓ pre-commit OK"

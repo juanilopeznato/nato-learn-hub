@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,11 +9,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 const schema = z.object({
   email: z.string().email('Email inválido'),
+  website: z.string().max(0, 'Bot detectado').optional(),
 })
 type FormData = z.infer<typeof schema>
+
+const MIN_TIME_TO_SUBMIT_MS = 2000
+const COOLDOWN_KEY = 'nato_reset_cooldown'
+const COOLDOWN_SECONDS = 60
 
 export default function ForgotPassword() {
   const { tenant } = useAuth()
@@ -25,12 +31,39 @@ export default function ForgotPassword() {
     resolver: zodResolver(schema),
   })
 
+  const formLoadedAt = useRef<number>(0)
+  useEffect(() => { formLoadedAt.current = Date.now() }, [])
+
   async function onSubmit(data: FormData) {
     setServerError(null)
+
+    // Honeypot
+    if (data.website && data.website.length > 0) {
+      logger.warn('forgot-password blocked: honeypot triggered')
+      setSuccess(true) // mismo UX que success real — no le decimos al bot que lo detectamos
+      return
+    }
+    // Cooldown anti-bot por timing
+    if (Date.now() - formLoadedAt.current < MIN_TIME_TO_SUBMIT_MS) {
+      logger.warn('forgot-password blocked: too fast')
+      setServerError('Esperá un momento antes de enviar.')
+      return
+    }
+    // Cooldown post-request: solo permitir 1 reset cada 60s desde el mismo browser
+    try {
+      const cooldownUntil = Number(sessionStorage.getItem(COOLDOWN_KEY) ?? 0)
+      if (cooldownUntil > Date.now()) {
+        const secs = Math.ceil((cooldownUntil - Date.now()) / 1000)
+        setServerError(`Ya enviamos un email. Probá de nuevo en ${secs}s.`)
+        return
+      }
+    } catch { /* sessionStorage puede fallar */ }
+
     const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
       redirectTo: window.location.origin + '/reset-password',
     })
     if (error) { setServerError(error.message); return }
+    try { sessionStorage.setItem(COOLDOWN_KEY, String(Date.now() + COOLDOWN_SECONDS * 1000)) } catch { /* */ }
     setSuccess(true)
   }
 
@@ -89,6 +122,14 @@ export default function ForgotPassword() {
               </div>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                {/* Honeypot off-screen */}
+                <div
+                  aria-hidden="true"
+                  style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+                >
+                  <label htmlFor="fp_website">No completar</label>
+                  <input id="fp_website" type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
+                </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
                   <Input

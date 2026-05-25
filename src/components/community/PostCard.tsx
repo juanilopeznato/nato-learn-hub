@@ -143,12 +143,35 @@ export function PostCard({ post, currentProfileId, tenantId }: Props) {
         await supabase.from('community_reactions').insert({ post_id: post.id, profile_id: currentProfileId })
       }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['community-posts'] }),
-    onError: (e: Error) => toastError(
-      hasLiked ? 'No se pudo sacar el like' : 'No se pudo dar like',
-      e,
-      { retry: () => toggleLike.mutate() },
-    ),
+    // Optimistic update: la UI cambia instantáneamente, sin esperar el round trip
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['community-posts'] })
+      const snapshots = queryClient.getQueriesData({ queryKey: ['community-posts'] })
+      queryClient.setQueriesData<unknown>({ queryKey: ['community-posts'] }, (old) => {
+        if (!Array.isArray(old)) return old
+        return old.map((p) => {
+          if (!p || (p as { id: string }).id !== post.id) return p
+          const typed = p as { reactions: { profile_id: string }[] }
+          const newReactions = hasLiked
+            ? typed.reactions.filter(r => r.profile_id !== currentProfileId)
+            : [...typed.reactions, { profile_id: currentProfileId }]
+          return { ...typed, reactions: newReactions }
+        })
+      })
+      return { snapshots }
+    },
+    onError: (e: Error, _vars, ctx) => {
+      // Rollback al snapshot pre-mutation
+      if (ctx?.snapshots) {
+        for (const [key, data] of ctx.snapshots) queryClient.setQueryData(key, data)
+      }
+      toastError(
+        hasLiked ? 'No se pudo sacar el like' : 'No se pudo dar like',
+        e,
+        { retry: () => toggleLike.mutate() },
+      )
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['community-posts'] }),
   })
 
   return (
