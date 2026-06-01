@@ -325,6 +325,8 @@ export default function CourseDetail() {
   // Asegurar URL absoluta
   const seoImage = rawImage.startsWith('http') ? rawImage : `${origin}${rawImage.startsWith('/') ? '' : '/'}${rawImage}`
   const seoUrl = typeof window !== 'undefined' ? window.location.href : ''
+  // Schema.org Course enriquecido — Google rich snippets: rating, opiniones,
+  // instructor, modo de entrega, duración. Validable en https://search.google.com/test/rich-results
   const schemaOrg = course ? JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'Course',
@@ -335,7 +337,7 @@ export default function CourseDetail() {
     provider: {
       '@type': 'Organization',
       name: tenant?.name ?? 'NATO University',
-      url: typeof window !== 'undefined' ? window.location.origin : '',
+      sameAs: typeof window !== 'undefined' ? window.location.origin : '',
     },
     offers: {
       '@type': 'Offer',
@@ -343,9 +345,40 @@ export default function CourseDetail() {
       priceCurrency: 'ARS',
       availability: 'https://schema.org/InStock',
       url: seoUrl,
+      category: course.category ?? 'Education',
     },
-    numberOfCredits: totalLessons,
+    ...(avgRating !== null && reviews && reviews.length > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: avgRating.toFixed(1),
+        reviewCount: reviews.length,
+        bestRating: '5',
+        worstRating: '1',
+      },
+      review: reviews.slice(0, 5).map(r => ({
+        '@type': 'Review',
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: r.rating,
+          bestRating: '5',
+        },
+        author: {
+          '@type': 'Person',
+          name: r.reviewer?.full_name ?? 'Estudiante',
+        },
+        reviewBody: r.body ?? undefined,
+        datePublished: r.created_at,
+      })),
+    } : {}),
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'online',
+      courseWorkload: `PT${Math.max(1, Math.round(totalLessons * 0.25))}H`,
+      inLanguage: 'es-AR',
+    },
     educationalLevel: 'Beginner',
+    inLanguage: 'es-AR',
+    isAccessibleForFree: course.is_free ?? false,
   }) : null
 
   if (isLoading) return <CourseDetailSkeleton />

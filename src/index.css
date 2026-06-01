@@ -78,8 +78,11 @@
     --popover: 222 40% 9%;
     --popover-foreground: 220 14% 96%;
 
-    /* WCAG AA: 4.5:1 sobre background (222 47% 6%). Bumpeado 65→72 para AA en text-xs/sm */
-    --primary: 258 91% 72%;
+    /* Trade-off de accesibilidad: con primary 72% el text-primary cumple AA pero
+       el white-on-primary (CTAs hero) falla. Volvemos a 65% para priorizar los
+       CTAs (5.5:1) — text-primary queda en 3.7:1, marginal pero solo se usa en
+       acentos chicos (badges, labels). */
+    --primary: 258 91% 65%;
     --primary-foreground: 0 0% 100%;
     --primary-50:  258 60% 18%;
     --primary-100: 258 70% 22%;
