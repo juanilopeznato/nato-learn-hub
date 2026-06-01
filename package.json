@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/build-sitemap.mjs && vite build",
+    "build": "node scripts/build-sitemap.mjs && vite build && node scripts/postbuild.mjs",
     "build:dev": "vite build --mode development",
     "sitemap": "node scripts/build-sitemap.mjs",
     "build:stats": "BUNDLE_STATS=1 npm run build",

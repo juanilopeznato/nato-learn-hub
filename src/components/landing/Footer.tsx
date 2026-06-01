@@ -50,7 +50,7 @@ const Footer = () => {
 
           {/* Link columns */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Plataforma</h4>
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Plataforma</h3>
             <ul className="space-y-2.5 text-sm">
               {[
                 { to: '/courses', label: 'Catálogo' },
@@ -69,7 +69,7 @@ const Footer = () => {
           </div>
 
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Empresa</h4>
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Empresa</h3>
             <ul className="space-y-2.5 text-sm">
               {[
                 { href: 'https://natoglobal.com', label: 'Sobre NATO', external: true },
@@ -100,7 +100,7 @@ const Footer = () => {
           </div>
 
           <div className="lg:col-span-3">
-            <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Legal</h4>
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">Legal</h3>
             <ul className="space-y-2.5 text-sm">
               <li><Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacidad</Link></li>
               <li><Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Términos</Link></li>
