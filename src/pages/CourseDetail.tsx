@@ -629,15 +629,23 @@ export default function CourseDetail() {
                   <div className="border-t border-border/40 pt-4 space-y-2">
                     {[
                       'Acceso inmediato al contenido',
-                      'Certificado al completar',
+                      'Certificado verificable al completar',
                       'Comunidad de estudiantes',
                       'Recursos descargables',
+                      'Acceso desde celu o desktop',
+                      ...(course.is_free ? [] : ['Garantía de 30 días o devolvemos el dinero']),
                     ].map(item => (
                       <div key={item} className="flex items-center gap-2 text-xs text-foreground/70">
                         <CheckCircle className="w-3.5 h-3.5 text-accent shrink-0" />
                         {item}
                       </div>
                     ))}
+                    {!course.is_free && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 mt-1 border-t border-border/30">
+                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-sm bg-foreground/[0.06] shrink-0">🔒</span>
+                        Pago seguro con Mercado Pago
+                      </div>
+                    )}
                     {avgRating !== null && (
                       <a
                         href="#reviews"
@@ -645,7 +653,7 @@ export default function CourseDetail() {
                       >
                         <div className="flex">
                           {[1,2,3,4,5].map(s => (
-                            <Star key={s} className={`w-3 h-3 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                            <Star key={s} className={`w-3 h-3 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-border'}`} />
                           ))}
                         </div>
                         <span className="font-semibold text-foreground/85">{avgRating.toFixed(1)}</span>
@@ -671,7 +679,7 @@ export default function CourseDetail() {
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">¿Qué vas a aprender?</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {outcomes.filter(Boolean).map((outcome, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-accent/10 border border-green-100">
+                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-accent/10 border border-accent/20">
                       <CheckCircle className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                       <span className="text-sm text-foreground/85">{outcome}</span>
                     </div>
@@ -684,7 +692,7 @@ export default function CourseDetail() {
             {forWho && (
               <section>
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-4">¿Para quién es este curso?</h2>
-                <div className="bg-primary/10 border border-blue-100 rounded-xl p-6">
+                <div className="bg-primary/10 border border-primary/20 rounded-xl p-6">
                   <MarkdownLight className="text-foreground/85 leading-relaxed">{forWho}</MarkdownLight>
                 </div>
               </section>
@@ -800,7 +808,7 @@ export default function CourseDetail() {
                     <div className="flex items-center gap-1.5">
                       <div className="flex">
                         {[1,2,3,4,5].map(s => (
-                          <Star key={s} className={`w-4 h-4 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                          <Star key={s} className={`w-4 h-4 ${s <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-border'}`} />
                         ))}
                       </div>
                       <span className="text-sm font-semibold text-foreground/85">{avgRating.toFixed(1)}</span>
@@ -821,7 +829,7 @@ export default function CourseDetail() {
                           onMouseLeave={() => setReviewHover(0)}
                           onClick={() => setReviewRating(s)}
                         >
-                          <Star className={`w-7 h-7 transition-colors ${s <= (reviewHover || reviewRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                          <Star className={`w-7 h-7 transition-colors ${s <= (reviewHover || reviewRating) ? 'fill-yellow-400 text-yellow-400' : 'text-border'}`} />
                         </button>
                       ))}
                     </div>
@@ -858,7 +866,7 @@ export default function CourseDetail() {
                           <span className="text-sm font-semibold text-foreground">{r.reviewer?.full_name ?? 'Estudiante'}</span>
                           <div className="flex">
                             {[1,2,3,4,5].map(s => (
-                              <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                              <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-border'}`} />
                             ))}
                           </div>
                           <span className="text-xs text-muted-foreground/80">{new Date(r.created_at).toLocaleDateString('es-AR')}</span>
@@ -891,7 +899,7 @@ export default function CourseDetail() {
                           </span>
                         )}
                         {appliedCoupon && (
-                          <Badge className="bg-accent/10 text-accent border-green-100 text-xs">
+                          <Badge className="bg-accent/10 text-accent border-accent/20 text-xs">
                             {appliedCoupon.discount_type === 'percent' ? `${appliedCoupon.discount_value}% OFF` : 'DESCUENTO'}
                           </Badge>
                         )}
