@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
-import { Check, Zap, Shield, Clock, X } from 'lucide-react'
+import { Check, Zap, Shield, Clock, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useQuery } from '@tanstack/react-query'
@@ -16,6 +16,41 @@ const COST_COMPARISON = [
   { item: 'Certificados verificables', price: 'ARS 8,000' },
   { item: 'Comunidad integrada', price: 'ARS 12,000' },
   { item: 'Hosting + dominio', price: 'ARS 9,000' },
+]
+
+const FAQ = [
+  {
+    q: '¿Necesito poner tarjeta de crédito para empezar?',
+    a: 'No. El plan Free no requiere tarjeta. Probás todo gratis hasta que decidas escalar.',
+  },
+  {
+    q: '¿NATO se queda con un porcentaje de mis ventas?',
+    a: 'Sí, retenemos 5% sólo en el plan Free, y 0% en Creator y Business. La plata cae directo a tu cuenta de Mercado Pago.',
+  },
+  {
+    q: '¿Hay límite de alumnos?',
+    a: 'No. Todos los planes son ilimitados en cantidad de alumnos. La diferencia entre planes es el límite de cursos y features avanzadas.',
+  },
+  {
+    q: '¿Puedo migrar mis cursos desde otra plataforma?',
+    a: 'Sí. Te damos una mano con la migración inicial gratis. Subís los videos a Vimeo/YouTube y los conectás acá.',
+  },
+  {
+    q: '¿Cuándo me cobran si paso a un plan pago?',
+    a: 'El primer cobro es cuando confirmás el upgrade. Después es mensual el mismo día del mes. Cancelás cuando quieras desde tu panel.',
+  },
+  {
+    q: '¿Tengo dominio propio?',
+    a: 'En plan Creator y Business sí. Subís tu URL custom (tu-escuela.com) y la conectamos en 1 hora.',
+  },
+  {
+    q: '¿Qué pasa si cancelo el plan?',
+    a: 'Tus cursos y alumnos siguen accesibles en modo solo lectura. No perdés nada. Reactivás cuando quieras y volvés al ritmo anterior.',
+  },
+  {
+    q: '¿Cómo facturo a mis alumnos?',
+    a: 'Mercado Pago genera el comprobante de cada venta. Si necesitás factura A/B fiscal, integramos con AFIP via app de terceros (Talently o Contabilium).',
+  },
 ]
 
 interface Plan {
@@ -271,8 +306,32 @@ export default function Pricing() {
           </div>
         </div>
 
+        {/* FAQ */}
+        <div className="mt-16">
+          <div className="text-center mb-8">
+            <h2 className="font-heading text-display-md text-foreground tracking-tight">Preguntas frecuentes</h2>
+            <p className="text-body-sm text-muted-foreground mt-2">Las dudas más comunes antes de empezar.</p>
+          </div>
+          <div className="max-w-2xl mx-auto space-y-2">
+            {FAQ.map((item, i) => (
+              <details key={i} className="group rounded-xl border border-border/60 bg-card hover:border-border transition-colors overflow-hidden">
+                <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none">
+                  <span className="font-semibold text-foreground text-sm leading-snug">{item.q}</span>
+                  <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0 transition-transform group-open:rotate-180" aria-hidden />
+                </summary>
+                <div className="px-5 pb-5 -mt-1 text-sm text-muted-foreground leading-relaxed">
+                  {item.a}
+                </div>
+              </details>
+            ))}
+          </div>
+          <p className="text-center text-body-xs text-muted-foreground mt-8">
+            ¿Otra pregunta? Escribinos a <a href="mailto:hola@natoglobal.com" className="text-primary hover:underline">hola@natoglobal.com</a>
+          </p>
+        </div>
+
         {/* Footer note */}
-        <p className="text-center text-muted-foreground text-sm mt-8">
+        <p className="text-center text-muted-foreground text-sm mt-12 mb-8">
           Sin contratos. Cancelá cuando quieras. Precios en ARS.
         </p>
       </div>

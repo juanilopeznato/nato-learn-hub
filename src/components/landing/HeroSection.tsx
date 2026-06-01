@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles, Check } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 
 // Actualizá estos números con datos reales de la plataforma
@@ -9,6 +9,8 @@ const SOCIAL_PROOF = [
   { value: '3.200+', label: 'alumnos' },
   { value: 'ARS 14M', label: 'facturados' },
 ]
+
+const TRUST_POINTS = ['Sin tarjeta de crédito', 'Listo en 2 minutos', 'Primer curso publicado hoy']
 
 export default function HeroSection() {
   const { tenant, user } = useAuth()
@@ -56,7 +58,7 @@ export default function HeroSection() {
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-slide-up" style={{ animationDelay: '120ms' }}>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-5 animate-slide-up" style={{ animationDelay: '120ms' }}>
             {isMainPlatform ? (
               <>
                 {!user && (
@@ -87,6 +89,18 @@ export default function HeroSection() {
               </>
             )}
           </div>
+
+          {/* Trust microcopy */}
+          {isMainPlatform && !user && (
+            <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-14 text-body-xs text-muted-foreground animate-fade-in" style={{ animationDelay: '180ms' }}>
+              {TRUST_POINTS.map(point => (
+                <span key={point} className="inline-flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-accent" aria-hidden />
+                  {point}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Social proof solo en plataforma principal */}
           {isMainPlatform && (
