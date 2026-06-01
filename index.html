@@ -61,6 +61,42 @@
     <meta name="twitter:title" content="NATO University — Plataforma de cursos online">
     <meta name="twitter:description" content="Aprendé marketing digital, negocios y creación de contenido con NATO University. Cursos prácticos, certificados verificables y comunidad activa.">
 
+    <!-- Schema.org Organization para rich snippets en Google. Las páginas específicas (CourseDetail)
+         agregan Course/Review schema vía Helmet. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "NATO University",
+      "url": "https://natouniversity.lovable.app",
+      "logo": "https://natouniversity.lovable.app/nato-logo.png",
+      "description": "Plataforma de cursos online para creadores e instructores en español. Vendé tus cursos, cobrá con Mercado Pago, certificados verificables.",
+      "sameAs": [
+        "https://instagram.com/nato.global",
+        "https://linkedin.com/company/nato-global"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "AR"
+      },
+      "inLanguage": "es-AR"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "NATO University",
+      "url": "https://natouniversity.lovable.app",
+      "inLanguage": "es-AR",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://natouniversity.lovable.app/courses?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
     <!-- Fuentes — preconnect + load non-blocking. Saca el @import del CSS para
          no bloquear el render del shell. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
