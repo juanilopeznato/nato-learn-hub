@@ -302,7 +302,7 @@ export default function LessonView() {
   const isFreePreview = !enrollment && !!currentLesson.is_free_preview
 
   return (
-    <div className="min-h-screen bg-secondary/30 flex flex-col">
+    <div className="min-h-screen bg-secondary/30 flex flex-col pb-20 sm:pb-24">
       {/* Header glass */}
       <header className="glass-light z-40 shrink-0">
         <div className="container h-14 flex items-center gap-3">
@@ -467,8 +467,8 @@ export default function LessonView() {
         </div>
       </div>
 
-      {/* Sticky action bar — siempre visible */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border/60 shadow-lg">
+      {/* Sticky action bar — siempre visible. Safe-area-inset para iPhone notch */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border/60 shadow-lg pb-[env(safe-area-inset-bottom)]">
         <div className="container mx-auto px-4 h-16 flex items-center gap-3 max-w-5xl">
           {/* Anterior */}
           <Button
@@ -532,7 +532,7 @@ export default function LessonView() {
               size="sm"
               onClick={() => completeMutation.mutate()}
               disabled={completeMutation.isPending}
-              className="shrink-0 bg-accent hover:bg-green-700"
+              className="shrink-0 bg-accent hover:bg-accent/85"
             >
               <CheckCircle className="w-4 h-4" />
               {completeMutation.isPending ? 'Guardando...' : 'Completar'}

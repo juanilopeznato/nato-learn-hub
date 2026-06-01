@@ -406,7 +406,7 @@ export default function CourseDetail() {
   )
 
   return (
-    <div className="min-h-screen bg-card">
+    <div className="min-h-screen bg-card pb-24 lg:pb-0">
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
@@ -625,8 +625,8 @@ export default function CourseDetail() {
                                 : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
                             </span>
                           </div>
-                          <button onClick={removeCoupon} className="text-accent hover:text-accent">
-                            <X className="w-4 h-4" />
+                          <button onClick={removeCoupon} aria-label="Quitar cupón" className="text-accent hover:text-accent">
+                            <X className="w-4 h-4" aria-hidden />
                           </button>
                         </div>
                       ) : (
@@ -971,8 +971,8 @@ export default function CourseDetail() {
                               : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
                           </span>
                         </div>
-                        <button onClick={removeCoupon} className="text-accent hover:text-accent">
-                          <X className="w-4 h-4" />
+                        <button onClick={removeCoupon} aria-label="Quitar cupón" className="text-accent hover:text-accent">
+                          <X className="w-4 h-4" aria-hidden />
                         </button>
                       </div>
                     ) : (
@@ -1024,8 +1024,8 @@ export default function CourseDetail() {
         </div>
       </div>
 
-      {/* Mobile sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border/60 p-3 shadow-lg">
+      {/* Mobile sticky CTA — safe-area para iPhone notch */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border/60 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg">
         <Button
           variant="hero"
           size="lg"

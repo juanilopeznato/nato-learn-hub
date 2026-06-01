@@ -90,11 +90,11 @@ function CommissionCell({ tenantId, value, onSaved }: { tenantId: string; value:
         onKeyDown={e => { if (e.key === 'Enter') save.mutate(); if (e.key === 'Escape') setEditing(false) }}
       />
       <span className="text-muted-foreground text-xs">%</span>
-      <button onClick={() => save.mutate()} className="text-accent hover:text-accent/80">
-        <Check className="w-4 h-4" />
+      <button onClick={() => save.mutate()} aria-label="Guardar cambio" className="text-accent hover:text-accent/80">
+        <Check className="w-4 h-4" aria-hidden />
       </button>
-      <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-foreground/85">
-        <X className="w-4 h-4" />
+      <button onClick={() => setEditing(false)} aria-label="Cancelar edición" className="text-muted-foreground hover:text-foreground/85">
+        <X className="w-4 h-4" aria-hidden />
       </button>
     </div>
   )

@@ -320,7 +320,7 @@ export default function Courses() {
 
                   {/* Content */}
                   <div className="p-5 flex flex-col flex-1 space-y-3">
-                    <h2 className="font-heading text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors duration-150">
+                    <h2 className="font-heading text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors duration-150 line-clamp-2 min-h-[2.75rem]">
                       {course.title}
                     </h2>
                     {review && (

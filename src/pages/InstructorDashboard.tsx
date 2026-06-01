@@ -400,7 +400,7 @@ export default function InstructorDashboard() {
                           disabled={togglePublish.isPending}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                             course.is_published
-                              ? 'bg-accent/15 text-accent hover:bg-green-200'
+                              ? 'bg-accent/15 text-accent hover:bg-accent/25'
                               : 'bg-secondary text-muted-foreground hover:bg-border'
                           }`}
                         >

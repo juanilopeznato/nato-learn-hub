@@ -37,6 +37,7 @@ const CreateSchool = React.lazy(() => import("./pages/CreateSchool"));
 const MpOAuthCallback = React.lazy(() => import("./pages/MpOAuthCallback"));
 const Affiliates = React.lazy(() => import("./pages/Affiliates"));
 const Status = React.lazy(() => import("./pages/Status"));
+const Calendar = React.lazy(() => import("./pages/Calendar"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -99,6 +100,7 @@ const App = () => (
 
                 {/* Protegidas: comunidad y perfiles */}
                   <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                  <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
                   <Route path="/members/:profileId" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
 
                 {/* Protegidas: instructores */}

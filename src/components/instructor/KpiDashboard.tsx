@@ -188,7 +188,7 @@ export function KpiDashboard({ courseIds }: Props) {
             <h4 className="text-sm font-semibold text-foreground mb-4">Embudo de conversión</h4>
             {funnelData ? (() => {
               const steps = [
-                { icon: Eye, label: 'Visitas a la landing', value: funnelData.page_views ?? 0, color: 'bg-blue-500' },
+                { icon: Eye, label: 'Visitas a la landing', value: funnelData.page_views ?? 0, color: 'bg-primary' },
                 { icon: MousePointerClick, label: 'Clics en CTA', value: funnelData.cta_clicks ?? 0, color: 'bg-indigo-500' },
                 { icon: ShoppingCart, label: 'Inicio de checkout', value: funnelData.checkout_starts ?? 0, color: 'bg-violet-500' },
                 { icon: UserCheck, label: 'Inscriptos', value: funnelData.enrollments ?? 0, color: 'bg-primary' },

@@ -102,7 +102,7 @@ export function EnrolledCourseCard({
       {/* Content */}
       <div className="p-4 flex flex-col gap-3 flex-1">
         <div>
-          <h3 className="font-heading font-semibold text-foreground leading-snug text-sm">{courseTitle}</h3>
+          <h3 className="font-heading font-semibold text-foreground leading-snug text-sm line-clamp-2 min-h-[2.5rem]">{courseTitle}</h3>
           <p className="text-xs text-muted-foreground/80 mt-0.5">
             {completedLessons}/{totalLessons} lecciones completadas
           </p>
