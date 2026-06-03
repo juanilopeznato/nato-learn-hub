@@ -336,7 +336,12 @@ export default function LessonView() {
           {/* Left: video + actions */}
           <div className="flex-1 min-w-0 space-y-5">
             {currentLesson.video_url && currentLesson.video_provider ? (
-              <VideoEmbed videoUrl={currentLesson.video_url} videoProvider={currentLesson.video_provider} />
+              <VideoEmbed
+                videoUrl={currentLesson.video_url}
+                videoProvider={currentLesson.video_provider}
+                lessonId={currentLesson.id}
+                watermarkText={profile?.email ?? profile?.full_name ?? undefined}
+              />
             ) : (
               <div className="aspect-video bg-secondary rounded-xl flex items-center justify-center">
                 <p className="text-muted-foreground/80">Esta lección no tiene video.</p>
