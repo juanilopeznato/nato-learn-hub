@@ -201,6 +201,11 @@ export function ModuleList({ courseId }: Props) {
   // Módulo edit state — editar title + description + promise del módulo inline
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [editModuleValues, setEditModuleValues] = useState<{ title: string; description: string; promise: string }>({ title: '', description: '', promise: '' })
+
+  // Bulk URL import — pegar 25 URLs y asignarlas en orden M1L1 → M5L5
+  const [bulkImportOpen, setBulkImportOpen] = useState(false)
+  const [bulkUrls, setBulkUrls] = useState('')
+  const [bulkProvider, setBulkProvider] = useState<'youtube' | 'vimeo' | 'supabase'>('youtube')
   // ConfirmDialog state — un único dialog reusado para módulos y lecciones
   const [confirmState, setConfirmState] = useState<{ open: boolean; title: string; description?: string; onConfirm: () => void } | null>(null)
 
@@ -328,6 +333,44 @@ export function ModuleList({ courseId }: Props) {
     })
   }
 
+  // Bulk import: 1 URL por línea, asigna en orden M1L1 → M5L5
+  const bulkImport = useMutation({
+    mutationFn: async () => {
+      if (!modules) throw new Error('No hay módulos cargados')
+      const urls = bulkUrls.split('\n').map(s => s.trim()).filter(Boolean)
+      if (urls.length === 0) throw new Error('Pegá al menos 1 URL')
+
+      // Aplanar lecciones en orden estricto
+      const ordered = [...modules]
+        .sort((a, b) => a.order_index - b.order_index)
+        .flatMap(m => [...(m.lessons ?? [])].sort((a, b) => a.order_index - b.order_index))
+
+      if (urls.length > ordered.length) {
+        throw new Error(`Pegaste ${urls.length} URLs pero el curso solo tiene ${ordered.length} lecciones`)
+      }
+
+      // Actualizar en lote — paralelo de a 5 para no saturar
+      const results = await Promise.allSettled(
+        urls.map((url, i) =>
+          supabase.from('lessons').update({
+            video_url: url,
+            video_provider: bulkProvider,
+          }).eq('id', ordered[i].id)
+        )
+      )
+      const failed = results.filter(r => r.status === 'rejected').length
+      if (failed > 0) throw new Error(`${failed} de ${urls.length} fallaron`)
+      return urls.length
+    },
+    onSuccess: (count) => {
+      setBulkImportOpen(false)
+      setBulkUrls('')
+      queryClient.invalidateQueries({ queryKey: ['instructor-modules', courseId] })
+      toast.success(`${count} URLs asignadas a las lecciones`)
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
   const addLesson = useMutation({
     mutationFn: async (moduleId: string) => {
       const lesson = newLessons[moduleId]
@@ -406,7 +449,89 @@ export function ModuleList({ courseId }: Props) {
 
   return (
     <div className="space-y-3">
-      <h3 className="font-heading font-semibold text-foreground">Módulos y lecciones</h3>
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h3 className="font-heading font-semibold text-foreground">Módulos y lecciones</h3>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setBulkImportOpen(true)}
+          className="gap-2"
+        >
+          <Video className="w-3.5 h-3.5" />
+          Importar URLs en bulk
+        </Button>
+      </div>
+
+      {/* Modal bulk import — pegar 25 URLs y asignarlas en orden */}
+      {bulkImportOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 backdrop-blur-sm p-4"
+          onClick={() => setBulkImportOpen(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div>
+              <h2 className="font-heading text-lg font-bold text-foreground">Importar URLs en bulk</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Pegá <strong>una URL por línea</strong>, en el orden M1L1, M1L2, ..., M5L5. Se asignan automáticamente a cada lección.
+              </p>
+            </div>
+
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-xs text-foreground/80 space-y-1">
+              <p className="font-semibold text-primary">💡 Flujo recomendado:</p>
+              <ol className="list-decimal list-inside space-y-0.5 text-muted-foreground">
+                <li>Subí los videos a YouTube como Unlisted (en orden M1L1 → M5L5)</li>
+                <li>En YouTube Studio, abrí cada video → copiá el URL</li>
+                <li>Pegá las 25 URLs acá, una por línea</li>
+              </ol>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Provider</label>
+              <Select value={bulkProvider} onValueChange={v => setBulkProvider(v as 'youtube' | 'vimeo' | 'supabase')}>
+                <SelectTrigger className="h-9 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="youtube">YouTube</SelectItem>
+                  <SelectItem value="vimeo">Vimeo</SelectItem>
+                  <SelectItem value="supabase">Supabase Storage</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">URLs (una por línea)</label>
+              <textarea
+                value={bulkUrls}
+                onChange={e => setBulkUrls(e.target.value)}
+                rows={12}
+                placeholder={`https://youtu.be/abc123     ← M1L1\nhttps://youtu.be/def456     ← M1L2\nhttps://youtu.be/ghi789     ← M1L3\n...`}
+                className="w-full resize-y rounded-md border border-border bg-card px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+              />
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>{bulkUrls.split('\n').filter(s => s.trim()).length} URLs detectadas</span>
+                <span>{(modules ?? []).reduce((acc, m) => acc + (m.lessons?.length ?? 0), 0)} lecciones disponibles</span>
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={() => setBulkImportOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="hero"
+                onClick={() => bulkImport.mutate()}
+                disabled={bulkImport.isPending || !bulkUrls.trim()}
+              >
+                {bulkImport.isPending ? 'Asignando...' : 'Asignar URLs a lecciones'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleModuleDragEnd}>
         <SortableContext items={modules?.map(m => m.id) ?? []} strategy={verticalListSortingStrategy}>
