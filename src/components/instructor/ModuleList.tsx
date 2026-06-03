@@ -205,7 +205,7 @@ export function ModuleList({ courseId }: Props) {
     queryFn: async () => {
       const { data } = await supabase
         .from('modules')
-        .select('*, lessons (id, title, video_url, video_provider, order_index, is_free_preview)')
+        .select('*, lessons (id, title, description, body, video_url, video_provider, order_index, is_free_preview)')
         .eq('course_id', courseId)
         .order('order_index')
       return data ?? []
@@ -523,27 +523,62 @@ export function ModuleList({ courseId }: Props) {
                                 </div>
                               </div>
                             ) : (
-                              /* Display row */
+                              /* Display row — clickeable entero abre edit, badges visibles muestran qué tiene cargado */
                               <SortableLesson id={lesson.id}>
-                                <div className="flex items-center gap-3 bg-secondary/50 rounded-lg px-3 py-2 group">
-                                  <Video className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                  <span className="text-sm text-foreground/85 flex-1 truncate">{lesson.title}</span>
-                                  {lesson.is_free_preview && (
-                                    <span className="text-xs text-primary font-medium shrink-0">Preview</span>
-                                  )}
-                                  <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={() => startEdit(lesson)}
+                                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startEdit(lesson) } }}
+                                  className="flex items-start gap-3 bg-secondary/50 hover:bg-secondary border border-transparent hover:border-border/60 rounded-lg px-3 py-3 group cursor-pointer transition-colors"
+                                >
+                                  <Video className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" aria-hidden />
+                                  <div className="flex-1 min-w-0 space-y-1.5">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <span className="text-sm font-medium text-foreground line-clamp-1">{lesson.title}</span>
+                                      {lesson.is_free_preview && (
+                                        <span className="text-[10px] font-semibold text-primary bg-primary/10 border border-primary/20 rounded-full px-2 py-0.5 shrink-0 uppercase tracking-wide">
+                                          Preview
+                                        </span>
+                                      )}
+                                    </div>
+                                    {lesson.description ? (
+                                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                                        {lesson.description}
+                                      </p>
+                                    ) : (
+                                      <p className="text-xs text-muted-foreground/60 italic">Sin descripción · click para agregar</p>
+                                    )}
+                                    {/* Badges de lo que tiene cargado */}
+                                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md ${lesson.description ? 'bg-accent/10 text-accent' : 'bg-muted text-muted-foreground/60'}`}>
+                                        <FileText className="w-2.5 h-2.5" aria-hidden />
+                                        Desc
+                                      </span>
+                                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md ${lesson.body ? 'bg-accent/10 text-accent' : 'bg-muted text-muted-foreground/60'}`}>
+                                        <FileText className="w-2.5 h-2.5" aria-hidden />
+                                        Body
+                                      </span>
+                                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md ${lesson.video_url ? 'bg-accent/10 text-accent' : 'bg-destructive/10 text-destructive'}`}>
+                                        <Video className="w-2.5 h-2.5" aria-hidden />
+                                        {lesson.video_url ? 'Video' : 'Falta video'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="w-7 h-7 text-muted-foreground/80 hover:text-foreground/85"
+                                      className="w-8 h-8 text-muted-foreground hover:text-foreground"
+                                      aria-label={`Editar lección ${lesson.title}`}
                                       onClick={() => startEdit(lesson)}
                                     >
-                                      <Pencil className="w-3.5 h-3.5" />
+                                      <Pencil className="w-3.5 h-3.5" aria-hidden />
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="w-7 h-7 text-muted-foreground/80 hover:text-destructive"
+                                      className="w-8 h-8 text-muted-foreground hover:text-destructive"
                                       aria-label={`Eliminar lección ${lesson.title}`}
                                       onClick={() => setConfirmState({
                                         open: true,
@@ -552,7 +587,7 @@ export function ModuleList({ courseId }: Props) {
                                         onConfirm: () => deleteLesson.mutate(lesson.id),
                                       })}
                                     >
-                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <Trash2 className="w-3.5 h-3.5" aria-hidden />
                                     </Button>
                                   </div>
                                 </div>
