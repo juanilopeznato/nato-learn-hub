@@ -197,6 +197,10 @@ export function ModuleList({ courseId }: Props) {
   const [newLessons, setNewLessons] = useState<Record<string, { title: string; videoUrl: string; provider: string }>>({})
   const [editingLesson, setEditingLesson] = useState<string | null>(null)
   const [editValues, setEditValues] = useState<LessonEditState>({ title: '', description: '', body: '', videoUrl: '', provider: 'youtube', isFreePreview: false })
+
+  // Módulo edit state — editar title + description + promise del módulo inline
+  const [editingModule, setEditingModule] = useState<string | null>(null)
+  const [editModuleValues, setEditModuleValues] = useState<{ title: string; description: string; promise: string }>({ title: '', description: '', promise: '' })
   // ConfirmDialog state — un único dialog reusado para módulos y lecciones
   const [confirmState, setConfirmState] = useState<{ open: boolean; title: string; description?: string; onConfirm: () => void } | null>(null)
 
@@ -297,6 +301,33 @@ export function ModuleList({ courseId }: Props) {
     },
   })
 
+  const updateModule = useMutation({
+    mutationFn: async (moduleId: string) => {
+      if (!editModuleValues.title.trim()) throw new Error('Ingresá un título')
+      const { error } = await supabase.from('modules').update({
+        title: editModuleValues.title.trim(),
+        description: editModuleValues.description.trim() || null,
+        promise: editModuleValues.promise.trim() || null,
+      }).eq('id', moduleId)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      setEditingModule(null)
+      queryClient.invalidateQueries({ queryKey: ['instructor-modules', courseId] })
+      toast.success('Módulo guardado')
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  function startEditModule(module: { id: string; title: string; description?: string | null; promise?: string | null }) {
+    setEditingModule(module.id)
+    setEditModuleValues({
+      title: module.title,
+      description: module.description ?? '',
+      promise: module.promise ?? '',
+    })
+  }
+
   const addLesson = useMutation({
     mutationFn: async (moduleId: string) => {
       const lesson = newLessons[moduleId]
@@ -382,18 +413,105 @@ export function ModuleList({ courseId }: Props) {
           {modules?.map((module, moduleIdx) => (
             <SortableModule key={module.id} id={module.id}>
               <div className="bg-card border border-border/60 rounded-xl overflow-hidden ml-6 shadow-xs hover:border-border transition-colors">
-                <div className="flex items-center justify-between p-4 gap-2">
+                {editingModule === module.id ? (
+                  /* Edit form del módulo — title + description + promise */
+                  <div className="bg-primary/5 border-b border-primary/20 p-4 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="w-7 h-7 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 tabular-nums">
+                        {moduleIdx + 1}
+                      </span>
+                      <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">Editando módulo</span>
+                    </div>
+
+                    <Input
+                      autoFocus
+                      placeholder="Título del módulo"
+                      value={editModuleValues.title}
+                      onChange={e => setEditModuleValues(prev => ({ ...prev, title: e.target.value }))}
+                      className="h-9 text-sm font-semibold"
+                    />
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Descripción del módulo</label>
+                      <textarea
+                        placeholder="¿De qué se trata este módulo? (qué temas se cubren — máx 300 caracteres)"
+                        value={editModuleValues.description}
+                        onChange={e => setEditModuleValues(prev => ({ ...prev, description: e.target.value }))}
+                        rows={3}
+                        maxLength={350}
+                        className="w-full resize-none rounded-md border border-border/60 bg-card px-2.5 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+                      />
+                      <span className="text-[10px] text-muted-foreground tabular-nums">{editModuleValues.description.length}/350</span>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Transformación / Promesa</label>
+                      <Input
+                        placeholder="De [estado inicial] a [estado final] — ej: De vestirte por hábito, a usar tu imagen estratégicamente"
+                        value={editModuleValues.promise}
+                        onChange={e => setEditModuleValues(prev => ({ ...prev, promise: e.target.value }))}
+                        maxLength={180}
+                        className="h-9 text-sm italic"
+                      />
+                      <span className="text-[10px] text-muted-foreground tabular-nums">{editModuleValues.promise.length}/180</span>
+                    </div>
+
+                    <div className="flex gap-2 pt-1">
+                      <Button
+                        size="sm"
+                        variant="hero"
+                        className="h-8 text-xs gap-1"
+                        onClick={() => updateModule.mutate(module.id)}
+                        disabled={updateModule.isPending}
+                      >
+                        <Check className="w-3 h-3" />
+                        Guardar módulo
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 text-xs"
+                        onClick={() => setEditingModule(null)}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                <div className="flex items-start justify-between p-4 gap-2">
                   <button
-                    className="flex items-center gap-3 flex-1 text-left min-w-0"
+                    className="flex items-start gap-3 flex-1 text-left min-w-0"
                     onClick={() => toggleModule(module.id)}
                   >
-                    <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0 tabular-nums">
+                    <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0 tabular-nums mt-0.5">
                       {moduleIdx + 1}
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform shrink-0 ${expandedModules.has(module.id) ? 'rotate-180' : ''}`} />
-                    <span className="font-semibold text-foreground truncate">{module.title}</span>
-                    <span className="text-xs text-muted-foreground tabular-nums shrink-0">· {module.lessons?.length ?? 0} {(module.lessons?.length ?? 0) === 1 ? 'lección' : 'lecciones'}</span>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform shrink-0 mt-1.5 ${expandedModules.has(module.id) ? 'rotate-180' : ''}`} aria-hidden />
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-foreground line-clamp-1">{module.title}</span>
+                        <span className="text-xs text-muted-foreground tabular-nums shrink-0">· {module.lessons?.length ?? 0} {(module.lessons?.length ?? 0) === 1 ? 'lección' : 'lecciones'}</span>
+                      </div>
+                      {module.description ? (
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{module.description}</p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground/60 italic">Sin descripción · click "Editar" para agregarla</p>
+                      )}
+                      {module.promise && (
+                        <p className="text-[11px] text-primary/80 italic line-clamp-1">→ {module.promise}</p>
+                      )}
+                    </div>
                   </button>
+                  <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label={`Editar módulo ${module.title}`}
+                      onClick={() => startEditModule(module)}
+                    >
+                      <Pencil className="w-4 h-4" aria-hidden />
+                    </Button>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -413,7 +531,9 @@ export function ModuleList({ courseId }: Props) {
                   >
                     <Trash2 className="w-4 h-4" aria-hidden />
                   </Button>
+                  </div>
                 </div>
+                )}
 
                 {expandedModules.has(module.id) && (
                   <div className="border-t border-border/60 p-4 space-y-3">
