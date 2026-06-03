@@ -16,6 +16,7 @@ import { events } from '@/lib/analytics'
 import { toast } from 'sonner'
 import { toastError } from '@/lib/toast-helpers'
 import { LessonViewSkeleton } from '@/components/skeletons'
+import { MarkdownLight } from '@/components/MarkdownLight'
 
 export default function LessonView() {
   const { courseSlug, lessonId } = useParams<{ courseSlug: string; lessonId: string }>()
@@ -42,7 +43,7 @@ export default function LessonView() {
           id, title, slug,
           modules (
             id, title, order_index,
-            lessons (id, title, order_index, video_url, video_provider, duration_seconds, is_free_preview)
+            lessons (id, title, description, body, order_index, video_url, video_provider, duration_seconds, is_free_preview)
           )
         `)
         .eq('slug', courseSlug!)
@@ -363,15 +364,31 @@ export default function LessonView() {
               </div>
             )}
 
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="font-heading text-display-sm text-foreground tracking-tight">{currentLesson.title}</h1>
-              {isCompleted && (
-                <span className="flex items-center gap-1.5 text-xs text-accent bg-accent/10 border border-accent/20 rounded-full px-2.5 py-1 shrink-0 font-medium">
-                  <CheckCircle className="w-3.5 h-3.5" aria-hidden />
-                  Completada
-                </span>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="font-heading text-display-sm text-foreground tracking-tight">{currentLesson.title}</h1>
+                {isCompleted && (
+                  <span className="flex items-center gap-1.5 text-xs text-accent bg-accent/10 border border-accent/20 rounded-full px-2.5 py-1 shrink-0 font-medium">
+                    <CheckCircle className="w-3.5 h-3.5" aria-hidden />
+                    Completada
+                  </span>
+                )}
+              </div>
+              {currentLesson.description && (
+                <p className="text-body-md text-muted-foreground leading-relaxed max-w-3xl">
+                  {currentLesson.description}
+                </p>
               )}
             </div>
+
+            {/* Body de la lección — notas + conceptos + takeaways en markdown */}
+            {currentLesson.body && (
+              <article className="bg-card border border-border/60 rounded-2xl p-6 sm:p-8">
+                <MarkdownLight className="prose-lesson text-foreground/85 leading-relaxed">
+                  {currentLesson.body}
+                </MarkdownLight>
+              </article>
+            )}
 
             {/* Recursos */}
             {resources && resources.length > 0 && (

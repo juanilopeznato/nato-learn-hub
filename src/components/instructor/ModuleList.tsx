@@ -30,6 +30,8 @@ interface Props {
 
 interface LessonEditState {
   title: string
+  description: string
+  body: string
   videoUrl: string
   provider: string
   isFreePreview: boolean
@@ -194,7 +196,7 @@ export function ModuleList({ courseId }: Props) {
   const [newModuleTitle, setNewModuleTitle] = useState('')
   const [newLessons, setNewLessons] = useState<Record<string, { title: string; videoUrl: string; provider: string }>>({})
   const [editingLesson, setEditingLesson] = useState<string | null>(null)
-  const [editValues, setEditValues] = useState<LessonEditState>({ title: '', videoUrl: '', provider: 'youtube', isFreePreview: false })
+  const [editValues, setEditValues] = useState<LessonEditState>({ title: '', description: '', body: '', videoUrl: '', provider: 'youtube', isFreePreview: false })
   // ConfirmDialog state — un único dialog reusado para módulos y lecciones
   const [confirmState, setConfirmState] = useState<{ open: boolean; title: string; description?: string; onConfirm: () => void } | null>(null)
 
@@ -323,8 +325,10 @@ export function ModuleList({ courseId }: Props) {
       if (!editValues.title.trim()) throw new Error('Ingresá un título')
       const { error } = await supabase.from('lessons').update({
         title: editValues.title.trim(),
+        description: editValues.description.trim() || null,
+        body: editValues.body.trim() || null,
         video_url: editValues.videoUrl || null,
-        video_provider: (editValues.provider as 'youtube' | 'vimeo') || null,
+        video_provider: (editValues.provider as 'youtube' | 'vimeo' | 'supabase') || null,
         is_free_preview: editValues.isFreePreview,
       }).eq('id', lessonId)
       if (error) throw error
@@ -357,10 +361,12 @@ export function ModuleList({ courseId }: Props) {
     })
   }
 
-  function startEdit(lesson: { id: string; title: string; video_url: string | null; video_provider: string | null; is_free_preview: boolean | null }) {
+  function startEdit(lesson: { id: string; title: string; description?: string | null; body?: string | null; video_url: string | null; video_provider: string | null; is_free_preview: boolean | null }) {
     setEditingLesson(lesson.id)
     setEditValues({
       title: lesson.title,
+      description: lesson.description ?? '',
+      body: lesson.body ?? '',
       videoUrl: lesson.video_url ?? '',
       provider: lesson.video_provider ?? 'youtube',
       isFreePreview: lesson.is_free_preview ?? false,
@@ -425,15 +431,42 @@ export function ModuleList({ courseId }: Props) {
                           <div key={lesson.id}>
                             {editingLesson === lesson.id ? (
                               /* Edit form */
-                              <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 space-y-2">
+                              <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 space-y-3">
                                 <Input
                                   autoFocus
                                   placeholder="Título de la lección"
                                   value={editValues.title}
                                   onChange={e => setEditValues(prev => ({ ...prev, title: e.target.value }))}
-                                  className="h-8 text-sm"
+                                  className="h-9 text-sm font-medium"
                                 />
-                                <div className="flex gap-2">
+
+                                {/* Descripción corta — aparece antes del video */}
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Descripción corta</label>
+                                  <textarea
+                                    placeholder="Gancho de 1-2 líneas: ¿qué va a aprender el alumno en esta clase? (máx 200 caracteres)"
+                                    value={editValues.description}
+                                    onChange={e => setEditValues(prev => ({ ...prev, description: e.target.value }))}
+                                    rows={2}
+                                    maxLength={250}
+                                    className="w-full resize-none rounded-md border border-border/60 bg-card px-2.5 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+                                  />
+                                  <span className="text-[10px] text-muted-foreground tabular-nums">{editValues.description.length}/250</span>
+                                </div>
+
+                                {/* Body markdown — aparece debajo del video */}
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Explicación amigable (markdown)</label>
+                                  <textarea
+                                    placeholder={`Notas, conceptos clave y takeaways. Soporta markdown:\n\n## Lo que vas a aprender\n- Punto 1\n- Punto 2\n\n## Para reflexionar\n¿Pregunta clave?\n\n## Aplicalo ya\nAcción concreta para esta semana.`}
+                                    value={editValues.body}
+                                    onChange={e => setEditValues(prev => ({ ...prev, body: e.target.value }))}
+                                    rows={8}
+                                    className="w-full resize-y rounded-md border border-border/60 bg-card px-2.5 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 font-mono focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+                                  />
+                                </div>
+
+                                <div className="flex gap-2 pt-1">
                                   <Select
                                     value={editValues.provider}
                                     onValueChange={v => setEditValues(prev => ({ ...prev, provider: v }))}
@@ -442,12 +475,13 @@ export function ModuleList({ courseId }: Props) {
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
+                                      <SelectItem value="supabase">Supabase</SelectItem>
                                       <SelectItem value="youtube">YouTube</SelectItem>
                                       <SelectItem value="vimeo">Vimeo</SelectItem>
                                     </SelectContent>
                                   </Select>
                                   <Input
-                                    placeholder="URL del video"
+                                    placeholder={editValues.provider === 'supabase' ? 'path en bucket (auto)' : 'URL del video'}
                                     value={editValues.videoUrl}
                                     onChange={e => setEditValues(prev => ({ ...prev, videoUrl: e.target.value }))}
                                     className="flex-1 h-8 text-sm"
