@@ -38,6 +38,8 @@ const MpOAuthCallback = React.lazy(() => import("./pages/MpOAuthCallback"));
 const Affiliates = React.lazy(() => import("./pages/Affiliates"));
 const Status = React.lazy(() => import("./pages/Status"));
 const Calendar = React.lazy(() => import("./pages/Calendar"));
+const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = React.lazy(() => import("./pages/TermsOfService"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,6 +94,8 @@ const App = () => (
                   <Route path="/create-school" element={<CreateSchool />} />
                   <Route path="/mp-oauth-callback" element={<MpOAuthCallback />} />
                   <Route path="/status" element={<Status />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
 
                 {/* Protegidas: estudiantes */}
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

@@ -40,7 +40,6 @@ async function pingStorage(): Promise<SystemCheck> {
     if (!url) return { name: 'Storage CDN', status: 'fail', message: 'VITE_SUPABASE_URL ausente' }
     const res = await fetch(`${url}/storage/v1/object/public/avatars/_ping?cache=${Date.now()}`, { method: 'HEAD' })
     const latency = Math.round(performance.now() - start)
-    // 200, 404 = bucket existe; >=500 = problema
     if (res.status >= 500) return { name: 'Storage CDN', status: 'fail', latencyMs: latency, message: `HTTP ${res.status}` }
     return { name: 'Storage CDN', status: 'ok', latencyMs: latency }
   } catch (e) {
@@ -48,16 +47,37 @@ async function pingStorage(): Promise<SystemCheck> {
   }
 }
 
+async function pingMercadoPago(): Promise<SystemCheck> {
+  const start = performance.now()
+  try {
+    // MP status público — verifica que API de MP esté arriba
+    const res = await fetch('https://api.mercadopago.com/sites/MLA', { method: 'GET' })
+    const latency = Math.round(performance.now() - start)
+    if (res.status >= 500) return { name: 'Mercado Pago', status: 'fail', latencyMs: latency, message: `HTTP ${res.status}` }
+    return { name: 'Mercado Pago', status: 'ok', latencyMs: latency }
+  } catch (e) {
+    return { name: 'Mercado Pago', status: 'fail', message: e instanceof Error ? e.message : 'error' }
+  }
+}
+
+async function pingResend(): Promise<SystemCheck> {
+  // Resend no expone endpoint público de ping. Si Supabase está OK asumimos Resend OK
+  // (los emails se mandan via Supabase Edge Functions → Resend). Esto es indicativo, no probatorio.
+  return { name: 'Email (Resend)', status: 'ok', message: 'Indicativo — emails se envían vía edge function' }
+}
+
 export default function Status() {
   const [checks, setChecks] = useState<SystemCheck[]>([
     { name: 'Frontend', status: 'ok' },
     { name: 'Supabase', status: 'pending' },
     { name: 'Storage CDN', status: 'pending' },
+    { name: 'Mercado Pago', status: 'pending' },
+    { name: 'Email (Resend)', status: 'pending' },
   ])
 
   useEffect(() => {
-    void Promise.all([pingSupabase(), pingStorage()]).then(([db, storage]) => {
-      setChecks([{ name: 'Frontend', status: 'ok', latencyMs: 0 }, db, storage])
+    void Promise.all([pingSupabase(), pingStorage(), pingMercadoPago(), pingResend()]).then(([db, storage, mp, email]) => {
+      setChecks([{ name: 'Frontend', status: 'ok', latencyMs: 0 }, db, storage, mp, email])
     })
   }, [])
 

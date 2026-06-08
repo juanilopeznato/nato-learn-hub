@@ -111,9 +111,9 @@ export default function Pricing() {
             <p className="text-body-lg text-muted-foreground mb-6">
               Empezá gratis. Escalá cuando estés listo.
             </p>
-            <div className="inline-flex items-center gap-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5">
+            <div className="inline-flex items-center gap-2 text-xs font-medium text-accent bg-accent/10 border border-accent/20 rounded-full px-3 py-1.5">
               <Clock className="w-3.5 h-3.5 shrink-0" />
-              Precio early adopter garantizado hasta el 31 de mayo
+              Sin contratos · Cancelás cuando quieras
             </div>
           </div>
 
@@ -301,7 +301,9 @@ export default function Pricing() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-foreground font-semibold">Con NATO University Creator</span>
-              <span className="text-accent font-bold tabular-nums">Desde ARS 15.000/mes</span>
+              <span className="text-accent font-bold tabular-nums">
+                ARS {((plans?.find(p => p.name === 'creador')?.price_ars ?? 29900)).toLocaleString('es-AR')}/mes
+              </span>
             </div>
           </div>
         </div>

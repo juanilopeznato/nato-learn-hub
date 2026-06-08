@@ -15,6 +15,7 @@ const schema = z.object({
   fullName: z.string().min(2, 'Ingresá tu nombre'),
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Mínimo 6 caracteres'),
+  acceptTerms: z.boolean().refine(v => v === true, 'Tenés que aceptar los Términos y la Política de Privacidad para continuar'),
   // Honeypot — los bots rellenan todos los campos; humanos no lo ven
   website: z.string().max(0, 'Bot detectado').optional(),
 })
@@ -185,6 +186,20 @@ export default function Signup() {
               />
               {errors.password && <p className="text-xs text-destructive mt-1">{errors.password.message}</p>}
             </div>
+
+            {/* Aceptación TyC + Privacidad — required para compliance */}
+            <div className="flex items-start gap-2.5 pt-1">
+              <input
+                id="acceptTerms"
+                type="checkbox"
+                {...register('acceptTerms')}
+                className="mt-0.5 w-4 h-4 rounded border-border accent-primary cursor-pointer shrink-0"
+              />
+              <Label htmlFor="acceptTerms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                Acepto los <Link to="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Términos y Condiciones</Link> y la <Link to="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Política de Privacidad</Link>
+              </Label>
+            </div>
+            {errors.acceptTerms && <p className="text-xs text-destructive">{errors.acceptTerms.message}</p>}
 
             {serverError && (
               <div className="text-sm text-destructive bg-destructive/[0.06] border border-destructive/20 rounded-md px-3 py-2.5 animate-fade-in">

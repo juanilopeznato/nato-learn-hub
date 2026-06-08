@@ -311,9 +311,9 @@ export default function Courses() {
                         Destacado
                       </Badge>
                     )}
-                    {course.category && (
+                    {course.category && course.category !== 'otro' && (
                       <Badge size="sm" className="absolute top-3 right-3 bg-background/90 text-foreground backdrop-blur-sm capitalize border border-border/40">
-                        {course.category}
+                        {CATEGORIES.find(c => c.value === course.category)?.label ?? course.category}
                       </Badge>
                     )}
                   </div>
