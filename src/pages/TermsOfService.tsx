@@ -77,12 +77,15 @@ export default function TermsOfService() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-heading text-2xl font-bold text-foreground">5. Garantía de devolución (30 días)</h2>
+            <h2 className="font-heading text-2xl font-bold text-foreground">5. Derecho de arrepentimiento</h2>
             <p>
-              Tenés <strong>30 días corridos desde la fecha de compra</strong> para solicitar devolución total del dinero. Sin preguntas ni burocracia. Solo escribinos a {supportEmail} con el email de tu cuenta y procesamos el reembolso en un plazo máximo de 10 días hábiles a través del mismo medio de pago.
+              De acuerdo con el <strong>art. 34 de la Ley 24.240 de Defensa del Consumidor</strong>, tenés derecho a revocar la compra <strong>dentro de los 10 días corridos desde la fecha de adquisición o desde la primera entrega del bien o servicio</strong>, lo que ocurra después. Para ejercer este derecho, escribinos a <a href={`mailto:${supportEmail}`} className="text-primary hover:underline">{supportEmail}</a> con el email de tu cuenta.
             </p>
-            <p className="text-sm text-muted-foreground">
-              Esta garantía es ADICIONAL al derecho de arrepentimiento establecido por el art. 34 de la Ley 24.240 (10 días corridos), no lo reemplaza.
+            <p>
+              <strong>Importante sobre cursos digitales:</strong> en cumplimiento del art. 1.116 inc. b del Código Civil y Comercial y la doctrina aplicable, el derecho de arrepentimiento no es aplicable cuando ya hayas accedido al contenido digital (videos, descargas, materiales) — el consumo del bien digital implica el inicio de la ejecución del servicio. Si no consumiste contenido todavía, el reembolso procede al 100%.
+            </p>
+            <p className="text-sm text-muted-foreground italic">
+              Plazo de reembolso: hasta 10 días hábiles, por el mismo medio de pago usado en la compra.
             </p>
           </section>
 

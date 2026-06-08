@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
-import { Check, Zap, Shield, Clock, X, ChevronDown } from 'lucide-react'
+import { Check, Zap, Clock, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useQuery } from '@tanstack/react-query'
@@ -267,17 +267,6 @@ export default function Pricing() {
             })}
           </div>
         )}
-
-        {/* Garantía */}
-        <div className="mt-12 rounded-2xl border border-accent/20 bg-accent/[0.04] p-7 text-center">
-          <div className="w-12 h-12 rounded-xl bg-accent/10 mx-auto mb-3 flex items-center justify-center">
-            <Shield className="w-6 h-6 text-accent" aria-hidden />
-          </div>
-          <h3 className="font-heading text-display-sm text-foreground mb-2">Garantía de 30 días</h3>
-          <p className="text-body-sm text-muted-foreground max-w-md mx-auto">
-            Si en los primeros 30 días no vendés tu primer curso, te devolvemos el dinero. Sin preguntas, sin burocracia.
-          </p>
-        </div>
 
         {/* Value stack — cuánto costaría hacerlo solo */}
         <div className="mt-8 rounded-2xl border border-border/60 bg-card p-7">

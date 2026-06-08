@@ -654,7 +654,9 @@ export default function CourseDetail() {
                       'Comunidad de estudiantes',
                       'Recursos descargables',
                       'Acceso desde celu o desktop',
-                      ...(course.is_free ? [] : ['Garantía de 30 días o devolvemos el dinero']),
+                      // (Sin garantía promocional — el derecho de arrepentimiento de 10 días
+                      //  de la Ley 24.240 aplica por defecto pero no se promueve como gancho)
+                      ...(course.is_free ? [] : []),
                     ].map(item => (
                       <div key={item} className="flex items-center gap-2 text-xs text-foreground/70">
                         <CheckCircle className="w-3.5 h-3.5 text-accent shrink-0" />
