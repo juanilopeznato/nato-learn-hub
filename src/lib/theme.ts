@@ -12,10 +12,11 @@ export type Theme = 'light' | 'dark' | 'system'
 const STORAGE_KEY = 'nato_theme'
 
 export function getStoredTheme(): Theme {
-  if (typeof window === 'undefined') return 'system'
+  if (typeof window === 'undefined') return 'light'
   const v = localStorage.getItem(STORAGE_KEY)
   if (v === 'light' || v === 'dark' || v === 'system') return v
-  return 'system'
+  // Default: light. La marca está diseñada para verse en claro; dark es opcional.
+  return 'light'
 }
 
 export function setStoredTheme(theme: Theme): void {

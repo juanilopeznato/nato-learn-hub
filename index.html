@@ -15,7 +15,9 @@
     <script>
       (function () {
         try {
-          var t = localStorage.getItem('nato_theme') || 'system';
+          // Default: light. Solo entra a dark si el user lo eligió explícito,
+          // o si eligió 'system' y su OS está en dark.
+          var t = localStorage.getItem('nato_theme') || 'light';
           var dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
           if (dark) {
             document.documentElement.classList.add('dark');
