@@ -61,7 +61,10 @@ export default function CourseDetail() {
   const [expandedFaq, setExpandedFaq] = useState<Set<number>>(new Set())
   const [stickyVisible, setStickyVisible] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
-  const [installments, setInstallments] = useState(1)
+  // Mantenemos installments=1 como default — no ofrecemos "cuotas sin interés" en la app
+  // por la comisión MP de 25-30%. El cliente puede pagar en cuotas con interés del banco
+  // directamente en el checkout de MP sin costo extra para el vendedor.
+  const installments = 1
   const [couponInput, setCouponInput] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<{ id: string; code: string; discount_type: string; discount_value: number } | null>(null)
   const [couponLoading, setCouponLoading] = useState(false)
@@ -223,7 +226,9 @@ export default function CourseDetail() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session?.access_token}`,
           },
-          body: JSON.stringify({ course_id: course.id, coupon_code: appliedCoupon?.code ?? undefined, installments }),
+          // installments=1 → MP igualmente le ofrece al cliente "cuotas con interés del banco"
+          // en su propio checkout, sin que el vendedor pague costos extra de financiación.
+          body: JSON.stringify({ course_id: course.id, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 }),
         }
       )
       const data = await res.json()
@@ -564,31 +569,14 @@ export default function CourseDetail() {
                     )}
                   </div>
 
-                  {/* Selector de cuotas — solo cursos pagos sin enrollment */}
+                  {/* Pago — sin "cuotas sin interés" en la app (comisión MP 28% es asesina).
+                       El cliente puede pagar en cuotas con interés del banco directo en el
+                       checkout de Mercado Pago, sin que el vendedor pague costos extra. */}
                   {!enrollment && !course.is_free && (
-                    <div className="space-y-2">
-                      <p className="text-eyebrow text-muted-foreground uppercase">Pagá en cuotas</p>
-                      <div className="grid grid-cols-4 gap-1.5">
-                        {[1, 3, 6, 12].map(n => (
-                          <button
-                            type="button"
-                            key={n}
-                            onClick={() => setInstallments(n)}
-                            className={`rounded-md border py-2 text-xs font-semibold transition-all duration-200 ease-apple ${
-                              installments === n
-                                ? 'border-primary bg-primary/10 text-primary shadow-xs'
-                                : 'border-border bg-background text-foreground hover:border-primary/40'
-                            }`}
-                          >
-                            {n === 1 ? '1 pago' : `${n}x`}
-                          </button>
-                        ))}
-                      </div>
-                      {installments > 1 && (
-                        <p className="text-xs text-muted-foreground text-center tabular-nums">
-                          {installments} cuotas de ARS {Math.ceil(discountedPrice / installments).toLocaleString('es-AR')}
-                        </p>
-                      )}
+                    <div className="rounded-md bg-secondary/40 border border-border/40 p-3 text-xs text-muted-foreground leading-relaxed">
+                      <p>
+                        <span className="font-semibold text-foreground">Pago único.</span> Si querés, podés pagar en cuotas con interés del banco al elegir tu tarjeta en el siguiente paso.
+                      </p>
                     </div>
                   )}
 
