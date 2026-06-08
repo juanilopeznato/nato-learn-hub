@@ -914,22 +914,28 @@ export default function CourseDetail() {
                         <span className="font-heading text-3xl font-bold text-foreground">
                           ARS {discountedPrice.toLocaleString('es-AR')}
                         </span>
-                        {(appliedCoupon || originalPrice > 0) && (
-                          <span className="text-muted-foreground/80 text-lg line-through">
+                        {appliedCoupon ? (
+                          // Hay cupón aplicado → tachado el precio de lista (course.price)
+                          <span className="text-muted-foreground/80 text-lg line-through tabular-nums">
                             ARS {Number(course.price).toLocaleString('es-AR')}
                           </span>
-                        )}
+                        ) : originalPrice > 0 ? (
+                          // Sin cupón pero con precio regular → tachado el regular (originalPrice)
+                          <span className="text-muted-foreground/80 text-lg line-through tabular-nums">
+                            ARS {originalPrice.toLocaleString('es-AR')}
+                          </span>
+                        ) : null}
                         {appliedCoupon && (
                           <Badge className="bg-accent/10 text-accent border-accent/20 text-xs">
                             {appliedCoupon.discount_type === 'percent' ? `${appliedCoupon.discount_value}% OFF` : 'DESCUENTO'}
                           </Badge>
                         )}
+                        {!appliedCoupon && originalPrice > 0 && (
+                          <Badge className="bg-accent/10 text-accent border-accent/20 text-xs">
+                            {Math.round((1 - Number(course.price) / originalPrice) * 100)}% OFF
+                          </Badge>
+                        )}
                       </div>
-                      {originalPrice > 0 && !appliedCoupon && (
-                        <p className="text-sm text-muted-foreground/80 line-through">
-                          Antes ARS {originalPrice.toLocaleString('es-AR')}
-                        </p>
-                      )}
                     </div>
                   )}
                 </div>
