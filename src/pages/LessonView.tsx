@@ -561,7 +561,7 @@ export default function LessonView() {
             )
           ) : (
             <Button
-              variant="hero"
+              variant="accent"
               size="sm"
               onClick={async () => {
                 // Completa la lección y, si hay próxima, avanza automáticamente.
@@ -572,7 +572,7 @@ export default function LessonView() {
                 } catch { /* el onError de la mutation ya muestra el toast */ }
               }}
               disabled={completeMutation.isPending}
-              className="shrink-0 bg-accent hover:bg-accent/85"
+              className="shrink-0"
             >
               <CheckCircle className="w-4 h-4" />
               {completeMutation.isPending

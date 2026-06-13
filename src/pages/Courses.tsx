@@ -57,12 +57,13 @@ function CourseCardSkeleton() {
 }
 
 function CourseInitialGradient({ title }: { title: string }) {
+  // Gradientes derivados de la paleta de marca (púrpura + verde NATO), no colores random
   const gradients = [
-    'from-yellow-400 to-orange-500',
-    'from-primary to-yellow-300',
-    'from-orange-400 to-rose-400',
-    'from-amber-400 to-yellow-500',
-    'from-violet-500 to-primary',
+    'from-primary to-accent',
+    'from-primary via-primary/80 to-accent/70',
+    'from-accent to-primary',
+    'from-primary to-[hsl(280_80%_55%)]',
+    'from-[hsl(280_80%_55%)] to-accent',
   ]
   const idx = title.charCodeAt(0) % gradients.length
   return (

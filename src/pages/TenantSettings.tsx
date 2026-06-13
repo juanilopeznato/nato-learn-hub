@@ -266,6 +266,12 @@ export default function TenantSettings() {
   const currentPlanName = tenantExtras?.plan_name ?? 'gratis'
   const planExpiresAt = tenantExtras?.plan_expires_at ?? null
 
+  // Comisión EFECTIVA: override del tenant > comisión del plan > 5% default.
+  // Evita mostrar "5%" hardcodeado cuando la realidad puede ser otra (riesgo de disputa).
+  const tenantCommissionOverride = (tenant as (typeof tenant & { commission_pct_override?: number | null }) | null)?.commission_pct_override
+  const currentPlanCommission = (plans ?? []).find(p => p.name === currentPlanName)?.commission_pct
+  const effectiveCommission = tenantCommissionOverride ?? currentPlanCommission ?? 5
+
   return (
     <div className="min-h-screen bg-secondary/30">
       <header className="glass-light sticky top-0 z-40">
@@ -403,7 +409,7 @@ export default function TenantSettings() {
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Cada venta va directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-foreground/85">5% de comisión</strong> automáticamente en cada cobro.
+                  Cada venta va directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-foreground/85">{effectiveCommission}% de comisión</strong> automáticamente en cada cobro.
                 </p>
               </div>
             ) : (
@@ -417,7 +423,7 @@ export default function TenantSettings() {
                   {[
                     { n: '1', text: 'Hacé clic en el botón de abajo' },
                     { n: '2', text: 'Iniciá sesión en Mercado Pago y autorizá a NATO University' },
-                    { n: '3', text: 'Listo — cada venta va directo a tu cuenta, NATO retiene el 5% automáticamente' },
+                    { n: '3', text: `Listo — cada venta va directo a tu cuenta, NATO retiene el ${effectiveCommission}% automáticamente` },
                   ].map(step => (
                     <li key={step.n} className="flex items-center gap-3">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">{step.n}</span>

@@ -683,7 +683,7 @@ export default function CourseDetail() {
                     ))}
                     {!course.is_free && (
                       <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 mt-1 border-t border-border/30">
-                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-sm bg-foreground/[0.06] shrink-0">🔒</span>
+                        <Lock className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" aria-hidden />
                         Pago seguro con Mercado Pago
                       </div>
                     )}
