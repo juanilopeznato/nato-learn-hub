@@ -23,7 +23,7 @@ export default function HowItWorks() {
     <section className="py-24 lg:py-32 bg-background border-b border-border/40">
       <div className="container max-w-6xl">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-eyebrow text-primary uppercase block mb-3">
+          <span className="font-serif italic text-xl text-primary block mb-2">
             Simple desde el día uno
           </span>
           <h2 className="font-heading text-display-md md:text-display-lg text-foreground mb-4">

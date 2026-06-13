@@ -29,7 +29,7 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ease-apple ${
-        scrolled ? 'glass-light shadow-xs' : 'bg-transparent'
+        scrolled ? 'bg-background/95 backdrop-blur-sm border-b border-border/60' : 'bg-transparent'
       }`}
     >
       <div className="container flex items-center justify-between h-16">
@@ -105,7 +105,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden glass-light border-t border-border/40 px-6 py-4 space-y-1 animate-fade-in">
+        <div className="md:hidden bg-background border-t border-border/60 px-6 py-4 space-y-1 animate-fade-in">
           {[
             { href: '#courses', label: 'Cursos' },
             { to: '/courses', label: 'Catálogo' },
