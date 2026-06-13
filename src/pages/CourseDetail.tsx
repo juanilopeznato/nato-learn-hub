@@ -340,7 +340,7 @@ export default function CourseDetail() {
 
   // Contenido del botón de compra con spinner inline cuando está procesando
   const ctaPending = enrollMutation.isPending || buyMutation.isPending
-  const ctaContent = <>{ctaPending && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}{ctaContent}</>
+  const ctaContent = <>{ctaPending && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}{ctaLabel}</>
 
   // SEO — construido antes del return para que Helmet lo procese siempre.
   // OG image debe ser URL ABSOLUTA o WhatsApp/Telegram/iOS no la cargan.

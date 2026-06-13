@@ -463,13 +463,13 @@ export default function InstructorCoursePage() {
                           ? ['Estudiante', 'Progreso', 'Última actividad', 'Inactividad'].map(h => (
                               <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">{h}</th>
                             ))
-                          : ['Estudiante', 'Estado', 'Progreso', 'Inscripto'].map(h => (
+                          : ['Estudiante', 'Estado', 'Monto', 'Progreso', 'Inscripto'].map(h => (
                               <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wide">{h}</th>
                             ))
                         }
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-border/50">
                       {displayedEnrollments.map(enrollment => {
                         const student = enrollment.student
                         const progress = progressData?.[enrollment.id] ?? 0
@@ -511,7 +511,7 @@ export default function InstructorCoursePage() {
                                   {(() => {
                                     const color = days === null ? 'bg-secondary text-muted-foreground'
                                       : days >= 7 ? 'bg-destructive/15 text-destructive'
-                                      : 'bg-orange-100 text-orange-700'
+                                      : 'bg-warning/15 text-warning'
                                     return (
                                       <span className={`text-xs font-semibold px-2 py-1 rounded-full ${color}`}>
                                         {days === null ? 'Sin actividad' : `${days} días`}
@@ -526,6 +526,11 @@ export default function InstructorCoursePage() {
                                   <Badge variant={enrollment.mp_status === 'approved' ? 'default' : 'secondary'} className="text-xs">
                                     {enrollment.mp_status === 'free' ? 'Gratis' : enrollment.mp_status === 'approved' ? 'Pagado' : enrollment.mp_status}
                                   </Badge>
+                                </td>
+                                <td className="px-4 py-3 text-sm font-medium text-foreground tabular-nums whitespace-nowrap">
+                                  {enrollment.amount_paid && enrollment.amount_paid > 0
+                                    ? `ARS ${Number(enrollment.amount_paid).toLocaleString('es-AR')}`
+                                    : <span className="text-muted-foreground/60">—</span>}
                                 </td>
                                 <td className="px-4 py-3">
                                   <div className="flex items-center gap-2 min-w-[100px]">
@@ -666,7 +671,7 @@ export default function InstructorCoursePage() {
                               ))}
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-gray-100">
+                          <tbody className="divide-y divide-border/50">
                             {coupons.map(c => (
                               <tr key={c.id} className="hover:bg-secondary/30">
                                 <td className="px-4 py-3 font-mono font-semibold text-foreground text-xs">{c.code}</td>

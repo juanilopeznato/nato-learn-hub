@@ -35,6 +35,10 @@
     --accent: 163 56% 52%;
     --accent-foreground: 0 0% 100%;
 
+    /* Warning ámbar — alertas no destructivas (inactividad, plan por vencer) */
+    --warning: 38 92% 45%;
+    --warning-foreground: 0 0% 100%;
+
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
@@ -97,6 +101,10 @@
 
     --accent: 163 71% 52%;
     --accent-foreground: 222 47% 6%;
+
+    /* Warning ámbar (dark) — un poco más luminoso para contraste */
+    --warning: 38 95% 58%;
+    --warning-foreground: 222 47% 6%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
