@@ -6,16 +6,17 @@
 
 @layer base {
   :root {
-    /* Background: white casi puro. Foreground gray casi negro pero no negro
-       puro (más cálido) para reducir contraste fatigante. */
+    /* Background blanco. Neutros NEUTROS (croma 0): antes tenían tinte slate-azul
+       (hue 222) que daba el aire "tech SaaS genérico" y peleaba con marcas cálidas.
+       Toda la calidez la lleva el color de marca per-tenant, no el lienzo. */
     --background: 0 0% 100%;
-    --foreground: 222 15% 13%;
+    --foreground: 0 0% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 15% 13%;
+    --card-foreground: 0 0% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 15% 13%;
+    --popover-foreground: 0 0% 11%;
 
     /* Primary púrpura NATO. Variantes 50/100/200 para soft backgrounds */
     --primary: 258 91% 55%;
@@ -24,12 +25,13 @@
     --primary-100: 258 95% 93%;
     --primary-200: 258 90% 86%;
 
-    /* Secondary: gris cálido casi imperceptible para fondos chip/badge */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 15% 13%;
+    /* Secondary: gris neutro para fondos chip/badge */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 11%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 0 0% 96%;
+    /* 46→40%: neutro + un poco más oscuro para AA en texto secundario */
+    --muted-foreground: 0 0% 40%;
 
     /* Accent verde NATO */
     --accent: 163 56% 52%;
@@ -42,9 +44,9 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Border más sutil que antes (gray-200/60) */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    /* Border neutro (sin tinte slate) */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
     --ring: 258 91% 55%;
 
     /* Radius default subido a 14px (lg de tailwind) */
