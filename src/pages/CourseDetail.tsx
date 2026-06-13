@@ -8,6 +8,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
@@ -69,6 +71,10 @@ export default function CourseDetail() {
   const [appliedCoupon, setAppliedCoupon] = useState<{ id: string; code: string; discount_type: string; discount_value: number } | null>(null)
   const [couponLoading, setCouponLoading] = useState(false)
   const [couponError, setCouponError] = useState('')
+  // Guest checkout — comprar sin crear cuenta (clave para el QR del evento)
+  const [guestOpen, setGuestOpen] = useState(false)
+  const [guestName, setGuestName] = useState('')
+  const [guestEmail, setGuestEmail] = useState('')
   const [reviewRating, setReviewRating] = useState(0)
   const [reviewHover, setReviewHover] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
@@ -272,6 +278,42 @@ export default function CourseDetail() {
     onError: (e: Error) => toast.error(e.message),
   })
 
+  // Guest checkout: paga sin sesión. La edge function crea/encuentra el usuario+profile,
+  // arma el enrollment pendiente y devuelve el init_point de MP. Tras pagar, el webhook
+  // le manda un mail de bienvenida con magic link de acceso passwordless.
+  const guestMutation = useMutation({
+    mutationFn: async () => {
+      if (!course) throw new Error('Curso no disponible')
+      const email = guestEmail.trim().toLowerCase()
+      const full_name = guestName.trim()
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Ingresá un email válido')
+      if (full_name.length < 2) throw new Error('Ingresá tu nombre')
+      const { data, error } = await supabase.functions.invoke('create-guest-preference', {
+        body: { course_id: course.id, email, full_name, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 },
+      })
+      if (error) {
+        // El cuerpo de error de invoke viene en error.context cuando el status no es 2xx
+        let code = ''
+        try { code = (await (error as { context?: Response }).context?.json())?.error ?? '' } catch { /* noop */ }
+        if (code === 'already_enrolled') throw new Error('Ya tenés este curso con ese email. Iniciá sesión para verlo.')
+        throw new Error('No pudimos iniciar el pago. Probá de nuevo en un momento.')
+      }
+      if (data?.error) {
+        if (data.error === 'already_enrolled') throw new Error('Ya tenés este curso con ese email. Iniciá sesión para verlo.')
+        throw new Error('No pudimos iniciar el pago. Probá de nuevo.')
+      }
+      if (!data?.init_point) throw new Error('No pudimos iniciar el pago. Probá de nuevo.')
+      return data.init_point as string
+    },
+    onSuccess: (initPoint) => {
+      trackCheckoutStart()
+      fbTrack('InitiateCheckout', { content_name: course?.title, value: discountedPrice, currency: 'ARS' })
+      events.checkoutStarted({ course: course?.slug, value: discountedPrice })
+      window.location.href = initPoint
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
   async function applyCouponCode(rawCode: string, { silent = false } = {}) {
     if (!rawCode.trim() || !course) return
     setCouponLoading(true)
@@ -355,8 +397,19 @@ export default function CourseDetail() {
 
   function handleCTA() {
     // Guard contra double-click — si una mutation ya está en curso, no disparar otra
-    if (enrollMutation.isPending || buyMutation.isPending) return
-    if (!user) { navigate(`/login?redirect=/courses/${slug}`); return }
+    if (enrollMutation.isPending || buyMutation.isPending || guestMutation.isPending) return
+    if (!user) {
+      // Curso pago + visitante sin sesión → guest checkout (sin crear cuenta).
+      // Curso gratis → necesita cuenta sí o sí, lo mandamos a login.
+      if (billingType !== 'free') {
+        trackCtaClick()
+        fbTrack('AddToCart', { content_name: course?.title, value: Number(course?.price ?? 0), currency: 'ARS' })
+        setGuestOpen(true)
+      } else {
+        navigate(`/login?redirect=/courses/${slug}`)
+      }
+      return
+    }
     if (enrollment) {
       const first = sortedModules[0]?.lessons?.sort((a, b) => a.order_index - b.order_index)[0]
       if (first) navigate(`/learn/${slug}/${first.id}`)
@@ -379,7 +432,7 @@ export default function CourseDetail() {
     : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${discountedPrice.toLocaleString('es-AR')}`)
 
   // Contenido del botón de compra con spinner inline cuando está procesando
-  const ctaPending = enrollMutation.isPending || buyMutation.isPending
+  const ctaPending = enrollMutation.isPending || buyMutation.isPending || guestMutation.isPending
   const ctaContent = <>{ctaPending && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}{ctaLabel}</>
 
   // SEO — construido antes del return para que Helmet lo procese siempre.
@@ -760,7 +813,9 @@ export default function CourseDetail() {
 
                   {!user && (
                     <p className="text-xs text-center text-muted-foreground">
-                      <Link to="/login" className="text-primary hover:underline">Iniciá sesión</Link> para inscribirte
+                      {billingType === 'free'
+                        ? <><Link to="/login" className="text-primary hover:underline">Iniciá sesión</Link> para inscribirte</>
+                        : <>No hace falta crear cuenta. ¿Ya tenés una? <Link to={`/login?redirect=/courses/${slug}`} className="text-primary hover:underline">Iniciá sesión</Link></>}
                     </p>
                   )}
 
@@ -1181,6 +1236,58 @@ export default function CourseDetail() {
           </div>
         </div>
       )}
+
+      {/* Guest checkout — comprar sin crear cuenta (QR del evento) */}
+      <Dialog open={guestOpen} onOpenChange={(o) => { if (!guestMutation.isPending) setGuestOpen(o) }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Comprar — ARS {discountedPrice.toLocaleString('es-AR')}</DialogTitle>
+            <DialogDescription>
+              Dejanos tu nombre y email. No hace falta crear cuenta: después de pagar te
+              llega un mail con el acceso directo al curso.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => { e.preventDefault(); guestMutation.mutate() }}
+            className="space-y-4 pt-2"
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="guest-name">Nombre y apellido</Label>
+              <Input
+                id="guest-name"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                placeholder="Tu nombre"
+                autoComplete="name"
+                disabled={guestMutation.isPending}
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="guest-email">Email</Label>
+              <Input
+                id="guest-email"
+                type="email"
+                value={guestEmail}
+                onChange={(e) => setGuestEmail(e.target.value)}
+                placeholder="tu@email.com"
+                autoComplete="email"
+                inputMode="email"
+                disabled={guestMutation.isPending}
+                required
+              />
+              <p className="text-xs text-muted-foreground">A este mail te mandamos el acceso. Revisá que esté bien escrito.</p>
+            </div>
+            <Button type="submit" variant="hero" size="lg" className="w-full" disabled={guestMutation.isPending}>
+              {guestMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}
+              {guestMutation.isPending ? 'Redirigiendo...' : 'Ir a pagar'}
+            </Button>
+            <p className="text-xs text-center text-muted-foreground">
+              Pago seguro con Mercado Pago. Podés pagar en cuotas con tu tarjeta.
+            </p>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
