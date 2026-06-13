@@ -31,8 +31,10 @@ const OUTPUT = '/Users/juanilopez/Documents/Claudio/Nata Alvarez/whatsapp-nata-l
 const CURSO_URL = 'https://nato-learn-hub.vercel.app/courses/edicion-limitada'
 
 // Mensaje personal de Nata (uno a uno). {nombre} se reemplaza por el nombre real.
-// {origen} se reemplaza por "nos vimos en el evento" o "participaste del sorteo de Style".
-const MENSAJE = `Hola {nombre}! Soy Nata 💛
+// {origen} se reemplaza según de dónde vino el contacto (evento o sorteo de Style).
+// SIN emojis a propósito: los emojis se rompían como caracteres raros (◆) al pasar
+// por el link de WhatsApp en algunos teléfonos. Si Nata quiere, los agrega a mano.
+const MENSAJE = `Hola {nombre}! Soy Nata.
 
 Te escribo personalmente porque {origen} y quiero que seas de las primeras en enterarte de algo que vengo construyendo hace años.
 
@@ -42,7 +44,7 @@ Estoy abriendo a precio de preventa solo para las primeras. Te dejo acá todo:
 
 {link}
 
-Cualquier cosa respondeme por acá. Un beso ✨`
+Cualquier cosa respondeme por acá. Un beso!`
 
 // ─── Normalización de teléfono AR a formato wa.me ──────────────────────────
 function toWaMe(raw) {
@@ -129,7 +131,7 @@ for (const r of parseCsv(join(BASE_DIR, 'registros-eventos-2026-06-13.csv'))) {
   const key = phone || (r.Email || '').toLowerCase()
   if (!phone || seen.has(key)) continue
   seen.add(key)
-  const origen = r.Origen === 'sorteo' ? 'participaste del sorteo de Style' : 'nos cruzamos en el evento'
+  const origen = r.Origen === 'sorteo' ? 'participaste del sorteo de Style' : 'te sumaste a uno de mis eventos'
   contacts.push({ name: r.Nombre || '', first: name, phone, origen })
 }
 
