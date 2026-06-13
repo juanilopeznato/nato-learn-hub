@@ -14,7 +14,7 @@ interface AuthContextValue {
   allProfiles: (Profile & { tenant: Tenant })[]
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null; needsConfirmation?: boolean }>
   signOut: () => Promise<void>
   switchSchool: (profileId: string) => Promise<void>
 }
@@ -138,7 +138,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     if (profileError) return { error: profileError.message }
-    return { error: null }
+    // Si Supabase tiene "Confirm email" activado, no hay sesión hasta confirmar.
+    // El caller usa esto para mostrar "revisá tu mail" en vez de redirigir a una
+    // ruta protegida que rebotaría a /login (usuario en limbo).
+    return { error: null, needsConfirmation: !data.session }
   }, [tenant])
 
   const signOut = useCallback(async () => {

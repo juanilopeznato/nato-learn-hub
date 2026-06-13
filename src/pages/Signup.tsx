@@ -37,6 +37,7 @@ export default function Signup() {
   const location = useLocation()
   const redirect = new URLSearchParams(location.search).get('redirect') ?? '/dashboard'
   const [serverError, setServerError] = useState<string | null>(null)
+  const [confirmEmailSent, setConfirmEmailSent] = useState(false)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -79,10 +80,38 @@ export default function Signup() {
     } catch { /* RPC unavailable → no bloquear */ }
 
     events.signupStarted({ tenant: tenant?.slug })
-    const { error } = await signUp(data.email, data.password, data.fullName)
+    const { error, needsConfirmation } = await signUp(data.email, data.password, data.fullName)
     if (error) { setServerError(error); return }
     events.signupCompleted({ tenant: tenant?.slug })
+    // Si Supabase exige confirmar email, NO hay sesión → navegar a una ruta protegida
+    // dejaría al usuario en limbo (rebote a /login). Mostramos instrucción clara.
+    if (needsConfirmation) { setConfirmEmailSent(true); return }
     navigate(redirect, { replace: true })
+  }
+
+  // Pantalla "revisá tu mail" cuando Supabase exige confirmar email
+  if (confirmEmailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <div className="max-w-md w-full bg-card border border-border/60 rounded-2xl p-8 text-center space-y-5 shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+            <CheckCircle className="w-9 h-9 text-primary" aria-hidden />
+          </div>
+          <div className="space-y-1.5">
+            <h1 className="font-heading text-display-sm text-foreground tracking-tight">Revisá tu email</h1>
+            <p className="text-body-sm text-muted-foreground">
+              Te enviamos un link de confirmación. Hacé clic ahí para activar tu cuenta y empezar.
+            </p>
+          </div>
+          <p className="text-xs text-muted-foreground/70">
+            ¿No te llegó? Revisá spam o promociones. El correo puede tardar 1-2 minutos.
+          </p>
+          <Button variant="outline" className="w-full" asChild>
+            <Link to="/login">Ya confirmé — ir a iniciar sesión</Link>
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (

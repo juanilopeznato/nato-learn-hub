@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useCourseTracking } from '@/hooks/useCourseTracking'
 import {
   BookOpen, Clock, ArrowRight, Lock, ChevronDown, CheckCircle,
@@ -83,6 +83,17 @@ export default function CourseDetail() {
     return () => document.removeEventListener('keydown', onKey)
   }, [showIntro])
 
+  // Pago rechazado al volver de MP → avisar y limpiar el query param
+  useEffect(() => {
+    if (searchParams.get('payment') === 'failure') {
+      toast.error('El pago no se pudo completar. Podés intentar de nuevo cuando quieras.')
+      const next = new URLSearchParams(searchParams)
+      next.delete('payment')
+      setSearchParams(next, { replace: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Show sticky CTA after hero scrolls out
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -113,19 +124,32 @@ export default function CourseDetail() {
     profileId: profile?.id,
   })
 
+  const [searchParams, setSearchParams] = useSearchParams()
+  const paymentReturn = searchParams.get('payment') // success | pending | failure (back_url de MP)
+
   const { data: enrollment } = useQuery({
     queryKey: ['enrollment', course?.id, profile?.id],
     enabled: !!course?.id && !!profile?.id,
     queryFn: async () => {
       const { data } = await supabase
         .from('enrollments')
-        .select('id')
+        .select('id, mp_status')
         .eq('course_id', course!.id)
         .eq('student_id', profile!.id)
         .maybeSingle()
       return data
     },
+    // Cuando el usuario vuelve de MP con ?payment=success/pending, el enrollment
+    // todavía está 'pending' hasta que el webhook async lo confirme. Hacemos polling
+    // cada 2.5s para detectar el cambio a approved y mostrar el acceso al instante.
+    refetchInterval: (query) => {
+      if (paymentReturn !== 'success' && paymentReturn !== 'pending') return false
+      const st = (query.state.data as { mp_status?: string } | null)?.mp_status
+      return (st === 'approved' || st === 'free') ? false : 2500
+    },
   })
+
+  const isPaidAccess = enrollment?.mp_status === 'approved' || enrollment?.mp_status === 'free'
 
   const { data: enrollmentCount } = useQuery({
     queryKey: ['enrollment-count', course?.id],
@@ -248,11 +272,11 @@ export default function CourseDetail() {
     onError: (e: Error) => toast.error(e.message),
   })
 
-  async function handleApplyCoupon() {
-    if (!couponInput.trim() || !course) return
+  async function applyCouponCode(rawCode: string, { silent = false } = {}) {
+    if (!rawCode.trim() || !course) return
     setCouponLoading(true)
     setCouponError('')
-    const code = couponInput.trim().toUpperCase()
+    const code = rawCode.trim().toUpperCase()
     const { data } = await supabase
       .from('coupons')
       .select('id, code, discount_type, discount_value, max_uses, uses_count, expires_at, course_id, is_active')
@@ -262,14 +286,29 @@ export default function CourseDetail() {
       .maybeSingle()
     setCouponLoading(false)
 
-    if (!data) { setCouponError('Cupón inválido o no disponible'); return }
-    if (data.expires_at && new Date(data.expires_at) < new Date()) { setCouponError('Este cupón ya venció'); return }
-    if (data.max_uses !== null && data.uses_count >= data.max_uses) { setCouponError('Este cupón ya alcanzó su límite de usos'); return }
-    if (data.course_id !== null && data.course_id !== course.id) { setCouponError('Este cupón no aplica a este curso'); return }
+    // silent = vino por URL (?cupon=X): no mostramos error si es inválido, solo lo ignoramos
+    if (!data) { if (!silent) setCouponError('Cupón inválido o no disponible'); return }
+    if (data.expires_at && new Date(data.expires_at) < new Date()) { if (!silent) setCouponError('Este cupón ya venció'); return }
+    if (data.max_uses !== null && data.uses_count >= data.max_uses) { if (!silent) setCouponError('Este cupón ya alcanzó su límite de usos'); return }
+    if (data.course_id !== null && data.course_id !== course.id) { if (!silent) setCouponError('Este cupón no aplica a este curso'); return }
 
     setAppliedCoupon({ id: data.id, code: data.code, discount_type: data.discount_type, discount_value: Number(data.discount_value) })
     setCouponInput('')
+    if (silent) toast.success(`Cupón ${data.code} aplicado 🎉`)
   }
+
+  function handleApplyCoupon() {
+    void applyCouponCode(couponInput)
+  }
+
+  // Auto-aplicar cupón desde la URL (?cupon=NATA) → campañas de IG/email con descuento embebido
+  const urlCoupon = searchParams.get('cupon') ?? searchParams.get('cupón')
+  useEffect(() => {
+    if (urlCoupon && course && !appliedCoupon) {
+      void applyCouponCode(urlCoupon, { silent: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlCoupon, course?.id])
 
   function removeCoupon() {
     setAppliedCoupon(null)
@@ -285,6 +324,7 @@ export default function CourseDetail() {
 
   const sortedModules = [...(course?.modules ?? [])].sort((a, b) => a.order_index - b.order_index)
   const totalLessons = sortedModules.reduce((acc, m) => acc + (m.lessons?.length ?? 0), 0)
+  const firstLessonId = sortedModules[0]?.lessons?.slice().sort((a, b) => a.order_index - b.order_index)[0]?.id
   const outcomes: string[] = course?.learning_outcomes ?? []
   const faqItems: { q: string; a: string }[] = course?.faq ?? []
   const instructorBio: string = course?.instructor_bio ?? ''
@@ -432,8 +472,56 @@ export default function CourseDetail() {
     </div>
   )
 
+  const dismissPaymentReturn = () => {
+    const next = new URLSearchParams(searchParams)
+    next.delete('payment')
+    setSearchParams(next, { replace: true })
+  }
+
   return (
     <div className="min-h-screen bg-card pb-24 lg:pb-0">
+      {/* Retorno post-pago de Mercado Pago — evita que el comprador caiga en la
+          landing de venta mientras el webhook confirma async (fuente de pánico/chargebacks). */}
+      {(paymentReturn === 'success' || paymentReturn === 'pending') && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/70 backdrop-blur-sm p-4 animate-fade-in" role="dialog" aria-modal="true">
+          <div className="bg-card rounded-2xl shadow-2xl border border-border/60 max-w-md w-full p-8 text-center space-y-5">
+            {isPaidAccess ? (
+              <>
+                <div className="w-16 h-16 rounded-full bg-accent/15 flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-9 h-9 text-accent" aria-hidden />
+                </div>
+                <div className="space-y-1.5">
+                  <h2 className="font-heading text-display-sm text-foreground tracking-tight">¡Listo! Ya tenés acceso 🎉</h2>
+                  <p className="text-body-sm text-muted-foreground">Tu pago se confirmó. <strong className="text-foreground">{course.title}</strong> ya está disponible.</p>
+                </div>
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="w-full"
+                  onClick={() => firstLessonId ? navigate(`/learn/${slug}/${firstLessonId}`) : navigate('/dashboard')}
+                >
+                  Empezar ahora
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                  <Loader2 className="w-8 h-8 text-primary animate-spin" aria-hidden />
+                </div>
+                <div className="space-y-1.5">
+                  <h2 className="font-heading text-display-sm text-foreground tracking-tight">Estamos confirmando tu pago…</h2>
+                  <p className="text-body-sm text-muted-foreground">Esto puede tardar unos segundos. No cierres esta ventana — tu acceso se activa solo apenas se acredite.</p>
+                </div>
+                <button onClick={dismissPaymentReturn} className="text-xs text-muted-foreground/70 hover:text-foreground underline underline-offset-2">
+                  Si ya pagaste y tarda, te mandamos un email con el acceso. Cerrar
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
