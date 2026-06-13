@@ -65,7 +65,7 @@ export default function AdminPanel() {
     id: string
     enrolled_at: string
     mp_status: string | null
-    paid_amount: number | null
+    amount_paid: number | null
     profiles: { full_name: string | null; email: string | null } | null
     courses: { title: string | null } | null
   }
@@ -87,7 +87,7 @@ export default function AdminPanel() {
     queryFn: async () => {
       const { data } = await supabase
         .from('enrollments')
-        .select('id, enrolled_at, mp_status, paid_amount, profiles(full_name, email), courses(title)')
+        .select('id, enrolled_at, mp_status, amount_paid, profiles(full_name, email), courses(title)')
         .order('enrolled_at', { ascending: false })
         .limit(50)
       return (data ?? []) as unknown as AdminEnrollmentRow[]
@@ -270,7 +270,7 @@ export default function AdminPanel() {
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">
-                        {e.paid_amount ? `$${e.paid_amount}` : '—'}
+                        {e.amount_paid ? `$${e.amount_paid}` : '—'}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground/80 text-xs">
                         {new Date(e.enrolled_at).toLocaleDateString('es-AR')}

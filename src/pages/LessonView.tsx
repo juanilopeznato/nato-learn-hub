@@ -432,7 +432,7 @@ export default function LessonView() {
                   onChange={e => handleNoteChange(e.target.value)}
                   placeholder="Escribí tus apuntes sobre esta lección..."
                   rows={5}
-                  className="w-full resize-none rounded-lg border border-border/60 bg-secondary/30 px-3 py-2 text-sm text-foreground/85 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
+                  className="w-full resize-none rounded-lg border border-border/60 bg-secondary/30 px-3 py-2 text-sm text-foreground/85 placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
                 />
               </div>
             )}

@@ -55,7 +55,7 @@ interface InstructorCourse {
 interface EnrollmentRow {
   id: string
   enrolled_at: string | null
-  paid_amount: number | null
+  amount_paid: number | null
   mp_status: string | null
   last_accessed_at: string | null
   student: { id: string; full_name: string | null; email: string | null; avatar_url: string | null; created_at: string | null } | null

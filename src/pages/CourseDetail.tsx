@@ -73,6 +73,15 @@ export default function CourseDetail() {
   const [reviewHover, setReviewHover] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
   const [reviewSubmitting, setReviewSubmitting] = useState(false)
+  const [showIntro, setShowIntro] = useState(false)
+
+  // Cerrar el modal de intro con Escape
+  useEffect(() => {
+    if (!showIntro) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowIntro(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [showIntro])
 
   // Show sticky CTA after hero scrolls out
   useEffect(() => {
@@ -283,6 +292,15 @@ export default function CourseDetail() {
   const forWho: string = course?.for_who ?? ''
   const thumbnailUrl: string = course?.thumbnail_url ?? ''
   const introVideo: string = course?.intro_video_url ?? ''
+  // Convierte el URL del intro (YouTube/Vimeo) a su URL de embed para el modal de preview
+  const introEmbedUrl: string = (() => {
+    if (!introVideo) return ''
+    const yt = introVideo.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+    if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0&modestbranding=1&autoplay=1`
+    const vm = introVideo.match(/vimeo\.com\/(?:video\/)?(\d+)/)
+    if (vm) return `https://player.vimeo.com/video/${vm[1]}?title=0&byline=0&portrait=0&autoplay=1`
+    return ''
+  })()
   const originalPrice: number = Number(course?.original_price ?? 0)
   const tenantPixel = (tenant as (typeof tenant & { meta_pixel_id?: string | null }) | null)?.meta_pixel_id
   const pixelId: string = course?.meta_pixel_id || tenantPixel || ''
@@ -520,8 +538,8 @@ export default function CourseDetail() {
                 {thumbnailUrl ? (
                   <div className="relative aspect-video bg-secondary overflow-hidden">
                     <SmartImage src={thumbnailUrl} alt={course.title} size="lg" eager className="w-full h-full object-cover" />
-                    {introVideo && (
-                      <button type="button" aria-label="Ver intro" className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors duration-200 ease-apple group">
+                    {introEmbedUrl && (
+                      <button type="button" aria-label="Ver video de presentación" onClick={() => setShowIntro(true)} className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors duration-200 ease-apple group">
                         <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-200 ease-apple">
                           <Play className="w-7 h-7 text-foreground ml-1" aria-hidden />
                         </div>
@@ -747,9 +765,9 @@ export default function CourseDetail() {
                       }
                     </button>
                     {expandedModules.has(module.id) && (
-                      <div className="border-t border-border/40 divide-y divide-gray-50">
+                      <div className="border-t border-border/40 divide-y divide-border/40">
                         {[...(module.lessons ?? [])].sort((a, b) => a.order_index - b.order_index).map(lesson => (
-                          <div key={lesson.id} className="flex items-center justify-between px-4 py-3 bg-secondary/50/50">
+                          <div key={lesson.id} className="flex items-center justify-between px-4 py-3 bg-secondary/50">
                             <div className="flex items-center gap-3">
                               {lesson.is_free_preview
                                 ? <Play className="w-3.5 h-3.5 text-primary shrink-0" />
@@ -812,7 +830,7 @@ export default function CourseDetail() {
                         {expandedFaq.has(i) ? <ChevronUp className="w-4 h-4 text-muted-foreground/80 shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground/80 shrink-0" />}
                       </button>
                       {expandedFaq.has(i) && (
-                        <div className="border-t border-border/40 px-4 py-4 bg-secondary/50/50">
+                        <div className="border-t border-border/40 px-4 py-4 bg-secondary/50">
                           <p className="text-sm text-foreground/70 leading-relaxed">{item.a}</p>
                         </div>
                       )}
@@ -1033,6 +1051,37 @@ export default function CourseDetail() {
           <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
+
+      {/* Modal de video de presentación */}
+      {showIntro && introEmbedUrl && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/80 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setShowIntro(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Video de presentación del curso"
+        >
+          <div className="relative w-full max-w-4xl" onClick={e => e.stopPropagation()}>
+            <button
+              type="button"
+              onClick={() => setShowIntro(false)}
+              aria-label="Cerrar video"
+              className="absolute -top-10 right-0 text-white/80 hover:text-white transition-colors flex items-center gap-1.5 text-sm"
+            >
+              Cerrar <X className="w-5 h-5" aria-hidden />
+            </button>
+            <div className="aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
+              <iframe
+                src={introEmbedUrl}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                allowFullScreen
+                title="Video de presentación"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
