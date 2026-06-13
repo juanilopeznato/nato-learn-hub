@@ -504,11 +504,22 @@ export default function LessonView() {
             <span className="hidden sm:block">Anterior</span>
           </Button>
 
-          {/* Progreso central */}
+          {/* Progreso central — con micro-meta motivacional hacia el certificado */}
           <div className="flex-1 flex flex-col items-center gap-1">
-            <div className="text-xs text-muted-foreground/80">
-              {currentIndex + 1} de {allLessons.length} lecciones
-            </div>
+            {(() => {
+              const completed = progressData?.completedIds?.size ?? 0
+              const total = allLessons.length
+              const remaining = Math.max(0, total - completed)
+              return (
+                <div className="text-xs font-medium text-muted-foreground/90 tabular-nums">
+                  {remaining === 0
+                    ? '🎉 ¡Completaste el curso! Descargá tu certificado'
+                    : remaining === 1
+                    ? '✨ Te falta 1 lección para tu certificado'
+                    : `Te faltan ${remaining} lecciones para tu certificado`}
+                </div>
+              )
+            })()}
             <div className="w-full max-w-xs h-1 bg-secondary rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary rounded-full transition-all duration-500"
@@ -552,13 +563,22 @@ export default function LessonView() {
             <Button
               variant="hero"
               size="sm"
-              onClick={() => completeMutation.mutate()}
+              onClick={async () => {
+                // Completa la lección y, si hay próxima, avanza automáticamente.
+                // Resuelve el problema mobile: "avanzar" = "completar" en un solo tap.
+                try {
+                  await completeMutation.mutateAsync()
+                  if (nextLesson) navigate(`/learn/${courseSlug}/${nextLesson.id}`)
+                } catch { /* el onError de la mutation ya muestra el toast */ }
+              }}
               disabled={completeMutation.isPending}
               className="shrink-0 bg-accent hover:bg-accent/85"
             >
               <CheckCircle className="w-4 h-4" />
-              {completeMutation.isPending ? 'Guardando...' : 'Completar'}
-              {nextLesson && <ArrowRight className="w-4 h-4" />}
+              {completeMutation.isPending
+                ? 'Guardando...'
+                : nextLesson ? 'Completar y seguir' : 'Completar'}
+              {nextLesson && !completeMutation.isPending && <ArrowRight className="w-4 h-4" />}
             </Button>
           )}
         </div>
