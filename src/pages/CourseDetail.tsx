@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useCourseTracking } from '@/hooks/useCourseTracking'
 import {
   BookOpen, Clock, ArrowRight, Lock, ChevronDown, CheckCircle,
-  Play, Users, Star, Shield, Award, ChevronUp, ExternalLink, Tag, X
+  Play, Users, Star, Shield, Award, ChevronUp, ExternalLink, Tag, X, Loader2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -338,6 +338,10 @@ export default function CourseDetail() {
     ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — ARS ${discountedPrice.toLocaleString('es-AR')}/año`)
     : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${discountedPrice.toLocaleString('es-AR')}`)
 
+  // Contenido del botón de compra con spinner inline cuando está procesando
+  const ctaPending = enrollMutation.isPending || buyMutation.isPending
+  const ctaContent = <>{ctaPending && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}{ctaContent}</>
+
   // SEO — construido antes del return para que Helmet lo procese siempre.
   // OG image debe ser URL ABSOLUTA o WhatsApp/Telegram/iOS no la cargan.
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://natouniversity.lovable.app'
@@ -458,7 +462,7 @@ export default function CourseDetail() {
         <div className="container h-14 flex items-center justify-between gap-4">
           <span className="font-heading font-semibold text-foreground truncate text-sm">{course.title}</span>
           <Button variant="hero" size="sm" onClick={handleCTA} disabled={enrollMutation.isPending || buyMutation.isPending} className="shrink-0">
-            {ctaLabel}
+            {ctaContent}
             <ArrowRight />
           </Button>
         </div>
@@ -605,7 +609,7 @@ export default function CourseDetail() {
                     onClick={handleCTA}
                     disabled={enrollMutation.isPending || buyMutation.isPending}
                   >
-                    {ctaLabel}
+                    {ctaContent}
                     {!(enrollMutation.isPending || buyMutation.isPending) && <ArrowRight />}
                   </Button>
 
@@ -967,7 +971,7 @@ export default function CourseDetail() {
                   onClick={handleCTA}
                   disabled={enrollMutation.isPending || buyMutation.isPending}
                 >
-                  {ctaLabel}
+                  {ctaContent}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
 
@@ -1047,7 +1051,7 @@ export default function CourseDetail() {
           onClick={handleCTA}
           disabled={enrollMutation.isPending || buyMutation.isPending}
         >
-          {ctaLabel}
+          {ctaContent}
           <ArrowRight className="w-4 h-4" />
         </Button>
       </div>

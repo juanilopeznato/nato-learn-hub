@@ -428,7 +428,7 @@ export default function InstructorDashboard() {
                           variant="ghost"
                           size="icon"
                           title="Eliminar curso"
-                          className="text-foreground/85 hover:text-red-400 transition-colors"
+                          className="text-foreground/85 hover:text-destructive transition-colors"
                           onClick={() => setDeletingCourse({ id: course.id, title: course.title })}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -523,7 +523,7 @@ export default function InstructorDashboard() {
               <Suspense fallback={<div className="text-sm text-muted-foreground">Cargando métricas…</div>}><KpiDashboard courseIds={courses.map(c => c.id)} /></Suspense>
             ) : (
               <div className="bg-card border border-border/60 rounded-2xl p-12 text-center">
-                <BarChart3 className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+                <BarChart3 className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
                 <p className="text-muted-foreground font-medium">Nada que mostrar todavía</p>
                 <p className="text-sm text-muted-foreground/80 mt-1">Cuando tengas inscriptos, acá vas a ver las métricas de tu escuela.</p>
               </div>
@@ -598,7 +598,7 @@ export default function InstructorDashboard() {
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-border/50">
                       {commissions.map(c => (
                         <tr key={c.id} className="hover:bg-secondary/30">
                           <td className="px-4 py-3 font-medium text-foreground">{c.referred_tenant?.name ?? '—'}</td>
@@ -620,7 +620,7 @@ export default function InstructorDashboard() {
                 </div>
               ) : (
                 <div className="bg-card border border-border/60 rounded-xl p-10 text-center">
-                  <Gift className="w-8 h-8 text-gray-200 mx-auto mb-3" />
+                  <Gift className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
                   <p className="text-muted-foreground text-sm font-medium">Todavía no tenés comisiones</p>
                   <p className="text-xs text-muted-foreground/80 mt-1">Compartí tu link y empezá a ganar.</p>
                 </div>
