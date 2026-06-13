@@ -16,5 +16,8 @@
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"
+  },
+  "registries": {
+    "@cult-ui": "https://cult-ui.com/r/{name}.json"
   }
 }
