@@ -75,13 +75,27 @@ export default function Dashboard() {
     },
   })
 
-  // Último curso accedido con progreso > 0 para el "Continuar" banner
-  const continueEnrollment = enrollments?.find(e => {
+  // Banner principal: priorizar curso EN PROGRESO (continuar donde dejó);
+  // si no hay ninguno empezado, enganchar al recién inscripto (0%) para que arranque.
+  // El primer retorno post-compra es el momento más frágil de la retención.
+  const inProgressEnrollment = enrollments?.find(e => {
     const prog = progressMap?.[e.id]
     return e.last_lesson_id && prog && Number(prog.percent) > 0 && Number(prog.percent) < 100
   })
+  const notStartedEnrollment = !inProgressEnrollment
+    ? enrollments?.find(e => {
+        const prog = progressMap?.[e.id]
+        return !prog || Number(prog.percent) === 0
+      })
+    : undefined
+  const continueEnrollment = inProgressEnrollment ?? notStartedEnrollment
+  const isResuming = !!inProgressEnrollment
   const continueCourse = continueEnrollment?.courses as unknown as { id: string; title: string; slug: string; thumbnail_url: string | null } | null
   const continueProgress = continueEnrollment ? progressMap?.[continueEnrollment.id] : null
+  // Destino: si ya entró antes, retoma la última lección; si no, va a la landing del curso (que lo lleva a la 1ra)
+  const continueHref = continueEnrollment?.last_lesson_id && continueCourse
+    ? `/learn/${continueCourse.slug}/${continueEnrollment.last_lesson_id}`
+    : continueCourse ? `/courses/${continueCourse.slug}` : '#'
 
   const { data: communityPosts } = useQuery<CommunityPostRow[]>({
     queryKey: ['community-preview', tenant?.id],
@@ -158,8 +172,8 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* "Continuar" banner — solo si hay progreso activo */}
-        {continueEnrollment && continueCourse && continueProgress && (
+        {/* Banner principal — "Continuar" si hay progreso, "Empezá" si recién se inscribió */}
+        {continueEnrollment && continueCourse && (
           <div className="bg-mesh-purple rounded-2xl overflow-hidden border border-primary/15">
             <div className="flex items-center gap-5 p-5 lg:p-6">
               {continueCourse.thumbnail_url ? (
@@ -175,24 +189,28 @@ export default function Dashboard() {
                 </div>
               )}
               <div className="flex-1 min-w-0 space-y-2">
-                <p className="text-eyebrow text-primary uppercase">Continuar aprendiendo</p>
+                <p className="text-eyebrow text-primary uppercase">{isResuming ? 'Continuar aprendiendo' : 'Tu próximo paso'}</p>
                 <h3 className="font-heading text-base font-semibold text-foreground truncate">{continueCourse.title}</h3>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 bg-background/80 rounded-full h-1.5 overflow-hidden">
-                    <div
-                      className="bg-primary h-full rounded-full transition-all duration-500 ease-apple"
-                      style={{ width: `${Math.round(Number(continueProgress.percent))}%` }}
-                    />
+                {isResuming && continueProgress ? (
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 bg-background/80 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-primary h-full rounded-full transition-all duration-500 ease-apple"
+                        style={{ width: `${Math.round(Number(continueProgress.percent))}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0 tabular-nums">
+                      {continueProgress.completed}/{continueProgress.total} lecciones
+                    </span>
                   </div>
-                  <span className="text-xs text-muted-foreground shrink-0 tabular-nums">
-                    {continueProgress.completed}/{continueProgress.total} lecciones
-                  </span>
-                </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Todavía no empezaste. Tu primera lección te espera.</p>
+                )}
               </div>
               <Button variant="hero" size="sm" asChild className="shrink-0">
-                <Link to={`/learn/${continueCourse.slug}/${continueEnrollment.last_lesson_id}`}>
+                <Link to={continueHref}>
                   <Play className="w-4 h-4" />
-                  Continuar
+                  {isResuming ? 'Continuar' : 'Empezar ahora'}
                 </Link>
               </Button>
             </div>
