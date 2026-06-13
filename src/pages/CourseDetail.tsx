@@ -677,6 +677,13 @@ export default function CourseDetail() {
                     {billingType === 'annual' && (
                       <p className="text-xs text-muted-foreground">Pago anual · 12 meses de acceso</p>
                     )}
+                    {/* Refuerzo de preventa — urgencia honesta: el precio actual es promo y sube */}
+                    {billingType === 'one_time' && originalPrice > Number(course.price) && !enrollment && (
+                      <p className="text-xs font-medium text-accent flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden />
+                        Precio de preventa — luego sube a ARS {originalPrice.toLocaleString('es-AR')}
+                      </p>
+                    )}
                   </div>
 
                   {/* Pago — sin "cuotas sin interés" en la app (comisión MP 28% es asesina).
