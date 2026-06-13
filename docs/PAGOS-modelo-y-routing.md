@@ -54,22 +54,36 @@ El modelo que pidió Juani (primeras ventas a NATO Creative, después a Nata) es
 
 ---
 
-## 4. 🔴 PENDIENTE CRÍTICO — SITE_URL de las edge functions
+## 4. Dominio (SITE_URL) y from transaccional — RESUELTO vía DB (sin redeploy)
 
-Las edge functions usan `Deno.env.get('SITE_URL') ?? 'https://natodigital.com'` para:
-- Los `back_urls` de MP (a dónde vuelve el comprador tras pagar)
-- El link del curso en los emails de comprobante/bienvenida
+Antes las edge functions caían a `https://natodigital.com` (dominio muerto). **Arreglado:** ahora el dominio y el remitente de los mails se leen de la tabla `platform_config`, así se cambian con un `UPDATE` de SQL **sin redeploy ni tocar secrets** (que no se pueden setear vía MCP).
 
-**Si `SITE_URL` no coincide con el dominio real, el comprador vuelve a un dominio equivocado tras pagar** → el overlay de retorno post-pago (que implementamos) no se dispara y se pierde el "aha moment".
+| Key en `platform_config` | Valor actual | Usado para |
+|---|---|---|
+| `site_url` | `https://nato-learn-hub.vercel.app` | `back_urls` de MP (retorno post-pago) + link del curso en los mails |
+| `transactional_from_email` | *(vacío)* | Remitente de comprobante/bienvenida |
 
-**Acción:** setear el secret `SITE_URL` en Supabase → Project Settings → Edge Functions → Secrets, al dominio real (hoy `https://nato-learn-hub.vercel.app`, o el dominio final cuando se defina). Mantenerlo sincronizado con `VITE_PUBLIC_URL`.
+**Orden de resolución del dominio** (en ambas funciones): `platform_config.site_url` → env `SITE_URL` → `https://nato-learn-hub.vercel.app`. Nunca más `natodigital.com`.
+
+**Cuando cambie el dominio** (Juani lo mueve de Vercel a uno propio en días):
+```sql
+update platform_config set value = 'https://EL_DOMINIO_NUEVO' where key = 'site_url';
+```
+Efecto inmediato, sin deploy.
+
+**🟡 Pendiente (Juani + Tomi) — from transaccional:** `transactional_from_email` está vacío → hoy los mails de comprobante/bienvenida salen desde el sandbox de Resend (`onboarding@resend.dev`), que **solo entrega al dueño de la cuenta Resend, NO a compradores reales**. Para que el comprador reciba el mail hay que verificar un dominio en Resend (SPF/DKIM) y setear:
+```sql
+update platform_config set value = 'Nata Álvarez <nata@DOMINIO_VERIFICADO>' where key = 'transactional_from_email';
+```
+Esto NO bloquea el cobro (el acceso al curso se da igual al aprobarse el pago); solo afecta el email de comprobante.
 
 ---
 
 ## 5. Checklist para validar pagos antes del launch (con MP conectado)
 
-1. [ ] Setear `SITE_URL` al dominio real (§4)
-2. [ ] Verificar `MP_WEBHOOK_SECRET` seteado (hoy corre en modo unverified si falta)
+1. [x] Dominio: ya sale de `platform_config.site_url` (Vercel hoy). Cambiarlo con un UPDATE cuando haya dominio propio (§4)
+2. [ ] `transactional_from_email`: setear con dominio verificado en Resend (Tomi) para que el comprobante llegue a compradores reales (§4)
+3. [ ] Verificar `MP_WEBHOOK_SECRET` seteado (hoy corre en modo unverified si falta)
 3. [ ] Compra de prueba con tarjeta de test de MP → verificar:
    - [ ] Enrollment pasa a `approved`
    - [ ] `payment_destination = 'nato'` (primeras 15)
