@@ -14,8 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        heading: ["Space Grotesk", "Inter", "sans-serif"],
+        sans: ["Montserrat", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        heading: ["Cormorant Garamond", "Georgia", "serif"],
+        serif: ["Cormorant Garamond", "Georgia", "serif"],
         mono: ["ui-monospace", "SF Mono", "Menlo", "monospace"],
       },
       // Tipografía con tracking/leading optimizados (Apple/Stripe-style)

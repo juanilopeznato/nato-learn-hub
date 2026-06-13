@@ -144,9 +144,17 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11"; /* Inter alternates más legibles */
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
-    letter-spacing: -0.022em;
+  /* Display serif (Cormorant Garamond, marca de Nata) para los títulos grandes;
+     UI densa (h4-h6) sigue en sans (Montserrat) por legibilidad. La serif no
+     quiere el tracking apretado del sans. */
+  h1, h2, h3 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    letter-spacing: -0.005em;
+    color: hsl(var(--foreground));
+  }
+  h4, h5, h6 {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    letter-spacing: -0.011em;
     color: hsl(var(--foreground));
   }
 
