@@ -1,7 +1,7 @@
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -60,6 +60,17 @@ function LoggedFeedbackButton() {
   return <FeedbackButton />
 }
 
+/** Redirige la URL vieja /courses/:slug a la canónica /:escuela/:curso.
+ *  Una sola URL de curso en toda la app; nada de rutas legacy a medias. */
+function LegacyCourseRedirect() {
+  const { slug } = useParams<{ slug: string }>()
+  const { tenant, loading } = useAuth()
+  // Preservar query (?payment=success de MP) y hash (#tokens de magic link).
+  const qs = typeof window !== 'undefined' ? window.location.search + window.location.hash : ''
+  if (loading || !tenant) return <PageLoading />
+  return <Navigate to={`/${tenant.slug}/${slug}${qs}`} replace />
+}
+
 const App = () => (
   <ErrorBoundary>
     <HelmetProvider>
@@ -87,7 +98,7 @@ const App = () => (
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/courses" element={<Courses />} />
-                  <Route path="/courses/:slug" element={<CourseDetail />} />
+                  <Route path="/courses/:slug" element={<LegacyCourseRedirect />} />
                   <Route path="/affiliates" element={<Affiliates />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />

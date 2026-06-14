@@ -627,7 +627,7 @@ export default function CourseDetail() {
             {user ? (
               <Link to="/dashboard" className="text-xs font-semibold text-primary hover:underline shrink-0">Mi panel</Link>
             ) : (
-              <Link to={`/login?redirect=/courses/${slug}`} className="text-xs font-semibold text-primary hover:underline shrink-0">Ingresar</Link>
+              <Link to={`/login?redirect=${tenant ? `/${tenant.slug}/${slug}` : `/courses/${slug}`}`} className="text-xs font-semibold text-primary hover:underline shrink-0">Ingresar</Link>
             )}
           </div>
 

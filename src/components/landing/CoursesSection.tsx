@@ -73,7 +73,7 @@ export default function CoursesSection() {
             return (
               <Link
                 key={course.id}
-                to={`/courses/${course.slug}`}
+                to={tenant ? `/${tenant.slug}/${course.slug}` : `/courses/${course.slug}`}
                 className="group bg-card rounded-xl border border-border/60 hover:border-primary/40 hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col"
               >
                 {/* Thumbnail o placeholder */}
