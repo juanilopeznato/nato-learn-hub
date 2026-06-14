@@ -37,13 +37,18 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
     },
   })
 
+  // Marca el onboarding como visto para que NO reaparezca (goal opcional).
+  async function markDone(goal: string | null) {
+    await supabase
+      .from('profiles')
+      .update({ onboarding_completed: true, onboarding_goal: goal })
+      .eq('id', profileId)
+  }
+
   async function handleConfirm() {
     if (!selected) return
     setSaving(true)
-    await supabase
-      .from('profiles')
-      .update({ onboarding_completed: true, onboarding_goal: selected })
-      .eq('id', profileId)
+    await markDone(selected)
     setSaving(false)
     onComplete()
     if (featuredCourse?.slug) {
@@ -51,8 +56,17 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
     }
   }
 
+  // Cerrar (X / Escape / "más tarde"): igual marca visto para que no vuelva a saltar.
+  async function handleSkip() {
+    if (saving) return
+    setSaving(true)
+    await markDone(selected)
+    setSaving(false)
+    onComplete()
+  }
+
   return (
-    <Dialog open>
+    <Dialog open onOpenChange={open => { if (!open) void handleSkip() }}>
       <DialogContent className="max-w-md p-0 overflow-hidden" onInteractOutside={e => e.preventDefault()}>
         <div className="bg-gradient-to-br from-primary/10 to-accent/5 p-8 space-y-6">
           <div className="space-y-2">
@@ -92,6 +106,14 @@ export default function OnboardingModal({ profileId, tenantId, onComplete }: Pro
           >
             {saving ? 'Guardando...' : featuredCourse ? `Ver curso recomendado →` : 'Empezar →'}
           </Button>
+
+          <button
+            onClick={() => void handleSkip()}
+            disabled={saving}
+            className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+          >
+            Quizás más tarde
+          </button>
         </div>
       </DialogContent>
     </Dialog>
