@@ -52,6 +52,11 @@
     /* Radius default subido a 14px (lg de tailwind) */
     --radius: 0.875rem;
 
+    /* Tipografía DEFAULT = NATO (la plataforma tiene su propio estilo: Nunito).
+       Cada escuela puede sobrescribir estas vars por el inyector per-tenant. */
+    --font-sans: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-heading: 'Nunito', -apple-system, sans-serif;
+
     /* Custom NATO tokens */
     --nato-dark: 240 20% 8%;
     --nato-dark-secondary: 240 15% 12%;
@@ -148,12 +153,12 @@
      UI densa (h4-h6) sigue en sans (Montserrat) por legibilidad. La serif no
      quiere el tracking apretado del sans. */
   h1, h2, h3 {
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.005em;
     color: hsl(var(--foreground));
   }
   h4, h5, h6 {
-    font-family: 'Montserrat', -apple-system, sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: -0.011em;
     color: hsl(var(--foreground));
   }

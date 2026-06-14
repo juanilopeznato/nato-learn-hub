@@ -3,26 +3,30 @@ import { useAuth } from '@/context/AuthContext'
 import { hexToHsl, relativeLuminance } from '@/lib/color'
 
 /**
- * Inyecta la paleta de la escuela activa (tenants.primary_color / accent_color)
- * en las CSS variables, en runtime, sin tocar el resto del sistema de diseño.
+ * Inyecta la identidad de la escuela activa (colores + tipografía) en las CSS
+ * variables, en runtime. La escuela la decide la URL (ver AuthContext):
+ *   - `/` (plataforma, sin escuela)  → limpia todo → defaults de NATO (Nunito/púrpura).
+ *   - `/:escuela`                    → pinta la paleta y las fuentes de esa escuela.
  *
- * - Convierte el hex de marca a HSL (el formato de los tokens) y deriva las
- *   variantes: ring, sidebar, los tints primary-50/100/200 y el foreground por
- *   contraste real (blanco vs. tinta).
- * - Es dark-aware: cuando el <html> tiene `.dark`, sube el lightness del primary
- *   ~+10 para igualar el patrón del CSS, y re-aplica al togglear tema.
- * - Si el tenant no define colores, no hace nada (quedan los defaults del CSS).
- *
- * Las CSS vars inline en <html> ganan sobre las reglas :root / .dark, por eso
- * recalculamos en cada cambio de clase en lugar de setear un valor fijo.
+ * Las CSS vars inline en <html> ganan sobre :root/.dark; por eso recalculamos
+ * en cada cambio de tema (dark) y LIMPIAMOS al salir a la plataforma.
  */
 function setVar(name: string, value: string) {
   document.documentElement.style.setProperty(name, value)
 }
 
-function applyTenantPalette(primaryHex: string | null, accentHex: string | null) {
-  const isDark = document.documentElement.classList.contains('dark')
+const COLOR_VARS = [
+  '--primary', '--ring', '--sidebar-primary', '--sidebar-ring', '--primary-foreground',
+  '--primary-50', '--primary-100', '--primary-200', '--accent', '--accent-foreground',
+]
+const FONT_VARS = ['--font-heading', '--font-sans']
 
+function clearTenant() {
+  for (const v of [...COLOR_VARS, ...FONT_VARS]) document.documentElement.style.removeProperty(v)
+}
+
+function applyColors(primaryHex: string | null, accentHex: string | null) {
+  const isDark = document.documentElement.classList.contains('dark')
   if (primaryHex) {
     const p = hexToHsl(primaryHex)
     if (p) {
@@ -33,17 +37,12 @@ function applyTenantPalette(primaryHex: string | null, accentHex: string | null)
       setVar('--sidebar-ring', `${p.h} ${p.s}% ${l}%`)
       setVar('--primary-foreground', relativeLuminance(primaryHex) > 0.5 ? '222 15% 13%' : '0 0% 100%')
       if (isDark) {
-        setVar('--primary-50', `${p.h} 60% 18%`)
-        setVar('--primary-100', `${p.h} 70% 22%`)
-        setVar('--primary-200', `${p.h} 75% 30%`)
+        setVar('--primary-50', `${p.h} 60% 18%`); setVar('--primary-100', `${p.h} 70% 22%`); setVar('--primary-200', `${p.h} 75% 30%`)
       } else {
-        setVar('--primary-50', `${p.h} 100% 97%`)
-        setVar('--primary-100', `${p.h} 95% 93%`)
-        setVar('--primary-200', `${p.h} 90% 86%`)
+        setVar('--primary-50', `${p.h} 100% 97%`); setVar('--primary-100', `${p.h} 95% 93%`); setVar('--primary-200', `${p.h} 90% 86%`)
       }
     }
   }
-
   if (accentHex) {
     const a = hexToHsl(accentHex)
     if (a) {
@@ -56,17 +55,27 @@ function applyTenantPalette(primaryHex: string | null, accentHex: string | null)
 
 export function TenantTheme() {
   const { tenant } = useAuth()
-  const primary = tenant?.primary_color ?? null
-  const accent = tenant?.accent_color ?? null
+  const t = tenant as (typeof tenant & { font_heading?: string | null; font_body?: string | null }) | null
+  const primary = t?.primary_color ?? null
+  const accent = t?.accent_color ?? null
+  const fontHeading = t?.font_heading ?? null
+  const fontBody = t?.font_body ?? null
 
   useEffect(() => {
-    if (!primary && !accent) return
-    applyTenantPalette(primary, accent)
-    // El toggle de tema agrega/quita `.dark` en <html>: recalculamos ahí.
-    const obs = new MutationObserver(() => applyTenantPalette(primary, accent))
+    // Sin escuela (plataforma) → limpiar overrides → defaults NATO del CSS.
+    if (!tenant) { clearTenant(); return }
+
+    // Fuentes (no dependen de dark)
+    if (fontHeading) setVar('--font-heading', fontHeading)
+    if (fontBody) setVar('--font-sans', fontBody)
+
+    // Colores (dark-aware: recalcular al togglear tema)
+    applyColors(primary, accent)
+    const obs = new MutationObserver(() => applyColors(primary, accent))
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
     return () => obs.disconnect()
-  }, [primary, accent])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenant?.id, primary, accent, fontHeading, fontBody])
 
   return null
 }

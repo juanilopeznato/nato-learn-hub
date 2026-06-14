@@ -14,9 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Montserrat", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        heading: ["Cormorant Garamond", "Georgia", "serif"],
-        serif: ["Cormorant Garamond", "Georgia", "serif"],
+        // Fuentes por CSS var → default NATO (Nunito), override per-tenant por el inyector.
+        sans: ["var(--font-sans)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        heading: ["var(--font-heading)", "Georgia", "serif"],
+        serif: ["var(--font-heading)", "Georgia", "serif"],
         mono: ["ui-monospace", "SF Mono", "Menlo", "monospace"],
       },
       // Tipografía con tracking/leading optimizados (Apple/Stripe-style)
