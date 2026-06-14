@@ -474,7 +474,10 @@ export default function LessonView() {
 
           {/* Right: sidebar (desktop) */}
           <div className="hidden lg:block w-72 shrink-0">
-            <div className="sticky top-20" style={{ maxHeight: 'calc(100vh - 5rem)' }}>
+            {/* height fija (no maxHeight): el h-full del sidebar necesita altura definida
+                para que su lista interna (overflow-y-auto) scrollee. Con maxHeight el
+                contenido se recortaba en el módulo 3 sin poder bajar. */}
+            <div className="sticky top-20" style={{ height: 'calc(100vh - 5rem)' }}>
               <LessonSidebar
                 courseId={course.id}
                 courseTitle={course.title}
