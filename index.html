@@ -29,6 +29,46 @@
       })();
     </script>
 
+    <!-- Anti-FOUC del color de escuela: aplica la paleta del tenant ANTES del
+         primer paint, leyendo de cache (localStorage, escrito por TenantTheme) o
+         de un fallback conocido. Evita el flash púrpura→oro. La raíz `/` (sin
+         slug) no aplica nada → marca NATO por default. -->
+    <script>
+      (function () {
+        try {
+          var seg = location.pathname.split('/')[1];
+          if (!seg) return;
+          var t = null;
+          try { t = JSON.parse(localStorage.getItem('nato_tenant_theme_' + seg) || 'null'); } catch (e) {}
+          // Fallback para escuelas conocidas (1ra visita, sin cache aún)
+          var KNOWN = { 'nata-alvarez': { primary: '#966f2c', accent: '#866027', fontHeading: "'Cormorant Garamond', Georgia, serif", fontBody: "'Montserrat', -apple-system, sans-serif" } };
+          if (!t && KNOWN[seg]) t = KNOWN[seg];
+          if (!t) return;
+          var root = document.documentElement;
+          var isDark = root.classList.contains('dark');
+          function set(n, v) { root.style.setProperty(n, v); }
+          function hx(hex) { var c = (hex || '').trim().replace('#', ''); if (c.length === 3) c = c.split('').map(function (x) { return x + x; }).join(''); return /^[0-9a-fA-F]{6}$/.test(c) ? c : null; }
+          function hsl(hex) { var c = hx(hex); if (!c) return null; var r = parseInt(c.slice(0, 2), 16) / 255, g = parseInt(c.slice(2, 4), 16) / 255, b = parseInt(c.slice(4, 6), 16) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, h = 0, s = 0; if (mx !== mn) { var d = mx - mn; s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); if (mx === r) h = (g - b) / d + (g < b ? 6 : 0); else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h /= 6; } return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) }; }
+          function lum(hex) { var c = hx(hex); if (!c) return 0; function f(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); } return 0.2126 * f(parseInt(c.slice(0, 2), 16)) + 0.7152 * f(parseInt(c.slice(2, 4), 16)) + 0.0722 * f(parseInt(c.slice(4, 6), 16)); }
+          var p = hsl(t.primary);
+          if (p) {
+            var pl = isDark ? Math.min(p.l + 10, 72) : p.l;
+            set('--primary', p.h + ' ' + p.s + '% ' + pl + '%');
+            set('--ring', p.h + ' ' + p.s + '% ' + pl + '%');
+            set('--sidebar-primary', p.h + ' ' + p.s + '% ' + p.l + '%');
+            set('--sidebar-ring', p.h + ' ' + p.s + '% ' + pl + '%');
+            set('--primary-foreground', lum(t.primary) > 0.5 ? '222 15% 13%' : '0 0% 100%');
+            if (isDark) { set('--primary-50', p.h + ' 60% 18%'); set('--primary-100', p.h + ' 70% 22%'); set('--primary-200', p.h + ' 75% 30%'); }
+            else { set('--primary-50', p.h + ' 100% 97%'); set('--primary-100', p.h + ' 95% 93%'); set('--primary-200', p.h + ' 90% 86%'); }
+          }
+          var a = hsl(t.accent);
+          if (a) { var al = isDark ? Math.min(a.l + 8, 70) : a.l; set('--accent', a.h + ' ' + a.s + '% ' + al + '%'); set('--accent-foreground', lum(t.accent) > 0.5 ? '222 47% 6%' : '0 0% 100%'); }
+          if (t.fontHeading) set('--font-heading', t.fontHeading);
+          if (t.fontBody) set('--font-sans', t.fontBody);
+        } catch (e) { /* */ }
+      })();
+    </script>
+
     <!-- Critical CSS inline: evita FOUC mientras carga el stylesheet principal.
          Respeta light/dark via color-scheme (se setea por el script de tema arriba). -->
     <style>

@@ -65,6 +65,16 @@ export function TenantTheme() {
     // Sin escuela (plataforma) → limpiar overrides → defaults NATO del CSS.
     if (!tenant) { clearTenant(); return }
 
+    // Cachear la paleta por slug → el script inline de index.html la aplica
+    // ANTES del primer paint en la próxima carga (anti-flash púrpura→oro).
+    try {
+      if (tenant.slug) {
+        localStorage.setItem('nato_tenant_theme_' + tenant.slug, JSON.stringify({
+          primary, accent, fontHeading, fontBody,
+        }))
+      }
+    } catch { /* localStorage no disponible */ }
+
     // Fuentes (no dependen de dark)
     if (fontHeading) setVar('--font-heading', fontHeading)
     if (fontBody) setVar('--font-sans', fontBody)
