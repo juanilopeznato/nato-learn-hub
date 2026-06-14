@@ -1,12 +1,19 @@
 import { Link } from 'react-router-dom'
 import { Instagram, Linkedin, Mail, ArrowUpRight } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 
 /**
  * Footer rediseñado con jerarquía visual clara, hover states refinados y CTA
  * de newsletter sutil. Linear-style: poca decoración, mucho espacio.
+ * Tenant-aware: dentro de una escuela muestra SU marca; en la raíz, NATO.
  */
 const Footer = () => {
   const year = new Date().getFullYear()
+  const { tenant } = useAuth()
+  const brandName = tenant?.name ?? 'NATO University'
+  const brandTagline = tenant
+    ? (tenant.tagline ?? `Formación de ${tenant.name}.`)
+    : 'La plataforma para crear tu escuela online y vender tus cursos. Cobrás en pesos con Mercado Pago.'
   return (
     <footer className="border-t border-border/60 bg-card/50">
       <div className="container py-16">
@@ -15,18 +22,18 @@ const Footer = () => {
           <div className="lg:col-span-5">
             <div className="flex items-center gap-2.5 mb-4">
               <img
-                src="/nato-logo.png"
-                alt="NATO"
+                src={tenant?.logo_url ?? '/nato-logo.png'}
+                alt={brandName}
                 className="h-7 w-auto object-contain"
                 loading="lazy"
                 decoding="async"
               />
               <span className="font-heading text-base font-semibold text-foreground tracking-tight">
-                NATO <span className="text-primary">University</span>
+                {tenant ? brandName : <>NATO <span className="text-primary">University</span></>}
               </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-              La plataforma de aprendizaje para equipos de marketing digital. Cursos, comunidad y certificaciones en un solo lugar.
+              {brandTagline}
             </p>
             <div className="flex items-center gap-1 mt-5">
               {[

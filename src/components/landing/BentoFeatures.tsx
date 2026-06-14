@@ -12,7 +12,7 @@ export default function BentoFeatures() {
     <section className="py-24 lg:py-32 bg-secondary/30 border-b border-border/40">
       <div className="container max-w-6xl">
         <FadeUpOnView className="text-center max-w-2xl mx-auto mb-14">
-          <span className="font-serif italic text-xl text-primary block mb-2">
+          <span className="text-sm font-semibold tracking-wide text-primary block mb-3">
             Todo lo que necesitás
           </span>
           <h2 className="font-heading text-display-md md:text-display-lg text-foreground mb-4">

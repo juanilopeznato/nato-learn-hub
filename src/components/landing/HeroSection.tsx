@@ -3,13 +3,6 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight, Sparkles, Check } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 
-// Actualizá estos números con datos reales de la plataforma
-const SOCIAL_PROOF = [
-  { value: '50+', label: 'escuelas activas' },
-  { value: '3.200+', label: 'alumnos' },
-  { value: 'ARS 14M', label: 'facturados' },
-]
-
 const TRUST_POINTS = ['Sin tarjeta de crédito', 'Listo en 2 minutos', 'Primer curso publicado hoy']
 
 export default function HeroSection() {
@@ -102,26 +95,6 @@ export default function HeroSection() {
             </div>
           )}
 
-          {/* Social proof solo en plataforma principal */}
-          {isMainPlatform && (
-            <div className="pt-10 border-t border-border/50 animate-fade-in" style={{ animationDelay: '240ms' }}>
-              <p className="text-eyebrow text-muted-foreground uppercase mb-6">
-                Usado por instructores en toda Argentina
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-10 sm:gap-16">
-                {SOCIAL_PROOF.map((stat) => (
-                  <div key={stat.label} className="text-center">
-                    <div className="font-heading text-display-md text-foreground tracking-tight">
-                      {stat.value}
-                    </div>
-                    <div className="text-body-xs uppercase tracking-wider text-muted-foreground mt-1">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </section>

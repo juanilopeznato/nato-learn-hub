@@ -24,6 +24,12 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 const DEV_TENANT_SLUG = import.meta.env.VITE_DEFAULT_TENANT_SLUG ?? 'nato'
 
+// Columnas PÚBLICAS del tenant. NUNCA traer secretos al cliente
+// (mp_access_token, mp_refresh_token, resend_api_key, mp_collector_id,
+// mp_public_key, mp_subscription_id) — esas solo las usan las edge functions
+// con service_role. Las settings del dueño van por la RPC get_tenant_settings.
+const TENANT_COLS = 'id, name, slug, custom_domain, logo_url, primary_color, accent_color, active, created_at, tagline, support_email, social_instagram, social_whatsapp, meta_pixel_id, plan_name, plan_expires_at, affiliate_code, referred_by, commission_pct_override, font_heading, font_body'
+
 /**
  * Resuelve la escuela (tenant). Modelo path-based:
  *   1. Si la URL trae `/:escuela/...`, busca por ese slug (fuente principal).
@@ -35,7 +41,7 @@ const DEV_TENANT_SLUG = import.meta.env.VITE_DEFAULT_TENANT_SLUG ?? 'nato'
 async function resolveTenant(pathSlug?: string | null): Promise<Tenant | null> {
   try {
     if (pathSlug) {
-      const { data } = await supabase.from('tenants').select('*').eq('slug', pathSlug).maybeSingle()
+      const { data } = await supabase.from('tenants').select(TENANT_COLS).eq('slug', pathSlug).maybeSingle()
       if (data) return data as Tenant
       // slug no es una escuela (ruta reservada) → seguir con fallbacks
     }
@@ -43,14 +49,14 @@ async function resolveTenant(pathSlug?: string | null): Promise<Tenant | null> {
     const isDevOrStaging =
       hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.vercel.app')
     if (isDevOrStaging) {
-      const { data } = await supabase.from('tenants').select('*').eq('slug', DEV_TENANT_SLUG).maybeSingle()
+      const { data } = await supabase.from('tenants').select(TENANT_COLS).eq('slug', DEV_TENANT_SLUG).maybeSingle()
       if (data) return data as Tenant
       // Fallback resiliente (setup mono-escuela): si el slug default no existe
       // —ej. se renombró— tomar la primera escuela. Evita romper si cambia el slug.
-      const { data: first } = await supabase.from('tenants').select('*').order('created_at').limit(1).maybeSingle()
+      const { data: first } = await supabase.from('tenants').select(TENANT_COLS).order('created_at').limit(1).maybeSingle()
       return (first as Tenant) ?? null
     }
-    const { data } = await supabase.from('tenants').select('*').eq('custom_domain', hostname).maybeSingle()
+    const { data } = await supabase.from('tenants').select(TENANT_COLS).eq('custom_domain', hostname).maybeSingle()
     return (data as Tenant) ?? null
   } catch (e) {
     console.error('[AuthContext] No se pudo resolver el tenant:', e)
@@ -81,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadProfile = useCallback(async (authId: string, attempt = 1): Promise<void> => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('*, tenant:tenants(*)')
+      .select(`*, tenant:tenants(${TENANT_COLS})`)
       .eq('auth_id', authId)
       .order('last_used_at', { ascending: false })
 

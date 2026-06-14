@@ -15,8 +15,8 @@ export default function CTASection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10 text-center space-y-6">
-        <p className="font-serif italic text-xl text-primary/90">
-          Más de 50 instructores ya están cobrando
+        <p className="text-sm font-semibold tracking-wide text-primary">
+          Cobrás en pesos, con Mercado Pago
         </p>
         <h2 className="font-heading text-3xl sm:text-5xl font-bold text-white">
           ¿Cuándo arrancás{' '}
