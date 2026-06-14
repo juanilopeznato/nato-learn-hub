@@ -20,7 +20,7 @@ import { MarkdownLight } from '@/components/MarkdownLight'
 
 export default function LessonView() {
   const { courseSlug, lessonId } = useParams<{ courseSlug: string; lessonId: string }>()
-  const { profile, tenant } = useAuth()
+  const { profile, tenant, user } = useAuth()
   const { fireLesson, fireCourse } = useConfetti()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -341,7 +341,7 @@ export default function LessonView() {
                 videoUrl={currentLesson.video_url}
                 videoProvider={currentLesson.video_provider}
                 lessonId={currentLesson.id}
-                watermarkText={profile?.email ?? profile?.full_name ?? undefined}
+                watermarkText={user?.email ?? profile?.full_name ?? undefined}
               />
             ) : (
               <div className="aspect-video bg-secondary rounded-xl flex items-center justify-center">

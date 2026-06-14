@@ -87,7 +87,7 @@ export default function AdminPanel() {
     queryFn: async () => {
       const { data } = await supabase
         .from('enrollments')
-        .select('id, enrolled_at, mp_status, amount_paid, profiles(full_name, email), courses(title)')
+        .select('id, enrolled_at, mp_status, amount_paid, profiles(full_name), courses(title)')
         .order('enrolled_at', { ascending: false })
         .limit(50)
       return (data ?? []) as unknown as AdminEnrollmentRow[]

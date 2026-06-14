@@ -112,12 +112,20 @@ export default function InstructorCoursePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('enrollments')
-        .select('*, student:profiles(id, full_name, email, avatar_url, created_at)')
+        .select('*, student:profiles(id, full_name, avatar_url, created_at)')
         .eq('course_id', courseId!)
         .in('mp_status', ['free', 'approved'])
         .order('enrolled_at', { ascending: false })
       if (error) throw error
-      return (data ?? []) as unknown as EnrollmentRow[]
+      const rows = (data ?? []) as unknown as EnrollmentRow[]
+      // El email es PII (columna revocada en la tabla). Lo traemos por RPC staff-only
+      // y lo mergeamos en cada alumno, así el render no cambia.
+      const { data: emails } = await supabase.rpc('get_course_student_emails', { p_course_id: courseId! })
+      const emailMap = new Map<string, string>((emails ?? []).map((r: { student_id: string; email: string | null }) => [r.student_id, r.email ?? '']))
+      for (const e of rows) {
+        if (e.student) e.student.email = emailMap.get(e.student.id) ?? null
+      }
+      return rows
     },
   })
 

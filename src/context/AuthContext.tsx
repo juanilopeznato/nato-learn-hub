@@ -30,6 +30,11 @@ const DEV_TENANT_SLUG = import.meta.env.VITE_DEFAULT_TENANT_SLUG ?? 'nato'
 // con service_role. Las settings del dueño van por la RPC get_tenant_settings.
 const TENANT_COLS = 'id, name, slug, custom_domain, logo_url, primary_color, accent_color, active, created_at, tagline, support_email, social_instagram, social_whatsapp, meta_pixel_id, plan_name, plan_expires_at, affiliate_code, referred_by, commission_pct_override, font_heading, font_body'
 
+// Columnas del profile SIN email. El email es PII: un alumno no debe poder leer
+// el de otros (la columna email queda revocada en la DB para anon/authenticated).
+// El email propio se lee de la sesión (auth user), no de profiles.
+const PROFILE_COLS = 'id, auth_id, tenant_id, full_name, avatar_url, role, created_at, points, level, bio, social_instagram, social_twitter, social_linkedin, social_website, last_used_at, streak_days, last_activity_date, onboarding_completed, onboarding_goal'
+
 /**
  * Resuelve la escuela (tenant). Modelo path-based:
  *   1. Si la URL trae `/:escuela/...`, busca por ese slug (fuente principal).
@@ -87,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadProfile = useCallback(async (authId: string, attempt = 1): Promise<void> => {
     const { data, error } = await supabase
       .from('profiles')
-      .select(`*, tenant:tenants(${TENANT_COLS})`)
+      .select(`${PROFILE_COLS}, tenant:tenants(${TENANT_COLS})`)
       .eq('auth_id', authId)
       .order('last_used_at', { ascending: false })
 
