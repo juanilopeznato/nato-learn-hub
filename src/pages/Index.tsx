@@ -7,12 +7,24 @@ import CoursesSection from '@/components/landing/CoursesSection'
 import CTASection from '@/components/landing/CTASection'
 import Footer from '@/components/landing/Footer'
 import { canonicalUrl, absoluteUrl } from '@/lib/seo'
+import { useAuth } from '@/context/AuthContext'
 
 export default function Index() {
-  const url = canonicalUrl('/')
+  const { tenant } = useAuth()
+  // Sin escuela en la URL = raíz de plataforma (NATO University).
+  // Con escuela = landing de esa escuela (ej. /nata-alvarez).
+  const isPlatform = !tenant
+
   const logoUrl = absoluteUrl('/nato-logo.png')
-  const title = 'NATO University — Cursos de marketing digital y negocios'
-  const desc = 'Aprendé marketing digital, creación de contenido y negocios online con NATO University. Cursos prácticos, certificados verificables y comunidad activa.'
+  const url = canonicalUrl(isPlatform ? '/' : `/${tenant!.slug}`)
+
+  const title = isPlatform
+    ? 'NATO University — Creá tu escuela online y vendé tus cursos'
+    : `${tenant!.name} — Cursos online`
+  const desc = isPlatform
+    ? 'Creá tu escuela online, vendé tus cursos y cobrá con Mercado Pago. Sin servidores ni código. NATO University.'
+    : `Formación de ${tenant!.name}. Cursos prácticos con certificado verificable.`
+
   return (
     <div className="min-h-screen">
       <Helmet>
@@ -26,28 +38,26 @@ export default function Index() {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="NATO University" />
+        <meta property="og:site_name" content={isPlatform ? 'NATO University' : tenant!.name} />
         <meta property="og:locale" content="es_AR" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={desc} />
         <meta name="twitter:image" content={logoUrl} />
-        <script type="application/ld+json">{JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'EducationalOrganization',
-          name: 'NATO University',
-          url,
-          logo: logoUrl,
-          description: 'Plataforma de cursos online de marketing digital, negocios y creación de contenido.',
-          sameAs: [],
-        })}</script>
       </Helmet>
       <Navbar />
       <HeroSection />
-      <HowItWorks />
-      <BentoFeatures />
-      <CoursesSection />
-      <CTASection />
+      {isPlatform ? (
+        // Raíz de plataforma: vender NATO University a creadores.
+        <>
+          <HowItWorks />
+          <BentoFeatures />
+          <CTASection />
+        </>
+      ) : (
+        // Dentro de una escuela: solo sus cursos, sin venta de plataforma.
+        <CoursesSection />
+      )}
       <Footer />
     </div>
   )

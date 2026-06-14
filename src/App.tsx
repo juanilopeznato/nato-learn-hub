@@ -120,6 +120,13 @@ const App = () => (
                   <Route path="/admin" element={<ProtectedRoute requiredRole="nato_owner"><AdminPanel /></ProtectedRoute>} />
                   <Route path="/nato" element={<ProtectedRoute requiredRole="nato_owner"><NatoOwnerPanel /></ProtectedRoute>} />
 
+                {/* Multi-tenant por path: /:escuela = landing de la escuela,
+                    /:escuela/:curso = curso. Van al final para que TODAS las
+                    rutas estáticas (login, courses, dashboard, etc.) ganen por
+                    especificidad. Las URLs viejas (/courses/:slug) siguen arriba. */}
+                  <Route path="/:tenantSlug" element={<Index />} />
+                  <Route path="/:tenantSlug/:slug" element={<CourseDetail />} />
+
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 </main>

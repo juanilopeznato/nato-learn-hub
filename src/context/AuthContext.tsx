@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import type { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/types/database.types'
@@ -23,30 +24,34 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 const DEV_TENANT_SLUG = import.meta.env.VITE_DEFAULT_TENANT_SLUG ?? 'nato'
 
-async function resolveTenant(): Promise<Tenant | null> {
-  const hostname = window.location.hostname
-  const isDevOrStaging =
-    hostname === 'localhost' ||
-    hostname === '127.0.0.1' ||
-    hostname.endsWith('.vercel.app')
-
+/**
+ * Resuelve la escuela (tenant). Modelo path-based:
+ *   1. Si la URL trae `/:escuela/...`, busca por ese slug (fuente principal).
+ *   2. Si no, por dominio propio (custom_domain) — escuelas con su dominio.
+ *   3. Si no, el default de la plataforma (dev/staging).
+ * Devuelve null si el slug de la URL no corresponde a ninguna escuela
+ * (ej. rutas reservadas /login, /dashboard) o en la raíz de plataforma.
+ */
+async function resolveTenant(pathSlug?: string | null): Promise<Tenant | null> {
   try {
-    if (isDevOrStaging) {
-      const { data, error } = await supabase
-        .from('tenants')
-        .select('*')
-        .eq('slug', DEV_TENANT_SLUG)
-        .single()
-      if (error) throw error
-      return data
+    if (pathSlug) {
+      const { data } = await supabase.from('tenants').select('*').eq('slug', pathSlug).maybeSingle()
+      if (data) return data as Tenant
+      // slug no es una escuela (ruta reservada) → seguir con fallbacks
     }
-    const { data, error } = await supabase
-      .from('tenants')
-      .select('*')
-      .eq('custom_domain', hostname)
-      .single()
-    if (error) throw error
-    return data
+    const hostname = window.location.hostname
+    const isDevOrStaging =
+      hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.vercel.app')
+    if (isDevOrStaging) {
+      const { data } = await supabase.from('tenants').select('*').eq('slug', DEV_TENANT_SLUG).maybeSingle()
+      if (data) return data as Tenant
+      // Fallback resiliente (setup mono-escuela): si el slug default no existe
+      // —ej. se renombró— tomar la primera escuela. Evita romper si cambia el slug.
+      const { data: first } = await supabase.from('tenants').select('*').order('created_at').limit(1).maybeSingle()
+      return (first as Tenant) ?? null
+    }
+    const { data } = await supabase.from('tenants').select('*').eq('custom_domain', hostname).maybeSingle()
+    return (data as Tenant) ?? null
   } catch (e) {
     console.error('[AuthContext] No se pudo resolver el tenant:', e)
     return null
@@ -61,9 +66,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [allProfiles, setAllProfiles] = useState<(Profile & { tenant: Tenant })[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Escuela reactiva a la URL: `/` = plataforma (sin escuela → marca NATO),
+  // `/:escuela/...` resuelve por slug. Las rutas reservadas/logueadas caen al
+  // default (y el perfil del usuario igual setea su escuela en loadProfile).
+  const location = useLocation()
+  const firstSeg = location.pathname === '/' ? null : (location.pathname.split('/')[1] || null)
   useEffect(() => {
-    resolveTenant().then(setTenant)
-  }, [])
+    let active = true
+    if (firstSeg === null) { setTenant(null); return }
+    resolveTenant(firstSeg).then(t => { if (active && t) setTenant(t) })
+    return () => { active = false }
+  }, [firstSeg])
 
   const loadProfile = useCallback(async (authId: string, attempt = 1): Promise<void> => {
     const { data, error } = await supabase

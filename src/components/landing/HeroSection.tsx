@@ -122,23 +122,6 @@ export default function HeroSection() {
               </div>
             </div>
           )}
-
-          {/* CTA Creadores — solo escuelas de terceros */}
-          {!isMainPlatform && !user && (
-            <div className="flex flex-col items-center gap-4 pt-4">
-              <div className="flex items-center gap-3 w-full max-w-xs">
-                <div className="flex-1 h-px bg-border" />
-                <span className="text-xs text-muted-foreground shrink-0">¿Querés vender tus cursos?</span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-              <Button variant="soft" asChild>
-                <Link to="/create-school">
-                  Creá tu escuela en NATO University
-                  <ArrowRight />
-                </Link>
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </section>
