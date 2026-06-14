@@ -613,16 +613,23 @@ export default function CourseDetail() {
       <div ref={heroRef} className="relative isolate bg-mesh-purple border-b border-border/40">
         <div className="absolute inset-0 bg-grid-light opacity-30 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_70%)] pointer-events-none" />
         <div className="container relative z-10 py-6">
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground mb-8">
-            <Link to="/" className="hover:text-foreground transition-colors">
-              <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO'} className="h-5 w-auto object-contain opacity-80" loading="lazy" decoding="async" />
-            </Link>
-            <span aria-hidden>/</span>
-            <Link to="/courses" className="hover:text-foreground transition-colors">Cursos</Link>
-            <span aria-hidden>/</span>
-            <span className="text-foreground/60 truncate max-w-[40ch]">{course.title}</span>
-          </nav>
+          {/* Breadcrumb + acceso a la cuenta */}
+          <div className="flex items-center justify-between gap-3 mb-8">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
+              <Link to="/" className="hover:text-foreground transition-colors shrink-0">
+                <img src={tenant?.logo_url ?? '/nato-logo.png'} alt={tenant?.name ?? 'NATO'} className="h-5 w-auto object-contain opacity-80" loading="lazy" decoding="async" />
+              </Link>
+              <span aria-hidden className="shrink-0">/</span>
+              <Link to="/courses" className="hover:text-foreground transition-colors shrink-0">Cursos</Link>
+              <span aria-hidden className="shrink-0">/</span>
+              <span className="text-foreground/60 truncate">{course.title}</span>
+            </nav>
+            {user ? (
+              <Link to="/dashboard" className="text-xs font-semibold text-primary hover:underline shrink-0">Mi panel</Link>
+            ) : (
+              <Link to={`/login?redirect=/courses/${slug}`} className="text-xs font-semibold text-primary hover:underline shrink-0">Ingresar</Link>
+            )}
+          </div>
 
           <div className="grid lg:grid-cols-5 gap-10 lg:gap-12 pb-16">
             {/* Left: text content */}
