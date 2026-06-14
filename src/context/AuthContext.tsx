@@ -93,9 +93,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data && data.length > 0) {
       const profiles = data as (Profile & { tenant: Tenant })[]
       setAllProfiles(profiles)
-      const { tenant: profileTenant, ...activeProfile } = profiles[0]
+      // La escuela activa (branding/tema) la decide la URL (efecto por location),
+      // NO el perfil. Si la setea el perfil, la raíz `/` mostraría la escuela del
+      // usuario logueado en vez de NATO. Por eso acá solo cargamos el perfil.
+      const { tenant: _profileTenant, ...activeProfile } = profiles[0]
+      void _profileTenant
       setProfile(activeProfile as Profile)
-      if (profileTenant) setTenant(profileTenant as Tenant)
     } else {
       setProfile(null)
       setAllProfiles([])
