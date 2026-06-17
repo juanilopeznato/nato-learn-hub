@@ -25,6 +25,11 @@ import { StorageMigration } from '@/components/StorageMigration'
 const fmt = (n: number) => `ARS ${Number(n).toLocaleString('es-AR')}`
 const fmtK = (n: number) => n >= 1000 ? `ARS ${(n / 1000).toFixed(0)}k` : fmt(n)
 
+// Edición Limitada — control financiero
+const FEE_PCT = 0.0189            // MP Checkout 35 días (1,56%) + IVA 21% ≈ 1,89%
+const COSTO_PRODUCCION = 4_400_000 // costo de grabación del curso
+const SPLIT = { nata: 0.5, juani: 0.4, lula: 0.1 } as const
+
 const PLAN_COLORS: Record<string, string> = {
   gratis: 'bg-muted-foreground text-foreground/85',
   starter: 'bg-primary/20 text-primary',
@@ -182,6 +187,20 @@ export default function NatoOwnerPanel() {
     enabled,
   })
 
+  const { data: elFinance } = useQuery({
+    queryKey: ['nato-el-finance'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_course_finance', { p_slug: 'edicion-limitada' })
+      if (error) throw error
+      return data as {
+        course_title: string; recovery_target: number
+        nato_sales: number; nato_gross: number
+        creator_sales: number; creator_gross: number
+      }
+    },
+    enabled,
+  })
+
   const toggleActive = useMutation({
     mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
       await supabase.rpc('toggle_tenant_active', { p_tenant_id: id, p_active: !active })
@@ -216,6 +235,15 @@ export default function NatoOwnerPanel() {
 
   const totalSubscriptionRevenue = subscriptions.filter(s => s.status === 'approved').reduce((s, p) => s + Number(p.amount_ars), 0)
   const pendingSubscriptions = subscriptions.filter(s => s.status === 'pending').length
+
+  // Edición Limitada — finanzas + split
+  const elNatoGross = Number(elFinance?.nato_gross ?? 0)
+  const elCreatorGross = Number(elFinance?.creator_gross ?? 0)
+  const elNetTotal = (elNatoGross + elCreatorGross) * (1 - FEE_PCT)
+  const elRecTarget = elFinance?.recovery_target ?? 17
+  const elRecDone = elFinance?.nato_sales ?? 0
+  const elRecovered = elRecDone >= elRecTarget
+  const elProfitNet = elCreatorGross * (1 - FEE_PCT)
 
   return (
     <div className="min-h-screen bg-foreground/95 text-white">
@@ -253,6 +281,7 @@ export default function NatoOwnerPanel() {
           <TabsList className="bg-foreground/90 border border-foreground/40 flex-wrap h-auto gap-1 p-1">
             {[
               { value: 'revenue', label: 'Revenue' },
+              { value: 'edicion', label: 'Edición Limitada · $' },
               { value: 'escuelas', label: 'Escuelas' },
               { value: 'suscripciones', label: 'Suscripciones' },
               { value: 'produccion', label: 'Producción NATO' },
@@ -353,6 +382,61 @@ export default function NatoOwnerPanel() {
                 </ResponsiveContainer>
               </div>
             )}
+          </TabsContent>
+
+          {/* ── Edición Limitada · $ ── */}
+          <TabsContent value="edicion" className="mt-6 space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <MetricCard label="Ventas pagas" value={elRecDone + (elFinance?.creator_sales ?? 0)} sub={`${elRecDone} recupero · ${elFinance?.creator_sales ?? 0} post-recupero`} icon={Activity} />
+              <MetricCard label="Recaudado neto" value={fmtK(elNetTotal)} sub={`bruto ${fmtK(elNatoGross + elCreatorGross)} − ${(FEE_PCT * 100).toFixed(2)}% MP`} icon={DollarSign} accent />
+              <MetricCard label="Recupero" value={`${elRecDone}/${elRecTarget}`} sub={elRecovered ? '✅ costo cubierto' : `faltan ${elRecTarget - elRecDone}`} icon={Clapperboard} />
+              <MetricCard label="Ganancia repartible" value={fmtK(elProfitNet)} sub={elRecovered ? 'neto post-recupero' : 'empieza tras la venta 17'} icon={TrendingUp} />
+            </div>
+
+            {/* Recupero del costo */}
+            <div className="bg-foreground rounded-2xl border border-foreground/40 p-6 space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-white font-semibold">Recupero del costo de grabación</span>
+                <span className="text-muted-foreground">{fmt(COSTO_PRODUCCION)}</span>
+              </div>
+              <div className="h-2.5 bg-foreground/40 rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-yellow-400 transition-all" style={{ width: `${Math.min(100, Math.round((elRecDone / elRecTarget) * 100))}%` }} />
+              </div>
+              <p className="text-xs text-foreground/70">
+                {elRecovered
+                  ? '✅ Recuperado: de acá en más la ganancia se reparte.'
+                  : `${elRecDone} de ${elRecTarget} ventas cobradas por NATO Creative. Faltan ${elRecTarget - elRecDone}.`}
+              </p>
+            </div>
+
+            {/* Split */}
+            <div className="bg-foreground rounded-2xl border border-foreground/40 p-6">
+              <h2 className="text-base font-semibold text-white mb-1">Reparto de la ganancia</h2>
+              <p className="text-xs text-muted-foreground mb-5">
+                Sobre el neto de las ventas post-recupero (después del {(FEE_PCT * 100).toFixed(2)}% de MP). Hoy: {fmtK(elProfitNet)}.
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { name: 'Nata', pct: SPLIT.nata, color: 'text-yellow-400' },
+                  { name: 'Juani', pct: SPLIT.juani, color: 'text-purple-300' },
+                  { name: 'Lula', pct: SPLIT.lula, color: 'text-accent' },
+                ].map(s => (
+                  <div key={s.name} className="bg-foreground/40 rounded-xl p-4 text-center">
+                    <p className="text-xs text-muted-foreground">{s.name}</p>
+                    <p className={`text-2xl font-bold mt-1 ${s.color}`}>{fmtK(elProfitNet * s.pct)}</p>
+                    <p className="text-xs text-foreground/70 mt-0.5">{(s.pct * 100).toFixed(0)}%</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Flujo de la plata */}
+            <div className="bg-foreground rounded-2xl border border-foreground/40 p-5 text-xs text-foreground/70 space-y-1">
+              <p className="text-white font-semibold text-sm mb-1">Flujo de la plata</p>
+              <p>• Ventas 1–{elRecTarget}: entran al <strong className="text-foreground/90">MP de NATO Creative</strong> (recupero del costo).</p>
+              <p>• Ventas {elRecTarget + 1}+: entran al <strong className="text-foreground/90">MP de Nata</strong> y se reparten 50 / 40 / 10.</p>
+              <p>• Acreditación de MP: <strong className="text-foreground/90">~35 días</strong> desde cada cobro.</p>
+            </div>
           </TabsContent>
 
           {/* ── Escuelas ── */}
