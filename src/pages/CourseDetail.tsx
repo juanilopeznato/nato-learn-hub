@@ -374,7 +374,7 @@ export default function CourseDetail() {
   const introEmbedUrl: string = (() => {
     if (!introVideo) return ''
     const yt = introVideo.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
-    if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0&modestbranding=1&autoplay=1`
+    if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0&modestbranding=1&autoplay=0`
     const vm = introVideo.match(/vimeo\.com\/(?:video\/)?(\d+)/)
     if (vm) return `https://player.vimeo.com/video/${vm[1]}?title=0&byline=0&portrait=0&autoplay=1`
     return ''
@@ -683,16 +683,19 @@ export default function CourseDetail() {
             <div className="lg:col-span-2">
               <div className="bg-card rounded-2xl shadow-xl border border-border/40 overflow-hidden sticky top-24">
                 {/* Thumbnail / preview */}
-                {thumbnailUrl ? (
+                {introEmbedUrl ? (
+                  <div className="relative aspect-video bg-black overflow-hidden">
+                    <iframe
+                      src={introEmbedUrl}
+                      title="Presentación de Edición Limitada"
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : thumbnailUrl ? (
                   <div className="relative aspect-video bg-secondary overflow-hidden">
                     <SmartImage src={thumbnailUrl} alt={course.title} size="lg" eager className="w-full h-full object-cover" />
-                    {introEmbedUrl && (
-                      <button type="button" aria-label="Ver video de presentación" onClick={() => setShowIntro(true)} className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors duration-200 ease-apple group">
-                        <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-200 ease-apple">
-                          <Play className="w-7 h-7 text-foreground ml-1" aria-hidden />
-                        </div>
-                      </button>
-                    )}
                   </div>
                 ) : (
                   <div className="aspect-video bg-mesh-purple flex items-center justify-center">
@@ -959,7 +962,7 @@ export default function CourseDetail() {
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Tu instructor</h2>
                 <div className="flex items-start gap-5">
                   {instructorAvatar ? (
-                    <SmartAvatar src={instructorAvatar} alt="Instructor" size={80} className="shrink-0 border-2 border-primary/20 object-top" />
+                    <SmartAvatar src={instructorAvatar} alt="Instructor" size={80} className="shrink-0 border-2 border-primary/20" />
                   ) : (
                     <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <Users className="w-9 h-9 text-primary" />
