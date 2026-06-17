@@ -28,7 +28,7 @@ const BASE_DIR = '/Users/juanilopez/Documents/Claudio/Nata Alvarez/BASES DE DATO
 const OUTPUT = '/Users/juanilopez/Documents/Claudio/Nata Alvarez/whatsapp-nata-lanzamiento.html'
 
 // ⚠️ El link puede cambiar cuando se defina el dominio final. Reemplazar acá o en el HTML.
-const CURSO_URL = 'https://nato-learn-hub.vercel.app/courses/edicion-limitada'
+const CURSO_URL = 'https://university.natoglobal.com.ar/nata-alvarez/edicion-limitada'
 
 // Mensaje personal de Nata (uno a uno). {nombre} se reemplaza por el nombre real.
 // {origen} se reemplaza según de dónde vino el contacto (evento o sorteo de Style).

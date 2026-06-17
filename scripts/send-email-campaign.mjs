@@ -28,7 +28,7 @@ import { readFileSync } from 'node:fs'
 const BASE_CSV = '/Users/juanilopez/Documents/Claudio/Nata Alvarez/BASES DE DATOS/registros-eventos-2026-06-13.csv'
 const FROM = 'Nata Álvarez <nata@stylecontenidos.com>' // requiere dominio verificado en Resend
 const REPLY_TO = 'nata@stylecontenidos.com'
-const CURSO_URL = 'https://nato-learn-hub.vercel.app/courses/edicion-limitada' // cambiar al dominio final
+const CURSO_URL = 'https://university.natoglobal.com.ar/nata-alvarez/edicion-limitada' // cambiar al dominio final
 const THROTTLE_MS = 1200 // ~50 emails/min — natural, no levanta flags de spam
 
 const API_KEY = process.env.RESEND_API_KEY
