@@ -319,22 +319,18 @@ export default function CourseDetail() {
     setCouponLoading(true)
     setCouponError('')
     const code = rawCode.trim().toUpperCase()
-    const { data } = await supabase
-      .from('coupons')
-      .select('id, code, discount_type, discount_value, max_uses, uses_count, expires_at, course_id, is_active')
-      .eq('tenant_id', course.tenant_id)
-      .eq('code', code)
-      .eq('is_active', true)
-      .maybeSingle()
+    // RPC SECURITY DEFINER: valida por código sin exponer la tabla (no se puede enumerar).
+    // La función ya chequea activo/vencimiento/usos/curso; devuelve vacío si no aplica.
+    // Clave para invitados (QR del evento): la RLS no deja leer coupons sin sesión.
+    const { data } = await supabase.rpc('validate_coupon', {
+      p_code: code, p_tenant: course.tenant_id, p_course: course.id,
+    })
     setCouponLoading(false)
 
-    // silent = vino por URL (?cupon=X): no mostramos error si es inválido, solo lo ignoramos
-    if (!data) { if (!silent) setCouponError('Cupón inválido o no disponible'); return }
-    if (data.expires_at && new Date(data.expires_at) < new Date()) { if (!silent) setCouponError('Este cupón ya venció'); return }
-    if (data.max_uses !== null && data.uses_count >= data.max_uses) { if (!silent) setCouponError('Este cupón ya alcanzó su límite de usos'); return }
-    if (data.course_id !== null && data.course_id !== course.id) { if (!silent) setCouponError('Este cupón no aplica a este curso'); return }
+    const coupon = Array.isArray(data) ? data[0] : data
+    if (!coupon) { if (!silent) setCouponError('Cupón inválido o no disponible'); return }
 
-    setAppliedCoupon({ id: data.id, code: data.code, discount_type: data.discount_type, discount_value: Number(data.discount_value) })
+    setAppliedCoupon({ id: coupon.id, code: coupon.code, discount_type: coupon.discount_type, discount_value: Number(coupon.discount_value) })
     setCouponInput('')
     if (silent) toast.success(`Cupón ${data.code} aplicado 🎉`)
   }
@@ -963,7 +959,7 @@ export default function CourseDetail() {
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Tu instructor</h2>
                 <div className="flex items-start gap-5">
                   {instructorAvatar ? (
-                    <SmartAvatar src={instructorAvatar} alt="Instructor" size={80} className="shrink-0 border-2 border-primary/20" />
+                    <SmartAvatar src={instructorAvatar} alt="Instructor" size={80} className="shrink-0 border-2 border-primary/20 object-top" />
                   ) : (
                     <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <Users className="w-9 h-9 text-primary" />
