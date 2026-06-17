@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Settings, LogOut, CreditCard, Palette, Globe, Save, Puzzle, Receipt, Check, CheckCircle2, Link2 } from 'lucide-react'
+import { Settings, LogOut, CreditCard, Palette, Globe, Save, Puzzle, Receipt, Check, CheckCircle2 } from 'lucide-react'
 import { ImageUpload } from '@/components/ImageUpload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,7 +15,6 @@ import { useAuth } from '@/context/AuthContext'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { events } from '@/lib/analytics'
-import { buildMpOAuthUrl } from '@/lib/mp-oauth'
 import { toast } from 'sonner'
 
 const brandSchema = z.object({
@@ -29,8 +28,9 @@ const brandSchema = z.object({
 })
 
 const mpSchema = z.object({
-  mp_access_token: z.string().min(10, 'Token inválido'),
-  mp_public_key: z.string().min(10, 'Public key inválida'),
+  mp_access_token: z.string().min(10, 'Pegá tu Access Token de Mercado Pago'),
+  // Public key opcional: el cobro solo usa el access token (server-side).
+  mp_public_key: z.string().optional().or(z.literal('')),
 })
 
 const integrationsSchema = z.object({
@@ -385,70 +385,58 @@ export default function TenantSettings() {
           {/* Payments */}
           <TabsContent value="payments" className="mt-6 space-y-4">
             {/* Connection status */}
-            {fullTenant?.mp_collector_id ? (
-              <div className="bg-card rounded-xl border border-border/60 p-6 space-y-4">
-                <div className="flex items-center justify-between">
+            {(() => {
+              const connected = fullTenant?.has_mp_access_token || !!fullTenant?.mp_collector_id
+              const comisionTxt = effectiveCommission > 0
+                ? <>NATO University retiene un <strong className="text-foreground/85">{effectiveCommission}% de comisión</strong> en cada cobro.</>
+                : <><strong className="text-foreground/85">Sin comisión de NATO University</strong> — cobrás el 100%.</>
+              const tokenForm = (
+                <form onSubmit={mpForm.handleSubmit(d => saveMp.mutate(d))} className="space-y-3">
+                  <div className="space-y-1.5">
+                    <label htmlFor="mp_token" className="text-sm font-medium text-foreground/85">Access Token de Mercado Pago</label>
+                    <Input id="mp_token" type="password" placeholder="APP_USR-..." autoComplete="off" {...mpForm.register('mp_access_token')} />
+                    {mpForm.formState.errors.mp_access_token && <p className="text-xs text-destructive">{mpForm.formState.errors.mp_access_token.message}</p>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label htmlFor="mp_pk" className="text-sm font-medium text-foreground/85">Public Key <span className="text-muted-foreground/70 font-normal">(opcional)</span></label>
+                    <Input id="mp_pk" placeholder="APP_USR-..." autoComplete="off" {...mpForm.register('mp_public_key')} />
+                  </div>
+                  <Button type="submit" variant="hero" disabled={saveMp.isPending}>
+                    {saveMp.isPending ? 'Guardando...' : 'Guardar credenciales'}
+                  </Button>
+                  <p className="text-xs text-muted-foreground/70 leading-relaxed">
+                    Lo sacás en Mercado Pago → <strong>Tu negocio → Configuraciones → Gestión y administración → Credenciales</strong> → copiá el <strong>Access Token de producción</strong>. Se guarda cifrado; nunca lo vemos.
+                  </p>
+                </form>
+              )
+              return connected ? (
+                <div className="bg-card rounded-xl border border-border/60 p-6 space-y-4">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-accent" />
                     <div>
                       <h2 className="font-heading font-semibold text-foreground">Mercado Pago conectado</h2>
-                      <p className="text-xs text-muted-foreground/80 mt-0.5">ID: {fullTenant.mp_collector_id}</p>
+                      <p className="text-xs text-muted-foreground/80 mt-0.5">Cada venta va directo a tu cuenta.</p>
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 text-muted-foreground"
-                    onClick={() => {
-                      if (!tenant?.id) return
-                      window.location.href = buildMpOAuthUrl(tenant.id)
-                    }}
-                  >
-                    <Link2 className="w-4 h-4" />
-                    Reconectar
-                  </Button>
+                  <p className="text-sm text-muted-foreground">{comisionTxt}</p>
+                  <details className="text-sm">
+                    <summary className="cursor-pointer text-primary font-medium select-none">Actualizar mi token</summary>
+                    <div className="mt-3">{tokenForm}</div>
+                  </details>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Cada venta va directamente a tu cuenta de Mercado Pago. NATO University retiene un <strong className="text-foreground/85">{effectiveCommission}% de comisión</strong> automáticamente en cada cobro.
-                </p>
-              </div>
-            ) : (
-              <div className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
-                <h2 className="font-heading font-semibold text-foreground">Conectá tu cuenta de Mercado Pago</h2>
-                <p className="text-sm text-muted-foreground">
-                  Para recibir pagos, necesitás conectar tu cuenta de Mercado Pago. El proceso tarda menos de un minuto y es completamente seguro — nunca vemos tu contraseña.
-                </p>
-
-                <ol className="space-y-3">
-                  {[
-                    { n: '1', text: 'Hacé clic en el botón de abajo' },
-                    { n: '2', text: 'Iniciá sesión en Mercado Pago y autorizá a NATO University' },
-                    { n: '3', text: `Listo — cada venta va directo a tu cuenta, NATO retiene el ${effectiveCommission}% automáticamente` },
-                  ].map(step => (
-                    <li key={step.n} className="flex items-center gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">{step.n}</span>
-                      <p className="text-sm text-foreground/70">{step.text}</p>
-                    </li>
-                  ))}
-                </ol>
-
-                <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 text-xs text-amber-700">
-                  <strong>Importante:</strong> sin conectar tu cuenta no vas a poder publicar cursos pagos. Los cursos gratuitos no requieren configuración.
+              ) : (
+                <div className="bg-card rounded-xl border border-border/60 p-6 space-y-5">
+                  <h2 className="font-heading font-semibold text-foreground">Conectá tu Mercado Pago</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Pegá tu Access Token y listo. Cada venta va directo a tu cuenta. {comisionTxt}
+                  </p>
+                  {tokenForm}
+                  <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 text-xs text-amber-700">
+                    <strong>Importante:</strong> sin esto no podés publicar cursos pagos. Los gratuitos no requieren configuración.
+                  </div>
                 </div>
-
-                <Button
-                  variant="hero"
-                  className="gap-2 w-full sm:w-auto"
-                  onClick={() => {
-                    if (!tenant?.id) return
-                    window.location.href = buildMpOAuthUrl(tenant.id)
-                  }}
-                >
-                  <Link2 className="w-4 h-4" />
-                  Conectar con Mercado Pago
-                </Button>
-              </div>
-            )}
+              )
+            })()}
           </TabsContent>
 
           {/* Integrations */}
