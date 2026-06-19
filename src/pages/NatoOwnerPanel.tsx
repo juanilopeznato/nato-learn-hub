@@ -196,6 +196,7 @@ export default function NatoOwnerPanel() {
         course_title: string; recovery_target: number
         nato_sales: number; nato_gross: number
         creator_sales: number; creator_gross: number
+        by_source: Record<string, number>
       }
     },
     enabled,
@@ -428,6 +429,24 @@ export default function NatoOwnerPanel() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Ventas por canal (atribución) */}
+            <div className="bg-foreground rounded-2xl border border-foreground/40 p-6">
+              <h2 className="text-base font-semibold text-white mb-1">Ventas por canal</h2>
+              <p className="text-xs text-muted-foreground mb-4">De dónde vino cada venta (QR, Instagram, WhatsApp, mail…).</p>
+              {Object.keys(elFinance?.by_source ?? {}).length === 0 ? (
+                <p className="text-sm text-foreground/70">Sin ventas aún.</p>
+              ) : (
+                <div className="space-y-2">
+                  {Object.entries(elFinance?.by_source ?? {}).sort((a, b) => b[1] - a[1]).map(([src, n]) => (
+                    <div key={src} className="flex items-center justify-between text-sm">
+                      <span className="text-foreground/85 capitalize">{src === 'directo' ? 'Directo / sin fuente' : src}</span>
+                      <span className="text-yellow-400 font-semibold">{n}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Flujo de la plata */}
