@@ -75,6 +75,7 @@ export default function CourseDetail() {
   const [guestOpen, setGuestOpen] = useState(false)
   const [guestName, setGuestName] = useState('')
   const [guestEmail, setGuestEmail] = useState('')
+  const [guestPhone, setGuestPhone] = useState('')
   const [reviewRating, setReviewRating] = useState(0)
   const [reviewHover, setReviewHover] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
@@ -286,10 +287,12 @@ export default function CourseDetail() {
       if (!course) throw new Error('Curso no disponible')
       const email = guestEmail.trim().toLowerCase()
       const full_name = guestName.trim()
+      const phone = guestPhone.trim()
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Ingresá un email válido')
       if (full_name.length < 2) throw new Error('Ingresá tu nombre')
+      if (phone.replace(/\D/g, '').length < 8) throw new Error('Ingresá tu WhatsApp con código de área')
       const { data, error } = await supabase.functions.invoke('create-guest-preference', {
-        body: { course_id: course.id, email, full_name, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 },
+        body: { course_id: course.id, email, full_name, phone, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 },
       })
       if (error) {
         // El cuerpo de error de invoke viene en error.context cuando el status no es 2xx
@@ -1283,6 +1286,21 @@ export default function CourseDetail() {
                 required
               />
               <p className="text-xs text-muted-foreground">A este mail te mandamos el acceso. Revisá que esté bien escrito.</p>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="guest-phone">WhatsApp</Label>
+              <Input
+                id="guest-phone"
+                type="tel"
+                value={guestPhone}
+                onChange={(e) => setGuestPhone(e.target.value)}
+                placeholder="Ej: +54 9 223 555 5555"
+                autoComplete="tel"
+                inputMode="tel"
+                disabled={guestMutation.isPending}
+                required
+              />
+              <p className="text-xs text-muted-foreground">Para acompañarte y avisarte las novedades del curso.</p>
             </div>
             <Button type="submit" variant="hero" size="lg" className="w-full" disabled={guestMutation.isPending}>
               {guestMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}
