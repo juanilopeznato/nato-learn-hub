@@ -76,6 +76,16 @@ export default function CourseDetail() {
   const [guestName, setGuestName] = useState('')
   const [guestEmail, setGuestEmail] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
+  // Atribución: capturamos el canal al cargar la página (utm_source, o el referrer si no hay UTM).
+  const [source] = useState<string>(() => {
+    try {
+      const u = new URLSearchParams(window.location.search).get('utm_source')
+      if (u) return u.slice(0, 40)
+      const r = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''
+      if (r && !r.includes('natoglobal') && !r.includes('localhost')) return r.slice(0, 40)
+      return 'directo'
+    } catch { return 'directo' }
+  })
   const [reviewRating, setReviewRating] = useState(0)
   const [reviewHover, setReviewHover] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
@@ -268,7 +278,7 @@ export default function CourseDetail() {
           },
           // installments=1 → MP igualmente le ofrece al cliente "cuotas con interés del banco"
           // en su propio checkout, sin que el vendedor pague costos extra de financiación.
-          body: JSON.stringify({ course_id: course.id, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 }),
+          body: JSON.stringify({ course_id: course.id, source, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 }),
         }
       )
       const data = await res.json()
@@ -292,7 +302,7 @@ export default function CourseDetail() {
       if (full_name.length < 2) throw new Error('Ingresá tu nombre')
       if (phone.replace(/\D/g, '').length < 8) throw new Error('Ingresá tu WhatsApp con código de área')
       const { data, error } = await supabase.functions.invoke('create-guest-preference', {
-        body: { course_id: course.id, email, full_name, phone, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 },
+        body: { course_id: course.id, email, full_name, phone, source, coupon_code: appliedCoupon?.code ?? undefined, installments: 1 },
       })
       if (error) {
         // El cuerpo de error de invoke viene en error.context cuando el status no es 2xx
