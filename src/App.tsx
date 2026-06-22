@@ -1,5 +1,6 @@
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
+import { Analytics } from "@vercel/analytics/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -90,6 +91,7 @@ const App = () => (
           <BrowserRouter>
             <AuthProvider>
               <TenantTheme />
+              <Analytics />
               <React.Suspense fallback={<PageLoading />}>
                 <main id="main-content" tabIndex={-1}>
                 <Routes>
