@@ -125,6 +125,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       else setLoading(false)
     })
 
+    // Red de seguridad: si getSession() se cuelga (webviews in-app raros de iOS),
+    // no dejamos la app muerta esperando. A los 4s asumimos "sin sesión" y
+    // renderizamos las páginas públicas (el curso se ve sin login). Si la sesión
+    // llega después, onAuthStateChange la corrige. Fail-open, no fail-hang.
+    const failOpen = setTimeout(() => setLoading(v => v ? false : v), 4000)
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
@@ -136,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => { clearTimeout(failOpen); subscription.unsubscribe() }
   }, [loadProfile])
 
   const switchSchool = useCallback(async (profileId: string) => {
