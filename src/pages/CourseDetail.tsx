@@ -168,29 +168,6 @@ export default function CourseDetail() {
 
   const isPaidAccess = enrollment?.mp_status === 'approved' || enrollment?.mp_status === 'free'
 
-  const { data: enrollmentCount } = useQuery({
-    queryKey: ['enrollment-count', course?.id],
-    enabled: !!course?.id,
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('enrollments')
-        .select('id', { count: 'exact', head: true })
-        .eq('course_id', course!.id)
-      return count ?? 0
-    },
-  })
-
-  // Ventas pagas reales — para el contador de "lugares a precio de preventa".
-  // Vía RPC SECURITY DEFINER: el RLS de enrollments es own-only, un anónimo contaría 0.
-  const { data: soldCount } = useQuery({
-    queryKey: ['sold-count', course?.id],
-    enabled: !!course?.id,
-    queryFn: async () => {
-      const { data } = await supabase.rpc('course_sold_count', { p_course: course!.id })
-      return Number(data ?? 0)
-    },
-  })
-
   const { data: reviews, refetch: refetchReviews } = useQuery<ReviewRow[]>({
     queryKey: ['course-reviews', course?.id],
     enabled: !!course?.id,
@@ -415,17 +392,23 @@ export default function CourseDetail() {
   const billingType: 'free' | 'one_time' | 'monthly' | 'annual' = course?.billing_type ?? (course?.is_free ? 'free' : 'one_time')
   const billingLabel = billingType === 'monthly' ? '/mes' : billingType === 'annual' ? '/año' : ''
 
-  // Escasez honesta: los lugares a precio de preventa = cupo de recupero de producción.
-  // Al agotarse hay que subir `price` a `original_price` para que la promesa sea real.
-  // ponytail: cap = production_recovery_sales (ya existe); cambiar ese número mueve el contador.
-  const preventaCap = Number((course as unknown as { production_recovery_sales?: number })?.production_recovery_sales ?? 0)
-  const spotsLeft = preventaCap > 0 ? Math.max(0, preventaCap - (soldCount ?? 0)) : 0
-  const showScarcity = billingType === 'one_time' && originalPrice > Number(course?.price ?? 0) && !enrollment && spotsLeft > 0
-  const scarcityBadge = showScarcity ? (
+  // Urgencia honesta por TIEMPO: el descuento de preventa cierra en una fecha real.
+  // Al vencer, el cron sube price a original_price (fuente única de verdad = courses.price).
+  const preventaEndsAt = (() => {
+    const raw = (course as unknown as { preventa_ends_at?: string })?.preventa_ends_at
+    return raw ? new Date(raw) : null
+  })()
+  const enPreventa = billingType === 'one_time' && originalPrice > Number(course?.price ?? 0) && !enrollment
+  const daysLeft = preventaEndsAt ? Math.ceil((preventaEndsAt.getTime() - Date.now()) / 86_400_000) : null
+  const deadlineLabel = preventaEndsAt?.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' }) ?? null
+  const scarcityBadge = enPreventa ? (
     <div className="flex items-center gap-2 rounded-lg bg-accent/10 border border-accent/30 px-3 py-2">
       <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden />
       <p className="text-xs font-semibold text-accent leading-snug">
-        {spotsLeft <= 5 ? '🔥 ' : ''}Quedan {spotsLeft} {spotsLeft === 1 ? 'lugar' : 'lugares'} a precio de preventa — luego sube a ARS {originalPrice.toLocaleString('es-AR')}
+        {deadlineLabel
+          ? `⏳ Precio de preventa hasta el ${deadlineLabel} — después ARS ${originalPrice.toLocaleString('es-AR')}`
+          : `Precio de preventa — luego sube a ARS ${originalPrice.toLocaleString('es-AR')}`}
+        {daysLeft != null && daysLeft > 0 && daysLeft <= 10 ? ` · ${daysLeft === 1 ? '¡último día!' : `quedan ${daysLeft} días`}` : ''}
       </p>
     </div>
   ) : null
@@ -683,12 +666,6 @@ export default function CourseDetail() {
 
               {/* Stats inline */}
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm pt-2">
-                {(enrollmentCount ?? 0) > 0 && (
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <Users className="w-4 h-4 text-primary" aria-hidden />
-                    <span className="text-foreground font-medium">{enrollmentCount}</span> estudiantes
-                  </span>
-                )}
                 <span className="flex items-center gap-1.5 text-muted-foreground">
                   <BookOpen className="w-4 h-4 text-primary" aria-hidden />
                   <span className="text-foreground font-medium">{totalLessons}</span> lecciones
@@ -775,13 +752,8 @@ export default function CourseDetail() {
                     {billingType === 'annual' && (
                       <p className="text-xs text-muted-foreground">Pago anual · 12 meses de acceso</p>
                     )}
-                    {/* Refuerzo de preventa — urgencia honesta: cupos reales + el precio sube */}
-                    {scarcityBadge ? scarcityBadge : (billingType === 'one_time' && originalPrice > Number(course.price) && !enrollment && (
-                      <p className="text-xs font-medium text-accent flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden />
-                        Precio de preventa — luego sube a ARS {originalPrice.toLocaleString('es-AR')}
-                      </p>
-                    ))}
+                    {/* Urgencia honesta por tiempo — el descuento cierra en una fecha real */}
+                    {scarcityBadge}
                   </div>
 
                   {/* Pago — sin "cuotas sin interés" en la app (comisión MP 28% es asesina).
@@ -806,13 +778,6 @@ export default function CourseDetail() {
                     {!(enrollMutation.isPending || buyMutation.isPending) && <ArrowRight />}
                   </Button>
 
-                  {/* Urgencia social — contador de alumnos */}
-                  {(enrollmentCount ?? 0) > 5 && (
-                    <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-primary" />
-                      <span><strong className="text-foreground/85">{enrollmentCount}</strong> personas ya inscriptas</span>
-                    </p>
-                  )}
 
                   {/* Cupón de descuento (solo cursos pagos no inscriptos) */}
                   {!enrollment && !course.is_free && (
