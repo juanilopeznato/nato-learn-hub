@@ -180,6 +180,17 @@ export default function CourseDetail() {
     },
   })
 
+  // Ventas pagas reales — para el contador de "lugares a precio de preventa".
+  // Vía RPC SECURITY DEFINER: el RLS de enrollments es own-only, un anónimo contaría 0.
+  const { data: soldCount } = useQuery({
+    queryKey: ['sold-count', course?.id],
+    enabled: !!course?.id,
+    queryFn: async () => {
+      const { data } = await supabase.rpc('course_sold_count', { p_course: course!.id })
+      return Number(data ?? 0)
+    },
+  })
+
   const { data: reviews, refetch: refetchReviews } = useQuery<ReviewRow[]>({
     queryKey: ['course-reviews', course?.id],
     enabled: !!course?.id,
@@ -403,6 +414,21 @@ export default function CourseDetail() {
 
   const billingType: 'free' | 'one_time' | 'monthly' | 'annual' = course?.billing_type ?? (course?.is_free ? 'free' : 'one_time')
   const billingLabel = billingType === 'monthly' ? '/mes' : billingType === 'annual' ? '/año' : ''
+
+  // Escasez honesta: los lugares a precio de preventa = cupo de recupero de producción.
+  // Al agotarse hay que subir `price` a `original_price` para que la promesa sea real.
+  // ponytail: cap = production_recovery_sales (ya existe); cambiar ese número mueve el contador.
+  const preventaCap = Number((course as unknown as { production_recovery_sales?: number })?.production_recovery_sales ?? 0)
+  const spotsLeft = preventaCap > 0 ? Math.max(0, preventaCap - (soldCount ?? 0)) : 0
+  const showScarcity = billingType === 'one_time' && originalPrice > Number(course?.price ?? 0) && !enrollment && spotsLeft > 0
+  const scarcityBadge = showScarcity ? (
+    <div className="flex items-center gap-2 rounded-lg bg-accent/10 border border-accent/30 px-3 py-2">
+      <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden />
+      <p className="text-xs font-semibold text-accent leading-snug">
+        {spotsLeft <= 5 ? '🔥 ' : ''}Quedan {spotsLeft} {spotsLeft === 1 ? 'lugar' : 'lugares'} a precio de preventa — luego sube a ARS {originalPrice.toLocaleString('es-AR')}
+      </p>
+    </div>
+  ) : null
 
   function handleCTA() {
     // Guard contra double-click — si una mutation ya está en curso, no disparar otra
@@ -749,13 +775,13 @@ export default function CourseDetail() {
                     {billingType === 'annual' && (
                       <p className="text-xs text-muted-foreground">Pago anual · 12 meses de acceso</p>
                     )}
-                    {/* Refuerzo de preventa — urgencia honesta: el precio actual es promo y sube */}
-                    {billingType === 'one_time' && originalPrice > Number(course.price) && !enrollment && (
+                    {/* Refuerzo de preventa — urgencia honesta: cupos reales + el precio sube */}
+                    {scarcityBadge ? scarcityBadge : (billingType === 'one_time' && originalPrice > Number(course.price) && !enrollment && (
                       <p className="text-xs font-medium text-accent flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden />
                         Precio de preventa — luego sube a ARS {originalPrice.toLocaleString('es-AR')}
                       </p>
-                    )}
+                    ))}
                   </div>
 
                   {/* Pago — sin "cuotas sin interés" en la app (comisión MP 28% es asesina).
@@ -1132,6 +1158,8 @@ export default function CourseDetail() {
                     </div>
                   )}
                 </div>
+
+                {scarcityBadge}
 
                 <Button
                   variant="hero"
