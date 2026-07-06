@@ -408,8 +408,8 @@ export default function CourseDetail() {
       <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden />
       <p className="text-xs font-semibold text-accent leading-snug">
         {deadlineLabel
-          ? `⏳ Precio de preventa hasta el ${deadlineLabel} — después ARS ${originalPrice.toLocaleString('es-AR')}`
-          : `Precio de preventa — luego sube a ARS ${originalPrice.toLocaleString('es-AR')}`}
+          ? `⏳ Precio de preventa hasta el ${deadlineLabel} — después $${originalPrice.toLocaleString('es-AR')}`
+          : `Precio de preventa — luego sube a $${originalPrice.toLocaleString('es-AR')}`}
         {daysLeft != null && daysLeft > 0 && daysLeft <= 10 ? ` · ${daysLeft === 1 ? '¡último día!' : `quedan ${daysLeft} días`}` : ''}
       </p>
     </div>
@@ -446,10 +446,10 @@ export default function CourseDetail() {
     : billingType === 'free'
     ? (enrollMutation.isPending ? 'Inscribiendo...' : 'Inscribirse gratis')
     : billingType === 'monthly'
-    ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — ARS ${discountedPrice.toLocaleString('es-AR')}/mes`)
+    ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — $${discountedPrice.toLocaleString('es-AR')}/mes`)
     : billingType === 'annual'
-    ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — ARS ${discountedPrice.toLocaleString('es-AR')}/año`)
-    : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — ARS ${discountedPrice.toLocaleString('es-AR')}`)
+    ? (buyMutation.isPending ? 'Redirigiendo...' : `Suscribirse — $${discountedPrice.toLocaleString('es-AR')}/año`)
+    : (buyMutation.isPending ? 'Redirigiendo...' : `Comprar — $${discountedPrice.toLocaleString('es-AR')}`)
 
   // Contenido del botón de compra con spinner inline cuando está procesando
   const ctaPending = enrollMutation.isPending || buyMutation.isPending || guestMutation.isPending
@@ -558,7 +558,7 @@ export default function CourseDetail() {
         <div className="w-full bg-primary text-primary-foreground text-center px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2">
           <Clock className="w-4 h-4 shrink-0" aria-hidden />
           <span>
-            Preventa: ARS {Number(course.price).toLocaleString('es-AR')} hasta el {deadlineLabel} — después ARS {originalPrice.toLocaleString('es-AR')}
+            Preventa: ${Number(course.price).toLocaleString('es-AR')} hasta el {deadlineLabel} — después ${originalPrice.toLocaleString('es-AR')}
             {daysLeft != null && daysLeft > 0 && daysLeft <= 10 ? ` · quedan ${daysLeft} días` : ''}
           </span>
         </div>
@@ -742,7 +742,7 @@ export default function CourseDetail() {
                     ) : (
                       <div className="flex items-baseline gap-2 flex-wrap">
                         <span className="font-heading text-display-md text-foreground tracking-tight tabular-nums">
-                          ARS {Number(course.price).toLocaleString('es-AR')}
+                          ${Number(course.price).toLocaleString('es-AR')}
                         </span>
                         {billingLabel && (
                           <span className="text-muted-foreground text-base font-medium">{billingLabel}</span>
@@ -750,7 +750,7 @@ export default function CourseDetail() {
                         {originalPrice > 0 && (
                           <>
                             <span className="text-muted-foreground text-lg line-through tabular-nums">
-                              ARS {originalPrice.toLocaleString('es-AR')}
+                              ${originalPrice.toLocaleString('es-AR')}
                             </span>
                             <Badge variant="success" size="default">
                               {Math.round((1 - Number(course.price) / originalPrice) * 100)}% OFF
@@ -803,7 +803,7 @@ export default function CourseDetail() {
                             <span className="text-accent">
                               {appliedCoupon.discount_type === 'percent'
                                 ? `−${appliedCoupon.discount_value}%`
-                                : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
+                                : `−$${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
                             </span>
                           </div>
                           <button onClick={removeCoupon} aria-label="Quitar cupón" className="text-accent hover:text-accent">
@@ -1109,17 +1109,17 @@ export default function CourseDetail() {
                     <div className="space-y-1">
                       <div className="flex items-baseline gap-2 flex-wrap">
                         <span className="font-heading text-3xl font-bold text-foreground">
-                          ARS {discountedPrice.toLocaleString('es-AR')}
+                          ${discountedPrice.toLocaleString('es-AR')}
                         </span>
                         {appliedCoupon ? (
                           // Hay cupón aplicado → tachado el precio de lista (course.price)
                           <span className="text-muted-foreground/80 text-lg line-through tabular-nums">
-                            ARS {Number(course.price).toLocaleString('es-AR')}
+                            ${Number(course.price).toLocaleString('es-AR')}
                           </span>
                         ) : originalPrice > 0 ? (
                           // Sin cupón pero con precio regular → tachado el regular (originalPrice)
                           <span className="text-muted-foreground/80 text-lg line-through tabular-nums">
-                            ARS {originalPrice.toLocaleString('es-AR')}
+                            ${originalPrice.toLocaleString('es-AR')}
                           </span>
                         ) : null}
                         {appliedCoupon && (
@@ -1161,7 +1161,7 @@ export default function CourseDetail() {
                           <span className="text-accent">
                             {appliedCoupon.discount_type === 'percent'
                               ? `−${appliedCoupon.discount_value}%`
-                              : `−ARS ${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
+                              : `−$${appliedCoupon.discount_value.toLocaleString('es-AR')}`}
                           </span>
                         </div>
                         <button onClick={removeCoupon} aria-label="Quitar cupón" className="text-accent hover:text-accent">
@@ -1266,7 +1266,7 @@ export default function CourseDetail() {
       <Dialog open={guestOpen} onOpenChange={(o) => { if (!guestMutation.isPending) setGuestOpen(o) }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Comprar — ARS {discountedPrice.toLocaleString('es-AR')}</DialogTitle>
+            <DialogTitle>Comprar — ${discountedPrice.toLocaleString('es-AR')}</DialogTitle>
             <DialogDescription>
               Dejanos tu nombre y email. No hace falta crear cuenta: después de pagar te
               llega un mail con el acceso directo al curso.
