@@ -401,6 +401,8 @@ export default function CourseDetail() {
   const enPreventa = billingType === 'one_time' && originalPrice > Number(course?.price ?? 0) && !enrollment
   const daysLeft = preventaEndsAt ? Math.ceil((preventaEndsAt.getTime() - Date.now()) / 86_400_000) : null
   const deadlineLabel = preventaEndsAt?.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' }) ?? null
+  // Barra de anuncio en el head — visible a todos mientras haya preventa vigente (no solo prospectos).
+  const showPreventaBanner = billingType === 'one_time' && originalPrice > Number(course?.price ?? 0) && !!preventaEndsAt && preventaEndsAt.getTime() > Date.now()
   const scarcityBadge = enPreventa ? (
     <div className="flex items-center gap-2 rounded-lg bg-accent/10 border border-accent/30 px-3 py-2">
       <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden />
@@ -551,6 +553,17 @@ export default function CourseDetail() {
 
   return (
     <div className="min-h-screen bg-card pb-24 lg:pb-0">
+      {/* Barra de urgencia en el head — anuncio de preventa arriba de todo */}
+      {showPreventaBanner && (
+        <div className="w-full bg-primary text-primary-foreground text-center px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2">
+          <Clock className="w-4 h-4 shrink-0" aria-hidden />
+          <span>
+            Preventa: ARS {Number(course.price).toLocaleString('es-AR')} hasta el {deadlineLabel} — después ARS {originalPrice.toLocaleString('es-AR')}
+            {daysLeft != null && daysLeft > 0 && daysLeft <= 10 ? ` · quedan ${daysLeft} días` : ''}
+          </span>
+        </div>
+      )}
+
       {/* Retorno post-pago de Mercado Pago — evita que el comprador caiga en la
           landing de venta mientras el webhook confirma async (fuente de pánico/chargebacks). */}
       {(paymentReturn === 'success' || paymentReturn === 'pending') && (
