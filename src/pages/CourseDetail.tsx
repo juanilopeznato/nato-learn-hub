@@ -408,8 +408,8 @@ export default function CourseDetail() {
       <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden />
       <p className="text-xs font-semibold text-accent leading-snug">
         {deadlineLabel
-          ? `⏳ Precio de preventa hasta el ${deadlineLabel} — después $${originalPrice.toLocaleString('es-AR')}`
-          : `Precio de preventa — luego sube a $${originalPrice.toLocaleString('es-AR')}`}
+          ? `⏳ Este precio es hasta el ${deadlineLabel} — después $${originalPrice.toLocaleString('es-AR')}`
+          : `Precio por tiempo limitado — luego sube a $${originalPrice.toLocaleString('es-AR')}`}
         {daysLeft != null && daysLeft > 0 && daysLeft <= 10 ? ` · ${daysLeft === 1 ? '¡último día!' : `quedan ${daysLeft} días`}` : ''}
       </p>
     </div>
@@ -558,7 +558,7 @@ export default function CourseDetail() {
         <div className="w-full bg-primary text-primary-foreground text-center px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2">
           <Clock className="w-4 h-4 shrink-0" aria-hidden />
           <span>
-            Preventa: ${Number(course.price).toLocaleString('es-AR')} hasta el {deadlineLabel} — después ${originalPrice.toLocaleString('es-AR')}
+            Precio actual: ${Number(course.price).toLocaleString('es-AR')} · el {deadlineLabel} sube a ${originalPrice.toLocaleString('es-AR')}
             {daysLeft != null && daysLeft > 0 && daysLeft <= 10 ? ` · quedan ${daysLeft} días` : ''}
           </span>
         </div>
