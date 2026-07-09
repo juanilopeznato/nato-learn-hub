@@ -26,10 +26,11 @@ import { readFileSync } from 'node:fs'
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
 const BASE_CSV = '/Users/juanilopez/Documents/Claudio/Nata Alvarez/BASES DE DATOS/registros-eventos-2026-06-13.csv'
-const FROM = 'Nata Álvarez <nata@stylecontenidos.com>' // requiere dominio verificado en Resend
+const FROM = 'Nata Álvarez <hola@natoglobal.com.ar>' // dominio verificado en Resend
 const REPLY_TO = 'nata@stylecontenidos.com'
-const CURSO_URL = 'https://university.natoglobal.com.ar/nata-alvarez/edicion-limitada' // cambiar al dominio final
-const THROTTLE_MS = 1200 // ~50 emails/min — natural, no levanta flags de spam
+const CURSO_URL = 'https://university.natoglobal.com.ar/nata-alvarez/edicion-limitada?utm_source=email'
+const throttleArg = process.argv.find(a => a.startsWith('--throttle'))
+const THROTTLE_MS = throttleArg ? Number(throttleArg.split(/[=\s]/)[1] ?? process.argv[process.argv.indexOf(throttleArg) + 1]) : 1200 // ms entre requests
 
 const API_KEY = process.env.RESEND_API_KEY
 const emailArg = process.argv.find(a => a.startsWith('--email'))
@@ -37,9 +38,15 @@ const EMAIL_N = emailArg ? parseInt(emailArg.split(/[=\s]/)[1] ?? process.argv[p
 const DRY = process.argv.includes('--dry-run')
 const testArg = process.argv.find(a => a === '--test')
 const TEST_TO = testArg ? process.argv[process.argv.indexOf(testArg) + 1] : null
+// --at <ISO>: programa el envío (scheduled_at de Resend) en vez de mandar ya
+const atArg = process.argv.find(a => a === '--at')
+const AT = atArg ? process.argv[process.argv.indexOf(atArg) + 1] : null
+// --skip N: saltea los primeros N destinatarios (para reanudar un envío cortado a la mitad)
+const skipArg = process.argv.find(a => a.startsWith('--skip'))
+const SKIP = skipArg ? Number(skipArg.split(/[=\s]/)[1] ?? process.argv[process.argv.indexOf(skipArg) + 1]) : 0
 
 if (!API_KEY && !DRY) { console.error('Falta RESEND_API_KEY (o usá --dry-run)'); process.exit(1) }
-if (!EMAIL_N || EMAIL_N < 1 || EMAIL_N > 7) { console.error('Indicá --email <1-7>'); process.exit(1) }
+if (!EMAIL_N || EMAIL_N < 1 || EMAIL_N > 5) { console.error('Indicá --email <1-5>'); process.exit(1) }
 
 // ─── Template HTML base (estética sobria) ───────────────────────────────────
 function wrap(bodyHtml) {
@@ -56,65 +63,48 @@ function wrap(bodyHtml) {
 </td></tr></table></body></html>`
 }
 function p(t) { return `<p style="margin:0 0 18px;font-size:16px;line-height:1.65">${t}</p>` }
-function btn(label) { return `<table cellpadding="0" cellspacing="0" style="margin:8px 0 22px"><tr><td style="border-radius:10px;background:#5B21F5"><a href="${CURSO_URL}" style="display:inline-block;padding:14px 30px;color:#fff;font-family:-apple-system,sans-serif;font-weight:700;font-size:15px;text-decoration:none">${label}</a></td></tr></table>` }
+function btn(label) { return `<table cellpadding="0" cellspacing="0" style="margin:8px 0 22px"><tr><td style="border-radius:10px;background:#966f2c"><a href="${CURSO_URL}" style="display:inline-block;padding:14px 30px;color:#fff;font-family:-apple-system,sans-serif;font-weight:700;font-size:15px;text-decoration:none">${label}</a></td></tr></table>` }
 
-// ─── Los 7 emails (copy en docs/campana-email-lanzamiento-nata.md) ───────────
+// ─── Los 5 emails — secuencia POST-lanzamiento, escasez por CUPOS LIMITADOS ───
+// (sin countdown ni "el precio sube": Juani no sabe cuándo cierra). Voz de Nata.
 const EMAILS = {
-  1: { subject: 'Te escribo porque me acordé de vos', html: n => wrap(
+  1: { subject: 'Lo que presenté hoy', html: n => wrap(
     p(`Hola ${n},`) +
-    p(`Nos cruzamos hace poco —en el evento, en el sorteo de Style, en alguno de esos momentos donde dejaste tus datos sin saber muy bien qué iba a venir después.`) +
-    p(`Esto es lo que viene.`) +
-    p(`Llevo más de 20 años en el cruce exacto entre comunicación, moda y lujo. Fundé Style Magazine desde Mar del Plata cuando nadie apostaba a que una revista de acá podía mirar al mundo. Y en todo ese camino hubo una pregunta que se repitió, en boca de mujeres muy distintas:`) +
-    p(`<em>"¿Cómo hago para que lo que muestro afuera refleje de verdad quién soy adentro?"</em>`) +
-    p(`Esa pregunta es la base de algo nuevo que estoy por abrir, solo para personas como vos. Se llama <strong>Edición Limitada</strong>. En unos días te cuento todo.`) +
+    p(`Hoy presenté algo que vengo construyendo hace años. Si me seguís por Instagram, ya lo cruzaste —pero quería que lo supieras de mí, no por un feed.`) +
+    p(`Se llama <strong>Edición Limitada</strong>: mi curso de marca personal. 5 semanas para construir tu imagen, tu presencia y tu comunicación desde el criterio, el estilo y la autenticidad. Todo lo que aprendí en 20 años, hecho método.`) +
+    p(`Te escribo a vos porque en algún momento dejaste tus datos conmigo —en un evento, en el sorteo de Style— y quiero que estés entre las primeras.`) +
+    p(`Abrí <strong>cupos limitados</strong> a precio de preventa. Te dejo todo acá:`) +
+    btn('Conocer Edición Limitada') +
     p(`Un beso,<br>Nata`)) },
   2: { subject: 'El lujo no grita. Susurra.', html: n => wrap(
     p(`Hola ${n},`) +
-    p(`Cuando terminé mi diplomatura en marketing de lujo en el IE Business School de Madrid, me hicieron una pregunta que todavía me acompaña: <em>"¿Cuál es la diferencia entre una marca de lujo y una que no lo es?"</em>`) +
-    p(`Mi respuesta fue: <strong>el lujo genuino no grita. Susurra.</strong> Y en ese susurro hay más poder que en cualquier campaña a los gritos.`) +
-    p(`Con los años entendí que lo mismo aplica a las personas. Una marca personal de lujo no es una marca cara: es una marca <strong>cuidada</strong>. Que elige con criterio. Que sabe qué mostrar y qué callar.`) +
-    p(`Eso es lo que vas a construir en <strong>Edición Limitada</strong>: 5 semanas, 25 clases y 5 rituales para que tu imagen, tu presencia y tu comunicación sean una sola estrategia. La tuya.`) +
-    p(`<strong>Mañana, en el evento, abre.</strong> Y por estar en esta lista, entrás al precio de preventa antes que nadie.`) +
+    p(`Cuando hice mi diplomatura en marketing de lujo en el IE Business School de Madrid, me quedó una idea que todavía me ordena: <strong>el lujo genuino no grita, susurra.</strong> Y en ese susurro hay más poder que en cualquier estridencia.`) +
+    p(`Con las personas pasa igual. Una marca personal de lujo no es una marca cara: es una marca <strong>cuidada</strong>. Que elige con criterio. Que sabe qué mostrar y qué callar.`) +
+    p(`Eso es lo que vas a construir en <strong>Edición Limitada</strong>: 25 clases y 5 rituales para que tu imagen, tu presencia y tu comunicación sean una sola estrategia. La tuya.`) +
+    p(`Son <strong>cupos limitados</strong>, y todavía quedan lugares de preventa.`) +
+    btn('Quiero mi lugar') +
     p(`Nata`)) },
-  3: { subject: 'Hoy.', html: n => wrap(
+  3: { subject: '¿Esto es para mí?', html: n => wrap(
     p(`Hola ${n},`) +
-    p(`Hoy es el día. Esta tarde, en el evento, presento oficialmente <strong>Edición Limitada</strong> —y abre la preventa.`) +
-    p(`<strong>Si venís al evento:</strong> buscame. Vas a poder sumarte ahí mismo, con el precio de preventa. Llevá el celu cargado 😉`) +
-    p(`<strong>Si no podés venir:</strong> no te quedás afuera. Hoy mismo te mando el link para entrar online, al mismo precio.`) +
-    p(`Hoy empieza algo. Y quería que lo supieras de mí.`) +
+    p(`Desde que abrí Edición Limitada me llegó varias veces la misma pregunta: <em>"Nata, ¿esto es para mí? No soy famosa, no tengo una empresa."</em>`) +
+    p(`Te respondo con honestidad: <strong>todas tenemos una marca personal.</strong> La diferencia es construirla con criterio, o dejar que se arme sola —contando una historia que quizás ni es la tuya.`) +
+    p(`Este curso es para quien siente que tiene algo valioso para mostrar y todavía no encontró cómo. Si te quedaste pensando en esto desde que lo presenté, esa duda ya te está diciendo algo.`) +
+    btn('Entrar a Edición Limitada') +
     p(`Nata`)) },
-  4: { subject: 'Ya está abierto 🤍', html: n => wrap(
+  4: { subject: 'Quiénes están entrando', html: n => wrap(
     p(`Hola ${n},`) +
-    p(`<strong>Edición Limitada ya está disponible.</strong> Y porque estás en esta lista, entrás al precio de preventa: <strong>ARS 280.000</strong> —después sube a ARS 350.000.`) +
-    p(`Lo que vas a construir en 5 semanas:`) +
-    p(`🤍 Tu firma personal<br>🤍 La anatomía de tu imagen<br>🤍 Tu narrativa de marca<br>🤍 El factor lujo<br>🤍 Tu Edición Limitada en acción`) +
-    p(`25 clases + 5 rituales + material descargable. Acceso permanente.`) +
-    btn('Quiero mi lugar a precio de preventa') +
-    p(`La preventa dura pocos días. Después, 350.000.`) +
-    p(`Nata<br><span style="font-size:14px;color:#6b7280">PD: si tenés una duda, respondé este mail. Te leo yo.</span>`)) },
-  5: { subject: '"¿Esto es para mí?"', html: n => wrap(
-    p(`Hola ${n},`) +
-    p(`Desde que abrí Edición Limitada me llegó varias veces la misma pregunta: <em>"Nata, ¿esto es para mí? Yo no soy famosa, no tengo una empresa."</em>`) +
-    p(`Te respondo con honestidad: <strong>todas tenemos una marca personal.</strong> La diferencia es construirla con conciencia o dejar que se arme sola, contando una historia que quizás ni es la tuya.`) +
-    p(`Este curso es para las que sienten que tienen algo valioso para mostrar y todavía no encontraron cómo. Si te quedaste pensando en este curso desde que lo abrí, esa duda ya te está diciendo algo.`) +
-    btn('Entrar a Edición Limitada — ARS 280.000') +
-    p(`El precio de preventa sigue por pocos días.`) +
+    p(`Algo que me está pasando con Edición Limitada y no esperaba: las personas que se suman no son las que "más saben" de marca. Son las que <strong>decidieron que era el momento</strong> de hacerlo con criterio.`) +
+    p(`Por eso lo pensé como una edición limitada de verdad: <strong>cupos acotados</strong>, para poder acompañar de cerca. No es una táctica —es la única forma en que sé hacer las cosas bien.`) +
+    p(`Quedan algunos lugares de preventa. Si venías dándole vueltas, este es el mensaje.`) +
+    btn('Sumarme ahora') +
     p(`Nata`)) },
-  6: { subject: 'El precio sube pronto', html: n => wrap(
-    p(`Hola ${n},`) +
-    p(`Te aviso con tiempo, como me gusta: <strong>en los próximos días el precio de Edición Limitada pasa de ARS 280.000 a ARS 350.000.</strong>`) +
-    p(`No es una táctica vacía. Es la diferencia entre entrar ahora, en la preventa, y entrar después.`) +
-    p(`Las que más transforman su marca en este curso no son las que más saben. Son las que <strong>decidieron que ya era el momento.</strong>`) +
-    btn('Sumarme ahora, antes de que suba') +
-    p(`Nata`)) },
-  7: { subject: 'Últimas horas a precio de preventa', html: n => wrap(
+  5: { subject: 'Cupos limitados (de verdad)', html: n => wrap(
     p(`Hola ${n},`) +
     p(`Esto es lo último que te escribo sobre la preventa.`) +
-    p(`<strong>Hoy es el último día para entrar a Edición Limitada a ARS 280.000.</strong> Mañana, 350.000.`) +
-    p(`Si llegaste hasta acá leyendo todos estos mails, no es casualidad. Algo de esto te está llamando.`) +
-    p(`No te pido que decidas por el precio. Te pido que decidas por vos —por esa versión tuya que ya sabés que está, y que solo le falta articularse.`) +
+    p(`<strong>Edición Limitada es, literalmente, limitada:</strong> hay una cantidad de lugares y no más. No te apuro por una fecha —te invito a que decidas por vos. Por esa versión tuya que ya sabés que está, y a la que solo le falta articularse.`) +
+    p(`Si es para vos, tu lugar te está esperando.`) +
     btn('Entro ahora, a precio de preventa') +
-    p(`Gracias por leerme estos días. Sea cual sea tu decisión.<br>Nata`)) },
+    p(`Gracias por leerme estos días, sea cual sea tu decisión.<br>Nata`)) },
 }
 
 // ─── Leer base ───────────────────────────────────────────────────────────────
@@ -135,7 +125,7 @@ for (const r of parseCsv(BASE_CSV)) {
 }
 
 // TODO exclusión de ya-compradores: query a Supabase enrollments approved y filtrar.
-// Por ahora documentado — agregar antes del envío real de los emails 5-7.
+// Por ahora documentado — agregar antes del envío real de los emails 4-5.
 
 const tmpl = EMAILS[EMAIL_N]
 console.log(`\n📧 Email ${EMAIL_N}: "${tmpl.subject}"`)
@@ -146,7 +136,7 @@ async function sendOne(to, name) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject: tmpl.subject, html: tmpl.html(name).replace('{unsubscribe}', '#') }),
+    body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject: tmpl.subject, html: tmpl.html(name).replace('{unsubscribe}', '#'), ...(AT ? { scheduled_at: AT } : {}) }),
   })
   if (!res.ok) throw new Error(`${res.status} ${(await res.text()).slice(0,150)}`)
 }
@@ -165,9 +155,11 @@ async function main() {
     console.log(`  ✅ Test enviado a ${TEST_TO}. Revisá cómo llegó (incluí spam).`)
     return
   }
+  const queue = recipients.slice(SKIP)
+  if (SKIP) console.log(`  (saltando los primeros ${SKIP} — reanudando en ${queue.length} restantes)\n`)
   let ok=0, fail=0
-  for (const r of recipients) {
-    try { await sendOne(r.email, r.name); ok++; process.stdout.write(`\r  Enviados: ${ok}/${recipients.length}`) }
+  for (const r of queue) {
+    try { await sendOne(r.email, r.name); ok++; process.stdout.write(`\r  Enviados: ${ok}/${queue.length}`) }
     catch (e) { fail++; console.error(`\n  ❌ ${r.email}: ${e.message}`) }
     await sleep(THROTTLE_MS)
   }
