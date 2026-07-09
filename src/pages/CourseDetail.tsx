@@ -577,6 +577,7 @@ export default function CourseDetail() {
                 <div className="space-y-1.5">
                   <h2 className="font-heading text-display-sm text-foreground tracking-tight">¡Listo! Ya tenés acceso 🎉</h2>
                   <p className="text-body-sm text-muted-foreground">Tu pago se confirmó. <strong className="text-foreground">{course.title}</strong> ya está disponible.</p>
+                  <p className="text-xs text-muted-foreground/80">También te enviamos el acceso por mail. Si no lo ves, revisá tu bandeja de entrada o la carpeta de spam.</p>
                 </div>
                 <Button
                   variant="hero"
@@ -596,6 +597,7 @@ export default function CourseDetail() {
                 <div className="space-y-1.5">
                   <h2 className="font-heading text-display-sm text-foreground tracking-tight">Estamos confirmando tu pago…</h2>
                   <p className="text-body-sm text-muted-foreground">Esto puede tardar unos segundos. No cierres esta ventana — tu acceso se activa solo apenas se acredite.</p>
+                  <p className="text-xs text-muted-foreground/80">También te llega el acceso por mail — revisá tu bandeja de entrada o el spam.</p>
                 </div>
                 <button onClick={dismissPaymentReturn} className="text-xs text-muted-foreground/70 hover:text-foreground underline underline-offset-2">
                   Si ya pagaste y tarda, te mandamos un email con el acceso. Cerrar
@@ -1269,7 +1271,7 @@ export default function CourseDetail() {
             <DialogTitle>Comprar — ${discountedPrice.toLocaleString('es-AR')}</DialogTitle>
             <DialogDescription>
               Dejanos tu nombre y email. No hace falta crear cuenta: después de pagar te
-              llega un mail con el acceso directo al curso.
+              llega un mail con el acceso directo al curso (revisá tu bandeja de entrada o el spam).
             </DialogDescription>
           </DialogHeader>
           <form
