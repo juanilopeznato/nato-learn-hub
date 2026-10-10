@@ -1,3 +1,12 @@
+<!-- arnes:inicio v1.0.0 -->
+## Arnés (leer antes de trabajar)
+- Reglas duras: `arnes/constitucion.md`. No se negocian; ante la duda, preguntale a Juani.
+- Antes de tocar algo: `arnes/docs/INDICE.md` y el doc del área. Si ya existe, reusalo; no lo rehagas.
+- Scripts ya hechos: `arnes/tools/INDICE.md`. Un script reutilizable nuevo va ahí, anotado.
+- En el mismo commit del cambio: decisión, feature, restricción o problema nuevo → actualizá su doc en `arnes/docs/` (decisiones con fecha).
+- Nunca a main/master sin pedido de Juani: rama + PR. Juani no es técnico: respuestas cortas.
+<!-- arnes:fin -->
+
 # NATO University — Guía del proyecto
 
 ## ¿Qué es esto?
